@@ -1,0 +1,1162 @@
+.platform-subscriptions .button,
+.platform-subscriptions .icon-button,
+.subscription-dialog .button,
+.subscription-dialog .icon-button,
+.business-subscription-banner .button {
+  min-height: 44px;
+}
+.platform-navigation {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--line);
+  margin: 0 0 1.5rem;
+  padding: 0 0 0.75rem;
+  overflow-x: auto;
+}
+.platform-navigation button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex: 0 0 auto;
+  min-height: 44px;
+  padding: 0.75rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 550;
+}
+.platform-navigation button[aria-current="page"] {
+  color: var(--pine);
+  border-color: var(--line);
+  background: var(--surface);
+}
+.platform-navigation button:hover {
+  color: var(--pine);
+  background: var(--mint);
+}
+.subscription-row-actions,
+.subscription-plan-actions,
+.subscription-dialog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.subscription-row-actions {
+  align-items: flex-start;
+}
+.subscription-status {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: var(--canvas);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+}
+.subscription-status.is-allowed {
+  background: var(--mint);
+  color: var(--pine);
+}
+.subscription-status.is-ended {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.subscription-directory td > .subscription-status {
+  margin-top: 0.5rem;
+}
+.subscription-directory td {
+  overflow-wrap: anywhere;
+}
+.subscription-directory td .cell-sub {
+  line-height: 1.6;
+}
+.subscription-directory .section-heading {
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.subscription-plan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 1rem;
+  padding: 0 1.5rem 1.5rem;
+}
+.subscription-plan-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  background: var(--surface);
+  min-width: 0;
+}
+.subscription-plan-card.is-archived {
+  background: var(--canvas);
+}
+.subscription-plan-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.subscription-plan-heading h3 {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.subscription-plan-description {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+.subscription-plan-price {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+.subscription-plan-price strong {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: -0.03em;
+  overflow-wrap: anywhere;
+}
+.subscription-plan-price span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.subscription-feature-list {
+  padding-left: 1.25rem;
+  margin: 0;
+  line-height: 1.9;
+  color: var(--muted);
+  font-size: 13px;
+}
+.subscription-plan-actions {
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+.subscription-panel-note {
+  border-top: 1px solid var(--line);
+  margin: 0;
+  padding: 1rem 1.5rem;
+  line-height: 1.7;
+  font-size: 12px;
+  color: var(--muted);
+}
+.subscription-success {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--line);
+  background: var(--mint);
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+.subscription-loading {
+  padding: 2rem;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.subscription-dialog {
+  width: min(640px, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0;
+  color: var(--ink);
+  background: var(--surface);
+}
+.subscription-dialog::backdrop {
+  background: rgb(16 49 41 / 45%);
+}
+.subscription-dialog-body {
+  padding: 1.5rem;
+}
+.subscription-dialog-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.subscription-dialog-heading h2 {
+  margin: 0.5rem 0 0;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  letter-spacing: -0.04em;
+}
+.subscription-dialog-heading p {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+}
+.subscription-dialog-heading .icon-button {
+  flex: 0 0 44px;
+}
+.subscription-dialog input:not([type="checkbox"]),
+.subscription-dialog select,
+.subscription-dialog textarea {
+  font: inherit;
+  font-size: 16px;
+  min-height: 44px;
+  width: 100%;
+}
+.subscription-dialog textarea {
+  padding: 0.75rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  resize: vertical;
+  min-height: 88px;
+  color: var(--ink);
+}
+.subscription-dialog label {
+  font-size: 13px;
+}
+.subscription-checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 44px;
+  cursor: pointer;
+}
+.subscription-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  min-height: 18px;
+}
+.subscription-modules {
+  margin: 0 0 1.5rem;
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+}
+.subscription-modules legend {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0 0.25rem;
+}
+.subscription-module-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.25rem 1rem;
+}
+.subscription-module-grid label {
+  margin: 0;
+}
+.subscription-dialog-actions {
+  justify-content: flex-end;
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+  margin-top: 1.5rem;
+}
+.subscription-snapshot {
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--canvas);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+.subscription-snapshot-heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.subscription-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 0;
+}
+.subscription-facts div {
+  min-width: 0;
+}
+.subscription-facts dt {
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 0.25rem;
+}
+.subscription-facts dd {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 550;
+  overflow-wrap: anywhere;
+}
+.subscription-cancel {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--line);
+}
+.subscription-cancel h3 {
+  font-size: 14px;
+  margin: 0 0 0.5rem;
+}
+.subscription-cancel p {
+  color: var(--muted);
+  line-height: 1.6;
+  font-size: 13px;
+}
+.subscription-cancel .button {
+  color: var(--danger);
+  border-color: var(--danger);
+}
+.business-subscription-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  margin-bottom: 1.5rem;
+}
+.business-subscription-banner p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+@media (max-width: 760px) {
+  .platform-subscriptions .page-heading {
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .platform-responsive-table,
+  .platform-responsive-table tbody,
+  .platform-responsive-table tr,
+  .platform-responsive-table td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  .platform-responsive-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+  .platform-responsive-table tbody {
+    padding: 0 1rem 1rem;
+  }
+  .platform-responsive-table tr {
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+    margin-bottom: 1rem;
+  }
+  .platform-responsive-table tr:last-child {
+    margin-bottom: 0;
+  }
+  .platform-responsive-table td {
+    border: 0;
+    padding: 0.5rem 0;
+    white-space: normal;
+  }
+  .platform-responsive-table td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 0.25rem;
+    color: var(--muted);
+    font-size: 11px;
+  }
+  .platform-responsive-table td:first-child::before {
+    display: none;
+  }
+  .platform-responsive-table td:first-child > strong {
+    font-size: 16px;
+  }
+  .subscription-directory .table-scroll {
+    overflow: visible;
+  }
+  .subscription-row-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+  .subscription-row-actions .button {
+    width: 100%;
+    justify-content: center;
+  }
+  .subscription-plan-grid {
+    padding: 0 1rem 1rem;
+  }
+  .subscription-plan-card {
+    padding: 1rem;
+  }
+}
+@media (max-width: 480px) {
+  .subscription-dialog {
+    width: calc(100% - 1rem);
+    max-height: calc(100dvh - 1rem);
+  }
+  .subscription-dialog-body {
+    padding: 1rem;
+  }
+  .subscription-dialog .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .subscription-module-grid {
+    grid-template-columns: 1fr;
+  }
+  .subscription-dialog-actions .button {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+  .subscription-plan-actions .button {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+  .platform-navigation {
+    gap: 0.25rem;
+  }
+  .platform-navigation button {
+    padding-inline: 0.75rem;
+    font-size: 12px;
+  }
+  .business-subscription-banner > .button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ==========================================================================
+   Platform SaaS Admin Shell & Sidebar
+   ========================================================================== */
+
+.platform-layout-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--canvas);
+}
+
+.platform-mobile-bar {
+  display: none;
+}
+
+.platform-sidebar {
+  width: 270px;
+  flex: 0 0 270px;
+  background: var(--pine);
+  color: #f1f7f5;
+  display: flex;
+  flex-direction: column;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 1.25rem 1rem;
+  z-index: 40;
+}
+
+.platform-sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1rem;
+}
+
+.platform-sidebar .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+.platform-portal-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.5rem;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--mint);
+  border-radius: 4px;
+}
+
+.platform-admin-pill {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius);
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.platform-admin-info strong {
+  display: block;
+  font-size: 13px;
+  color: #fff;
+}
+
+.platform-admin-info .cell-sub {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 11px;
+}
+
+.role-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  background: var(--mint);
+  color: var(--pine);
+  border-radius: 4px;
+  width: fit-content;
+}
+
+.platform-nav {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.platform-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.platform-nav-button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.85rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: rgba(255, 255, 255, 0.75);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.platform-nav-button:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.platform-nav-button.is-active {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.platform-sidebar-footer {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.platform-logout-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.65rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 550;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.platform-logout-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.platform-workspace-main {
+  flex: 1;
+  min-width: 0;
+  padding: 2rem 2.5rem 4rem;
+}
+
+.platform-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.platform-tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* ==========================================================================
+   Platform Overview & Reports Stack
+   ========================================================================== */
+
+.platform-overview-stack,
+.platform-reports-stack,
+.platform-access-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.platform-quick-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.platform-quick-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.platform-quick-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--pine);
+}
+
+.quick-card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius);
+  background: var(--mint);
+  color: var(--pine);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.quick-card-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.quick-card-body h3 {
+  margin: 0 0 0.25rem;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.quick-card-body p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.platform-info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: var(--mint);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--pine);
+}
+
+.platform-info-box p {
+  margin: 0.25rem 0 0;
+  font-size: 13px;
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* Reports Grids & Progress Bars */
+.platform-grid-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.subscription-health-bars,
+.plan-distribution-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.health-bar-item,
+.plan-dist-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.health-bar-label,
+.plan-dist-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.progress-track {
+  width: 100%;
+  height: 8px;
+  background: var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.fill-active {
+  background: #16a34a;
+}
+.fill-trialing {
+  background: #0284c7;
+}
+.fill-expired {
+  background: #eab308;
+}
+.fill-cancelled {
+  background: #dc2626;
+}
+.fill-plan {
+  background: var(--pine);
+}
+
+.expiring-trials-panel {
+  border-color: rgba(234, 179, 8, 0.4);
+}
+
+.heading-with-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.text-warning {
+  color: #d97706;
+}
+.warning-badge {
+  background: #fef3c7;
+  color: #b45309;
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+/* Filter & Search Bar */
+.directory-filter-bar {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--canvas);
+  border-bottom: 1px solid var(--line);
+  flex-wrap: wrap;
+}
+
+.search-input-wrap,
+.filter-select-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0 0.75rem;
+  color: var(--muted);
+}
+
+.search-input-wrap {
+  flex: 1;
+  min-width: 240px;
+}
+
+.search-input-wrap input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  height: 38px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+.filter-select-wrap select {
+  border: none;
+  background: transparent;
+  outline: none;
+  height: 38px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+}
+
+/* Platform Subtab Bar (for Access manager) */
+.platform-subtab-bar {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.75rem;
+}
+
+.platform-subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.platform-subtab-btn:hover {
+  background: var(--mint);
+  color: var(--pine);
+}
+
+.platform-subtab-btn.is-active {
+  background: var(--surface);
+  color: var(--pine);
+  border-color: var(--line);
+}
+
+/* Platform Roles Grid */
+.platform-role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+  gap: 1.25rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.platform-role-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.platform-role-card.is-super {
+  border-color: var(--pine);
+  background: linear-gradient(180deg, #f7fbf9 0%, var(--surface) 100%);
+}
+
+.role-card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.role-card-title-row h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.role-card-desc {
+  margin: 0.35rem 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.role-card-meta {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 12px;
+}
+
+.user-count-tag,
+.perm-count-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--canvas);
+  border-radius: 4px;
+  color: var(--muted);
+  font-weight: 550;
+}
+
+.role-card-permissions h4 {
+  margin: 0 0 0.5rem;
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.role-card-permissions ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.perm-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 12px;
+}
+
+.perm-enabled {
+  color: var(--pine);
+  font-weight: 550;
+}
+
+.perm-disabled {
+  color: var(--muted);
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+
+.role-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+/* Modals & Dialog Tabs */
+.subscription-modal-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.5rem;
+}
+
+.subscription-status-card {
+  background: var(--canvas);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.status-grid > div strong {
+  display: block;
+  font-size: 13px;
+  margin-top: 0.15rem;
+}
+
+.quick-extend-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+.radio-group-row {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.radio-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.85rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.date-input-with-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.quick-date-presets {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.chip-btn {
+  padding: 0.25rem 0.65rem;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  font: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--pine);
+  cursor: pointer;
+}
+
+.chip-btn:hover {
+  background: var(--mint);
+}
+
+.subscription-audit-stack {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.audit-timeline {
+  list-style: none;
+  padding: 0 0 0 1rem;
+  margin: 0;
+  position: relative;
+  border-left: 2px solid var(--line);
+}
+
+.audit-timeline-item {
+  position: relative;
+  padding-bottom: 1.25rem;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -1.35rem;
+  top: 0.2rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--pine);
+  border: 2px solid var(--surface);
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 13px;
+}
+
+.current-badge {
+  background: var(--mint);
+  color: var(--pine);
+  font-weight: 700;
+}
+
+/* Responsiveness */
+@media (max-width: 900px) {
+  .platform-layout-shell {
+    flex-direction: column;
+  }
+
+  .platform-mobile-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.25rem;
+    background: var(--pine);
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+
+  .platform-mobile-bar .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+
+  .platform-sidebar {
+    position: fixed;
+    top: 50px;
+    left: 0;
+    bottom: 0;
+    height: calc(100vh - 50px);
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+  }
+
+  .platform-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .platform-workspace-main {
+    padding: 1.25rem 1rem 3rem;
+  }
+
+  .platform-grid-two {
+    grid-template-columns: 1fr;
+  }
+}

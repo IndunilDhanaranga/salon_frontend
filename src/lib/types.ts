@@ -22,7 +22,12 @@ export interface Tenant {
 }
 
 export type SubscriptionFeature =
-  "staff" | "appointments" | "catalog" | "orders" | "payroll";
+  | "staff"
+  | "appointments"
+  | "catalog"
+  | "orders"
+  | "payroll"
+  | "branches";
 export interface Plan {
   id: string;
   name: string;
@@ -30,6 +35,8 @@ export interface Plan {
   price_minor: number;
   currency: string;
   billing_interval: "month" | "year";
+  included_branches?: number;
+  price_per_additional_branch_minor?: number;
   active: boolean;
   features: string[];
 }
@@ -40,6 +47,12 @@ export interface Subscription {
   plan_id: string | null;
   plan_name: string;
   price_minor: number;
+  base_price_minor?: number;
+  included_branches?: number;
+  price_per_additional_branch_minor?: number;
+  active_branches_count?: number;
+  additional_branch_fee_minor?: number;
+  total_price_minor?: number;
   currency: string;
   billing_interval: "month" | "year";
   features: string[];
@@ -60,6 +73,26 @@ export interface AdminPlansResponse {
   features: { key: string; label: string }[];
 }
 
+export interface Branch {
+  id: string;
+  name: string;
+  code?: string | null;
+  phone?: string | null;
+  address?: string | null;
+  is_main: boolean;
+  active: boolean;
+  staff_count?: number;
+  orders_count?: number;
+  created_at?: string;
+}
+
+export interface BranchesResponse {
+  data: Branch[];
+  active_branch_id: string | null;
+  has_all_access: boolean;
+  subscription?: Subscription | null;
+}
+
 export interface TenantRole {
   id: string;
   name: string;
@@ -72,6 +105,7 @@ export interface TenantMember {
   user: Pick<User, "id" | "name" | "email">;
   role_id: string;
   role: string;
+  branch_ids?: string[];
 }
 
 export interface Permission {
@@ -83,6 +117,7 @@ export interface AccessResponse {
   roles: TenantRole[];
   members: TenantMember[];
   permissions: Permission[];
+  branches?: Branch[];
 }
 
 export interface PlatformTenant {
@@ -203,6 +238,8 @@ export interface StaffMember {
   base_salary_minor: number;
   commission_bps: number;
   active: boolean;
+  branch_id?: string | null;
+  branch_name?: string | null;
   user_id?: string | null;
 }
 
@@ -226,6 +263,8 @@ export interface Deduction {
   date: string;
   payment_method: string;
   notes: string | null;
+  branch_id?: string | null;
+  branch_name?: string | null;
   created_by?: string | null;
   created_at: string;
   updated_at: string;
@@ -338,6 +377,8 @@ export interface Dashboard {
   };
   business_position?: BusinessPosition | null;
   deductions_summary?: DashboardDeductionsSummary | null;
+  branches?: Branch[];
+  active_branch_id?: string | null;
   appointments: Appointment[];
   staff: StaffMember[];
 }
@@ -370,6 +411,8 @@ export interface Order {
   payment_method: PaymentMethod | null;
   subtotal_minor: number;
   total_minor: number;
+  branch_id?: string | null;
+  branch_name?: string | null;
   staff_id?: string | null;
   staff_name?: string | null;
   commission_bps?: number;
@@ -386,6 +429,9 @@ export interface BusinessReportResponse {
     end_date: string;
     timezone: string;
     currency: string;
+    branch_id?: string | null;
+    is_centralized?: boolean;
+    branches?: { id: string; name: string; code?: string | null; is_main: boolean }[];
   };
   sales: {
     gross_revenue_minor: number;
@@ -464,4 +510,19 @@ export interface BusinessReportResponse {
     net_margin_minor: number;
     net_margin_percentage: number;
   };
+  branches_comparison?: Array<{
+    id: string;
+    name: string;
+    code?: string | null;
+    is_main: boolean;
+    orders_count: number;
+    appointments_count: number;
+    revenue_minor: number;
+    staff_cost_minor: number;
+    deductions_minor: number;
+    advances_minor: number;
+    profit_minor: number;
+    profit_margin_percentage: number;
+    contribution_percentage: number;
+  }>;
 }

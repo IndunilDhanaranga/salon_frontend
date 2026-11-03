@@ -153,6 +153,7 @@ export function AccessView({
         {memberForm && (
           <MemberEditor
             roles={memberCreatableRoles}
+            branches={data?.branches ?? []}
             busy={busy}
             onClose={() => setMemberForm(false)}
             onSave={(values) => void mutate("access/members", values)}

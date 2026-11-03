@@ -41,7 +41,26 @@ export function TeamView({
               <span className="avatar large">{initials(person.name)}</span>
               <div>
                 <h3>{person.name}</h3>
-                <p>{person.job_title}</p>
+                <p>
+                  {person.job_title}
+                  {person.branch_name && (
+                    <span
+                      className="branch-chip-xs"
+                      style={{
+                        marginLeft: 6,
+                        display: "inline-block",
+                        background: "rgba(18, 53, 36, 0.08)",
+                        color: "var(--teal)",
+                        padding: "1px 6px",
+                        borderRadius: 4,
+                        fontSize: "0.75rem",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {person.branch_name}
+                    </span>
+                  )}
+                </p>
               </div>
             </div>
             <div className="team-contact">

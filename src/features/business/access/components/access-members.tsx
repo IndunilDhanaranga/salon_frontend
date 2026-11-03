@@ -29,6 +29,7 @@ export function AccessMembers({
           <tr>
             <th>{t.payroll.member}</th>
             <th>{t.access.roleName}</th>
+            <th>{t.branches.branchAccess}</th>
             <th>{t.access.permissions}</th>
           </tr>
         </thead>
@@ -73,6 +74,51 @@ export function AccessMembers({
                     </select>
                   ) : (
                     member.role === "Owner" ? t.access.owner : member.role
+                  )}
+                </td>
+                <td>
+                  {!member.branch_ids || member.branch_ids.length === 0 ? (
+                    <span
+                      className="branch-chip-xs"
+                      style={{
+                        background: "rgba(18, 53, 36, 0.08)",
+                        color: "var(--teal)",
+                        padding: "2px 8px",
+                        borderRadius: 4,
+                        fontSize: "0.78rem",
+                        fontWeight: 500,
+                        display: "inline-block",
+                      }}
+                    >
+                      🌐 {t.branches.allBranches}
+                    </span>
+                  ) : (
+                    <div
+                      style={{
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 4,
+                      }}
+                    >
+                      {member.branch_ids.map((id) => {
+                        const branch = data.branches?.find((b) => b.id === id);
+                        return (
+                          <span
+                            key={id}
+                            className="branch-chip-xs"
+                            style={{
+                              background: "rgba(0, 0, 0, 0.06)",
+                              padding: "2px 6px",
+                              borderRadius: 4,
+                              fontSize: "0.78rem",
+                              display: "inline-block",
+                            }}
+                          >
+                            🏢 {branch?.name ?? id}
+                          </span>
+                        );
+                      })}
+                    </div>
                   )}
                 </td>
                 <td>

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { X, ArrowRight } from "lucide-react";
-import type { BookingStaff, Staff, Tenant } from "@/lib/types";
+import type { BookingStaff, Branch, Staff, Tenant } from "@/lib/types";
 import { api } from "@/lib/api";
 import { message, salonDateTime } from "@/lib/format";
 import { useTranslation } from "@/lib/i18n";
@@ -16,6 +16,7 @@ type Props = {
   kind: FormKind;
   tenant: Tenant;
   staff: BookingStaff[];
+  branches?: Branch[];
   editing: Staff | null;
   onClose: () => void;
   onSaved: () => Promise<void>;
@@ -25,6 +26,7 @@ export function WorkspaceForm({
   kind,
   tenant,
   staff,
+  branches = [],
   editing,
   onClose,
   onSaved,
@@ -83,6 +85,7 @@ export function WorkspaceForm({
             phone: form.get("phone") || null,
             password: form.get("password") || undefined,
             job_title: form.get("job_title"),
+            branch_id: form.get("branch_id") || null,
             base_salary_minor: Math.round(Number(form.get("salary")) * 100),
             commission_bps: Math.round(Number(form.get("commission")) * 100),
             active: form.get("active") === "on",
@@ -154,7 +157,9 @@ export function WorkspaceForm({
         {kind === "appointment" && (
           <AppointmentFields tenant={tenant} staff={staff} />
         )}
-        {kind === "staff" && <StaffFields editing={editing} />}
+        {kind === "staff" && (
+          <StaffFields editing={editing} branches={branches} />
+        )}
         {kind === "payroll" && <PayrollFields tenant={tenant} />}
         {error && (
           <p className="error-box" role="alert">

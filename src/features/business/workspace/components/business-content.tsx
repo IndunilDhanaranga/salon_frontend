@@ -14,6 +14,7 @@ import { WorkspaceDetails } from "./workspace-details";
 import { SubscriptionView } from "@/features/business/subscription/components/subscription-view";
 import { BusinessReportsView } from "@/features/business/reports/components/business-reports-view";
 import { DeductionsView } from "@/features/business/deductions/components/deductions-view";
+import { BranchesView } from "@/features/business/branches/components/branches-view";
 
 type Props = {
   workspace: ReturnType<typeof useWorkspace>;
@@ -40,6 +41,16 @@ export function BusinessContent({ workspace: w, tenant, session }: Props) {
         onView={w.setView}
         onBook={() => w.openForm("appointment")}
         onStatus={(id, status) => void w.updateStatus(id, status)}
+      />
+    );
+  if (
+    w.view === "branches" &&
+    (can("branches.view") || can("branches.manage") || can("dashboard.view"))
+  )
+    return (
+      <BranchesView
+        tenant={tenant}
+        onBranchChanged={() => void w.refresh()}
       />
     );
   if (w.view === "appointments" && can("appointments.view"))

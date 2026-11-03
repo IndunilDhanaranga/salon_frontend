@@ -1,9 +1,10 @@
 "use client";
 import { canPermission } from "@/lib/access";
 import { Plus, RefreshCw } from "lucide-react";
-import type { Tenant } from "@/lib/types";
+import type { Branch, Tenant } from "@/lib/types";
 import { viewTitles, type View } from "@/features/workspace/navigation";
 import { useTranslation, LanguageDropdown } from "@/lib/i18n";
+import { BranchDropdown } from "./branch-dropdown";
 import type { FormKind } from "./workspace-forms";
 
 type Props = {
@@ -13,6 +14,12 @@ type Props = {
   busy: boolean;
   onRefresh: () => void;
   onForm: (kind: FormKind) => void;
+  branches?: Branch[];
+  activeBranchId?: string | null;
+  selectedBranchId?: string;
+  hasAllBranchesAccess?: boolean;
+  onSelectBranch?: (id: string) => void;
+  onManageBranches?: () => void;
 };
 export function WorkspaceHeading({
   tenant,
@@ -21,6 +28,12 @@ export function WorkspaceHeading({
   busy,
   onRefresh,
   onForm,
+  branches,
+  activeBranchId,
+  selectedBranchId,
+  hasAllBranchesAccess,
+  onSelectBranch,
+  onManageBranches,
 }: Props) {
   const { t, language } = useTranslation();
   const heading = t.headings[view] ?? viewTitles[view];
@@ -51,6 +64,17 @@ export function WorkspaceHeading({
           {viewLabel}
         </span>
         <div className="topbar-right">
+          {branches && branches.length > 0 && onSelectBranch && (
+            <BranchDropdown
+              branches={branches}
+              activeBranchId={activeBranchId ?? null}
+              selectedBranchId={selectedBranchId ?? "all"}
+              hasAllBranchesAccess={hasAllBranchesAccess ?? true}
+              onSelectBranch={onSelectBranch}
+              onManageBranches={onManageBranches}
+              disabled={loading || busy}
+            />
+          )}
           <LanguageDropdown />
           <span className="topbar-date">
             {new Intl.DateTimeFormat(language === "si" ? "si-LK" : "en", {

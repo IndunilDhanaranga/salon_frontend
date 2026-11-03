@@ -115,6 +115,12 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
           busy={w.busy}
           onRefresh={() => void w.refresh()}
           onForm={w.openForm}
+          branches={w.branches}
+          activeBranchId={w.activeBranchId}
+          selectedBranchId={w.branchId}
+          hasAllBranchesAccess={w.hasAllBranchesAccess}
+          onSelectBranch={w.setBranchId}
+          onManageBranches={() => w.setView("branches")}
         />
         {w.error && (
           <div className="error-box" role="alert">
@@ -159,6 +165,7 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
             kind={w.form}
             tenant={tenant}
             staff={w.data.bookingStaff}
+            branches={w.branches}
             editing={w.editing}
             onClose={() => w.setForm(null)}
             onSaved={w.refresh}

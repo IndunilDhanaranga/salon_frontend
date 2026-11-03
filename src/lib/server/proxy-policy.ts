@@ -46,8 +46,13 @@ export const ENDPOINTS: Array<{
     tenant: true,
   },
   {
-    pattern: /^(staff|appointments|payroll|catalog|orders|deductions|deduction-options)$/,
+    pattern: /^(staff|appointments|payroll|catalog|orders|deductions|deduction-options|branches)$/,
     methods: ["GET", "POST"],
+    tenant: true,
+  },
+  {
+    pattern: new RegExp(`^branches/${UUID}$`, "i"),
+    methods: ["PATCH", "DELETE"],
     tenant: true,
   },
   {

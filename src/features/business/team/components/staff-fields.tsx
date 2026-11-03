@@ -1,8 +1,14 @@
 "use client";
-import type { Staff } from "@/lib/types";
+import type { Branch, Staff } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
 
-export function StaffFields({ editing }: { editing: Staff | null }) {
+export function StaffFields({
+  editing,
+  branches = [],
+}: {
+  editing: Staff | null;
+  branches?: Branch[];
+}) {
   const { t, language } = useTranslation();
   return (
     <>
@@ -26,6 +32,23 @@ export function StaffFields({ editing }: { editing: Staff | null }) {
           defaultValue={editing?.job_title}
         />
       </label>
+      {branches.length > 0 && (
+        <label>
+          {t.branches.assignBranch}
+          <select
+            name="branch_id"
+            defaultValue={editing?.branch_id ?? ""}
+          >
+            <option value="">{t.branches.unassigned}</option>
+            {branches.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.name} {b.is_main ? `(${t.branches.mainBranch})` : ""}{" "}
+                {b.code ? `[${b.code}]` : ""}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <div className="form-grid">
         <label>
           {t.forms.emailLogin}

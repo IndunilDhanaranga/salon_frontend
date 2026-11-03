@@ -4,6 +4,7 @@ import { canPermission, hasBusinessAccess } from "@/lib/access";
 export type View =
   | "overview"
   | "reports"
+  | "branches"
   | "appointments"
   | "team"
   | "catalog"
@@ -16,6 +17,7 @@ export type View =
 export const viewPermissions: Partial<Record<View, string>> = {
   overview: "dashboard.view",
   reports: "dashboard.view",
+  branches: "branches.view",
   appointments: "appointments.view",
   team: "staff.view",
   catalog: "catalog.view",
@@ -59,6 +61,11 @@ export const viewTitles: Record<
     label: "SALON ANALYTICS & INSIGHTS",
     title: "Reports & Financials",
     description: "Detailed sales, staff performance, services, and salon financial analysis.",
+  },
+  branches: {
+    label: "MULTI-BRANCH MANAGEMENT",
+    title: "Branches & Locations",
+    description: "Manage multiple salon branches, active status, and dynamic package pricing.",
   },
   appointments: {
     label: "KEEP THE DAY MOVING",

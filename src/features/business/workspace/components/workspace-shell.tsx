@@ -35,6 +35,12 @@ const navigation = [
     permission: "dashboard.view",
   },
   {
+    id: "branches",
+    name: "Branches",
+    icon: Building2,
+    permission: "branches.view",
+  },
+  {
     id: "appointments",
     name: "Appointments",
     icon: CalendarDays,
@@ -105,6 +111,7 @@ export function WorkspaceShell({
 
   const navLabels: Record<string, string> = {
     overview: t.nav.overview,
+    branches: t.nav.branches ?? "Branches",
     appointments: t.nav.appointments,
     team: t.nav.team,
     catalog: t.nav.catalog,

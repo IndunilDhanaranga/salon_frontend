@@ -8,6 +8,8 @@ import type {
   Appointment,
   AppointmentOptions,
   BookingStaff,
+  Branch,
+  BranchesResponse,
   Dashboard,
   ListResponse,
   PayrollRun,
@@ -23,6 +25,9 @@ export interface WorkspaceData {
   payroll: PayrollRun[];
   staff: Staff[];
   bookingStaff: BookingStaff[];
+  branches: Branch[];
+  activeBranchId: string | null;
+  hasAllBranchesAccess: boolean;
 }
 export const emptyWorkspace: WorkspaceData = {
   tenantId: "",
@@ -31,11 +36,15 @@ export const emptyWorkspace: WorkspaceData = {
   payroll: [],
   staff: [],
   bookingStaff: [],
+  branches: [],
+  activeBranchId: null,
+  hasAllBranchesAccess: true,
 };
 
 export function useWorkspaceData(
   slug: string,
   platform: boolean,
+  branchId: string,
   setSession: (session: Session | null) => void,
   setView: (update: (view: View) => View) => void,
 ) {
@@ -80,23 +89,27 @@ export function useWorkspaceData(
         return;
       }
       const can = (permission: string) => canPermission(tenant, permission);
-      const [dashboard, appointments, payroll, staff, options] =
+      const branchParam = branchId && branchId !== "all" ? branchId : undefined;
+      const [dashboard, appointments, payroll, staff, options, branchesRes] =
         await Promise.all([
           can("dashboard.view")
-            ? api<Dashboard>("dashboard", { tenant: slug })
+            ? api<Dashboard>("dashboard", { tenant: slug, branch: branchParam })
             : Promise.resolve(null),
           can("appointments.view")
-            ? api<ListResponse<Appointment>>("appointments", { tenant: slug })
+            ? api<ListResponse<Appointment>>("appointments", { tenant: slug, branch: branchParam })
             : Promise.resolve({ data: [] }),
           can("payroll.view")
-            ? api<ListResponse<PayrollRun>>("payroll", { tenant: slug })
+            ? api<ListResponse<PayrollRun>>("payroll", { tenant: slug, branch: branchParam })
             : Promise.resolve({ data: [] }),
           can("staff.view")
-            ? api<ListResponse<Staff>>("staff", { tenant: slug })
+            ? api<ListResponse<Staff>>("staff", { tenant: slug, branch: branchParam })
             : Promise.resolve({ data: [] }),
           can("appointments.manage")
-            ? api<AppointmentOptions>("appointment-options", { tenant: slug })
+            ? api<AppointmentOptions>("appointment-options", { tenant: slug, branch: branchParam })
             : Promise.resolve({ staff: [] }),
+          can("branches.view") || can("dashboard.view")
+            ? api<BranchesResponse>("branches", { tenant: slug, branch: branchParam }).catch(() => null)
+            : Promise.resolve(null),
         ]);
       if (version === epoch.current)
         setData({
@@ -106,6 +119,9 @@ export function useWorkspaceData(
           payroll: payroll.data,
           staff: staff.data,
           bookingStaff: options.staff,
+          branches: branchesRes?.data ?? dashboard?.branches ?? [],
+          activeBranchId: branchesRes?.active_branch_id ?? dashboard?.active_branch_id ?? null,
+          hasAllBranchesAccess: branchesRes?.has_all_access ?? true,
         });
     } catch (error) {
       if (version !== epoch.current) return;
@@ -120,7 +136,7 @@ export function useWorkspaceData(
     } finally {
       if (version === epoch.current) setLoading(false);
     }
-  }, [slug, platform, setSession, setView]);
+  }, [slug, platform, branchId, setSession, setView]);
 
   useEffect(() => {
     void refresh();

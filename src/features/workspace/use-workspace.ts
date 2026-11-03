@@ -14,6 +14,7 @@ export function useWorkspace() {
   const [initializing, setInitializing] = useState(true);
   const [slug, setSlug] = useState("");
   const [platform, setPlatform] = useState(false);
+  const [branchId, setBranchId] = useState<string>("all");
   const [view, setView] = useState<View>("workspace");
   const [busy, setBusy] = useState(false);
   const [initialError, setInitialError] = useState("");
@@ -21,7 +22,7 @@ export function useWorkspace() {
   const [form, setForm] = useState<FormKind | null>(null);
   const [editing, setEditing] = useState<Staff | null>(null);
   const [tourOpen, setTourOpen] = useState(false);
-  const business = useWorkspaceData(slug, platform, setSession, setView);
+  const business = useWorkspaceData(slug, platform, branchId, setSession, setView);
   const tenant = session?.tenants.find((item) => item.slug === slug);
   const sessionRef = useRef(session);
   sessionRef.current = session;
@@ -33,6 +34,7 @@ export function useWorkspace() {
       setSession(null);
       setSlug("");
       setPlatform(false);
+      setBranchId("all");
       setView("workspace");
       setForm(null);
       setEditing(null);
@@ -48,6 +50,7 @@ export function useWorkspace() {
     setSession(value);
     setSlug(value.tenants[0]?.slug ?? "");
     setPlatform(value.user.is_platform_admin);
+    setBranchId("all");
     setView(firstView(value.tenants[0]));
     setInitialError("");
     setSessionNotice("");
@@ -218,6 +221,7 @@ export function useWorkspace() {
     setEditing(null);
     setTourOpen(false);
     setSlug(value);
+    setBranchId("all");
     setView(firstView(session?.tenants.find((item) => item.slug === value)));
   }
   function selectPlatform(value: boolean) {
@@ -278,11 +282,23 @@ export function useWorkspace() {
     tenant && business.data.tenantId === tenant.id
       ? business.data
       : emptyWorkspace;
+
+  useEffect(() => {
+    if (!data.hasAllBranchesAccess && data.activeBranchId && branchId === "all") {
+      setBranchId(data.activeBranchId);
+    }
+  }, [data.hasAllBranchesAccess, data.activeBranchId, branchId]);
+
   return {
     session,
     initializing,
     tenant,
     platform,
+    branchId,
+    setBranchId,
+    branches: data.branches,
+    activeBranchId: data.activeBranchId,
+    hasAllBranchesAccess: data.hasAllBranchesAccess,
     view,
     setView,
     busy,

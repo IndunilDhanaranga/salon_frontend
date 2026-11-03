@@ -70,6 +70,8 @@ export async function handleBackend(
   if (token && !endpoint.public)
     headers.set("Authorization", "Bearer " + token);
   if (tenant && endpoint.tenant) headers.set("X-Tenant", tenant);
+  const branch = request.headers.get("x-branch");
+  if (branch) headers.set("X-Branch", branch);
   const rawBase =
     process.env.LARAVEL_API_URL ?? "http://127.0.0.1:8000/api/v1";
   const base = rawBase.replace(/\/+$/, "");

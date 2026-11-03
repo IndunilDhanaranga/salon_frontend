@@ -3,12 +3,14 @@
 import { useCallback, useEffect, useState } from "react";
 import {
   BarChart3,
+  Building2,
   CalendarDays,
   CheckCircle2,
   ChevronRight,
   Clock,
   CreditCard,
   DollarSign,
+  Globe,
   Package,
   PieChart,
   Printer,
@@ -25,7 +27,13 @@ import { initials, message, money } from "@/lib/format";
 import type { BusinessReportResponse, Tenant } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
 
-type ReportTab = "sales" | "staff" | "catalog" | "appointments" | "financial";
+type ReportTab =
+  | "sales"
+  | "staff"
+  | "catalog"
+  | "appointments"
+  | "financial"
+  | "branches";
 type RangeOption = "today" | "7d" | "30d" | "month" | "last_month" | "all";
 
 export function BusinessReportsView({ tenant }: { tenant: Tenant }) {
@@ -34,18 +42,24 @@ export function BusinessReportsView({ tenant }: { tenant: Tenant }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [range, setRange] = useState<RangeOption>("30d");
+  const [selectedBranch, setSelectedBranch] = useState<string>("all");
   const [activeTab, setActiveTab] = useState<ReportTab>("sales");
   const [isPrintingAll, setIsPrintingAll] = useState(false);
 
   const load = useCallback(
-    async (selectedRange: RangeOption, signal?: AbortSignal) => {
+    async (selectedRange: RangeOption, branchId: string, signal?: AbortSignal) => {
       setLoading(true);
       setError("");
       try {
+        const query = new URLSearchParams({ range: selectedRange });
+        if (branchId && branchId !== "all") {
+          query.set("branch_id", branchId);
+        }
         const response = await api<BusinessReportResponse>(
-          `reports?range=${selectedRange}`,
+          `reports?${query.toString()}`,
           {
             tenant: tenant.slug,
+            branch: branchId !== "all" ? branchId : undefined,
             signal,
           },
         );
@@ -67,9 +81,9 @@ export function BusinessReportsView({ tenant }: { tenant: Tenant }) {
 
   useEffect(() => {
     const controller = new AbortController();
-    void load(range, controller.signal);
+    void load(range, selectedBranch, controller.signal);
     return () => controller.abort();
-  }, [load, range]);
+  }, [load, range, selectedBranch]);
 
   useEffect(() => {
     const handleAfterPrint = () => {
@@ -101,6 +115,15 @@ export function BusinessReportsView({ tenant }: { tenant: Tenant }) {
     { id: "catalog", label: t.businessReports.tabs.catalog, icon: Package },
     { id: "appointments", label: t.businessReports.tabs.appointments, icon: CalendarDays },
     { id: "financial", label: t.businessReports.tabs.financial, icon: Wallet },
+    ...(data?.branches_comparison && data.branches_comparison.length > 0
+      ? [
+          {
+            id: "branches" as ReportTab,
+            label: t.businessReports.tabs.branches,
+            icon: Building2,
+          },
+        ]
+      : []),
   ];
 
   const currency = data?.meta.currency || tenant.currency || "LKR";
@@ -114,9 +137,14 @@ export function BusinessReportsView({ tenant }: { tenant: Tenant }) {
           {t.businessReports.title} –{" "}
           {isPrintingAll
             ? language === "si"
-              ? "සම්පූර්ණ ව්‍යාපාරික වාර්තාව (සියලු අංශ 5)"
-              : "Comprehensive Salon Report (All 5 Sections)"
+              ? "සම්පූර්ණ ව්‍යාපාරික වාර්තාව (සියලු අංශ)"
+              : "Comprehensive Salon Report (All Sections)"
             : reportTabs.find((tab) => tab.id === activeTab)?.label}
+        </p>
+        <p>
+          {selectedBranch === "all"
+            ? t.businessReports.allBranchesCentralized
+            : `${t.businessReports.branch}: ${data?.meta.branches?.find((b) => b.id === selectedBranch)?.name ?? selectedBranch}`}
         </p>
         <p>
           {t.businessReports.range}: {data?.meta.start_date} – {data?.meta.end_date} (
@@ -147,7 +175,7 @@ export function BusinessReportsView({ tenant }: { tenant: Tenant }) {
             aria-label={t.common.refresh}
             title={t.common.refresh}
             disabled={loading}
-            onClick={() => void load(range)}
+            onClick={() => void load(range, selectedBranch)}
           >
             <RefreshCw size={17} className={loading ? "spin" : ""} />
           </button>
@@ -172,8 +200,8 @@ export function BusinessReportsView({ tenant }: { tenant: Tenant }) {
             disabled={loading || !data}
             title={
               language === "si"
-                ? "සියලුම අංශ 5 ම මුද්‍රණය කරන්න"
-                : "Print all 5 report sections"
+                ? "සියලුම අංශ මුද්‍රණය කරන්න"
+                : "Print all report sections"
             }
           >
             <Printer size={16} />
@@ -184,10 +212,48 @@ export function BusinessReportsView({ tenant }: { tenant: Tenant }) {
         </div>
       </div>
 
+      {/* Branch selector pills (centralized vs individual branch) */}
+      {data?.meta.branches && data.meta.branches.length > 0 && (
+        <div className="reports-branch-bar no-print">
+          <div className="reports-branch-label">
+            <Building2 size={15} />
+            <span>{t.businessReports.filterByBranch}:</span>
+          </div>
+          <div className="reports-branch-pills">
+            <button
+              type="button"
+              className={`branch-pill ${selectedBranch === "all" ? "selected" : ""}`}
+              onClick={() => setSelectedBranch("all")}
+              disabled={loading}
+            >
+              <Globe size={13} style={{ marginRight: 4 }} />
+              {t.businessReports.allBranchesCentralized}
+            </button>
+            {data.meta.branches.map((b) => (
+              <button
+                key={b.id}
+                type="button"
+                className={`branch-pill ${selectedBranch === b.id ? "selected" : ""}`}
+                onClick={() => setSelectedBranch(b.id)}
+                disabled={loading}
+              >
+                <Building2 size={13} style={{ marginRight: 4 }} />
+                {b.name}
+                {b.is_main && (
+                  <span className="branch-main-chip-xs" style={{ marginLeft: 6 }}>
+                    {t.branches.mainBranch}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {error && (
         <div className="error-box" role="alert">
           {error}
-          <button className="text-button" onClick={() => void load(range)}>
+          <button className="text-button" onClick={() => void load(range, selectedBranch)}>
             {t.common.tryAgain}
           </button>
         </div>
@@ -941,6 +1007,240 @@ export function BusinessReportsView({ tenant }: { tenant: Tenant }) {
               </div>
             </section>
           )}
+
+          {/* ============================================================== */}
+          {/* TAB 6: MULTI-BRANCH PERFORMANCE COMPARISON                     */}
+          {/* ============================================================== */}
+          {(activeTab === "branches" || isPrintingAll) &&
+            data.branches_comparison &&
+            data.branches_comparison.length > 0 && (
+              <section className="report-section">
+                {isPrintingAll && (
+                  <h2
+                    className="print-only"
+                    style={{ fontSize: 18, marginBottom: 12 }}
+                  >
+                    6. {t.businessReports.tabs.branches}
+                  </h2>
+                )}
+                <div className="section-header">
+                  <div>
+                    <h3>{t.businessReports.branchesComparison}</h3>
+                    <p className="section-sub">
+                      {t.businessReports.branchesComparisonDesc}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="table-responsive">
+                  <table className="report-table">
+                    <thead>
+                      <tr>
+                        <th>{t.businessReports.branch}</th>
+                        <th style={{ textAlign: "right" }}>
+                          {t.businessReports.tables.orders}
+                        </th>
+                        <th style={{ textAlign: "right" }}>
+                          {t.businessReports.tables.appointmentsCount}
+                        </th>
+                        <th style={{ textAlign: "right" }}>
+                          {t.businessReports.kpis.grossRevenue}
+                        </th>
+                        <th style={{ textAlign: "right" }}>
+                          {t.businessReports.kpis.totalStaffCost}
+                        </th>
+                        <th style={{ textAlign: "right" }}>
+                          {t.deductions.kpis.dailyBusinessDeductions}
+                        </th>
+                        <th style={{ textAlign: "right" }}>
+                          {t.deductions.kpis.staffAdvances}
+                        </th>
+                        <th style={{ textAlign: "right" }}>
+                          {t.businessReports.kpis.salonGrossMargin}
+                        </th>
+                        <th style={{ textAlign: "right" }}>
+                          {t.businessReports.profitMargin}
+                        </th>
+                        <th style={{ textAlign: "right" }}>
+                          {t.businessReports.contribution}
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {data.branches_comparison.map((branch) => {
+                        const isProfitable = branch.profit_minor >= 0;
+                        return (
+                          <tr key={branch.id}>
+                            <td>
+                              <div className="cell-with-avatar">
+                                <span className="branch-table-icon">
+                                  <Building2 size={16} />
+                                </span>
+                                <div>
+                                  <strong>{branch.name}</strong>
+                                  <div
+                                    className="badges-row-inline"
+                                    style={{
+                                      display: "flex",
+                                      gap: 4,
+                                      marginTop: 2,
+                                    }}
+                                  >
+                                    {branch.is_main && (
+                                      <span className="branch-main-chip-xs">
+                                        {t.branches.mainBranch}
+                                      </span>
+                                    )}
+                                    {branch.code && (
+                                      <span className="branch-code-tag-xs">
+                                        {branch.code}
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              {branch.orders_count}
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              {branch.appointments_count}
+                            </td>
+                            <td style={{ textAlign: "right", fontWeight: 600 }}>
+                              {money(branch.revenue_minor, currency)}
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              {money(branch.staff_cost_minor, currency)}
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              {money(branch.deductions_minor, currency)}
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              {money(branch.advances_minor, currency)}
+                            </td>
+                            <td
+                              style={{
+                                textAlign: "right",
+                                fontWeight: 700,
+                                color: isProfitable ? "var(--teal)" : "#cf433a",
+                              }}
+                            >
+                              {money(branch.profit_minor, currency)}
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              <span
+                                className={`badge-pill ${isProfitable ? "success" : "danger"}`}
+                              >
+                                {branch.profit_margin_percentage}%
+                              </span>
+                            </td>
+                            <td style={{ textAlign: "right" }}>
+                              <strong>{branch.contribution_percentage}%</strong>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="table-total-row">
+                        <td>
+                          <strong>{t.businessReports.centralizedSummary}</strong>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                          <strong>
+                            {data.branches_comparison.reduce(
+                              (sum, b) => sum + b.orders_count,
+                              0,
+                            )}
+                          </strong>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                          <strong>
+                            {data.branches_comparison.reduce(
+                              (sum, b) => sum + b.appointments_count,
+                              0,
+                            )}
+                          </strong>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                          <strong>
+                            {money(
+                              data.branches_comparison.reduce(
+                                (sum, b) => sum + b.revenue_minor,
+                                0,
+                              ),
+                              currency,
+                            )}
+                          </strong>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                          <strong>
+                            {money(
+                              data.branches_comparison.reduce(
+                                (sum, b) => sum + b.staff_cost_minor,
+                                0,
+                              ),
+                              currency,
+                            )}
+                          </strong>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                          <strong>
+                            {money(
+                              data.branches_comparison.reduce(
+                                (sum, b) => sum + b.deductions_minor,
+                                0,
+                              ),
+                              currency,
+                            )}
+                          </strong>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                          <strong>
+                            {money(
+                              data.branches_comparison.reduce(
+                                (sum, b) => sum + b.advances_minor,
+                                0,
+                              ),
+                              currency,
+                            )}
+                          </strong>
+                        </td>
+                        <td
+                          style={{
+                            textAlign: "right",
+                            fontWeight: 700,
+                            color:
+                              data.branches_comparison.reduce(
+                                (sum, b) => sum + b.profit_minor,
+                                0,
+                              ) >= 0
+                                ? "var(--teal)"
+                                : "#cf433a",
+                          }}
+                        >
+                          <strong>
+                            {money(
+                              data.branches_comparison.reduce(
+                                (sum, b) => sum + b.profit_minor,
+                                0,
+                              ),
+                              currency,
+                            )}
+                          </strong>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                          <strong>{data.financial.net_margin_percentage}%</strong>
+                        </td>
+                        <td style={{ textAlign: "right" }}>
+                          <strong>100%</strong>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </section>
+            )}
         </div>
       ) : null}
     </div>

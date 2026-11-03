@@ -55,6 +55,7 @@ export interface TranslationDictionary {
     deductions: string;
     payroll: string;
     reports: string;
+    branches: string;
     access: string;
     subscription: string;
     takeTour: string;
@@ -69,9 +70,15 @@ export interface TranslationDictionary {
     selectLanguage: string;
     rolesAndAccess: string;
     overview: string;
+    branches: string;
   };
   headings: {
     overview: {
+      label: string;
+      title: string;
+      description: string;
+    };
+    branches: {
       label: string;
       title: string;
       description: string;
@@ -398,7 +405,16 @@ export interface TranslationDictionary {
       catalog: string;
       appointments: string;
       financial: string;
+      branches: string;
     };
+    branchesComparison: string;
+    branchesComparisonDesc: string;
+    branch: string;
+    contribution: string;
+    profitMargin: string;
+    centralizedSummary: string;
+    filterByBranch: string;
+    allBranchesCentralized: string;
     kpis: {
       grossRevenue: string;
       unpaidRevenue: string;
@@ -491,5 +507,49 @@ export interface TranslationDictionary {
       business: string;
       staff_advance: string;
     };
+  };
+  branches: {
+    title: string;
+    manageTitle: string;
+    allBranches: string;
+    allBranchesDesc: string;
+    centralized: string;
+    mainBranch: string;
+    addBranch: string;
+    editBranch: string;
+    branchName: string;
+    branchCode: string;
+    branchCodePlaceholder: string;
+    phone: string;
+    address: string;
+    status: string;
+    active: string;
+    inactive: string;
+    totalBranches: string;
+    activeBranches: string;
+    includedBranches: string;
+    dynamicPricingTitle: string;
+    dynamicPricingDesc: string;
+    basePlanPrice: string;
+    additionalBranchFee: string;
+    extraBranchesBilled: string;
+    totalMonthlyPrice: string;
+    dynamicPricingNote: string;
+    dynamicPricingPreview: string;
+    noBranches: string;
+    staffCount: string;
+    ordersCount: string;
+    switchBranch: string;
+    manageBranches: string;
+    branchAccess: string;
+    allBranchesAccess: string;
+    assignedBranches: string;
+    selectBranches: string;
+    assignBranch: string;
+    unassigned: string;
+    deleteBranch: string;
+    confirmDelete: string;
+    cannotDeleteMain: string;
+    toggleActive: string;
   };
 }

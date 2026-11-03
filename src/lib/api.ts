@@ -4,6 +4,7 @@ export interface ApiOptions {
   method?: "GET" | "POST" | "PATCH" | "DELETE";
   body?: unknown;
   tenant?: string;
+  branch?: string;
   signal?: AbortSignal;
   params?: Record<string, string | number | boolean | undefined>;
 }
@@ -52,6 +53,7 @@ export async function api<T>(
   const headers = new Headers({ Accept: "application/json" });
   if (body !== undefined) headers.set("Content-Type", "application/json");
   if (options.tenant) headers.set("X-Tenant", options.tenant);
+  if (options.branch) headers.set("X-Branch", options.branch);
 
   let response: Response;
   try {

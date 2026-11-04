@@ -1,7 +1,8 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { Plus, UserPlus } from "lucide-react";
-import { api, type ApiOptions } from "@/lib/api";
+import type { ApiOptions } from "@/lib/api";
+import { useBranchApi } from "@/features/workspace/branch-context";
 import type { AccessResponse, Tenant, TenantRole } from "@/lib/types";
 import { message } from "@/lib/format";
 import { RoleEditor } from "./role-editor";
@@ -17,6 +18,7 @@ export function AccessView({
   tenant: Tenant;
   currentUserId: string;
 }) {
+  const api = useBranchApi();
   const { t } = useTranslation();
   const [data, setData] = useState<AccessResponse | null>(null);
   const [error, setError] = useState("");

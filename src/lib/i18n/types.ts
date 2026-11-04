@@ -1,6 +1,18 @@
 export type Language = "en" | "si";
 
 export interface TranslationDictionary {
+  branchSetup: {
+    title: string;
+    description: string;
+    submit: string;
+    continue: string;
+    mainHint: string;
+    namePlaceholder: string;
+    waitingForOwner: string;
+    subscriptionRequired: string;
+    switchWorkspace: string;
+    refresh: string;
+  };
   common: {
     save: string;
     cancel: string;

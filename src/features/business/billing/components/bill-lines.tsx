@@ -31,7 +31,8 @@ export function BillLines({
             <div>
               <strong>{item.name}</strong>
               <span className="cell-sub">
-                {money(item.price_minor, currency)} {language === "si" ? "බැගින්" : "each"}
+                {money(item.price_minor, currency)}{" "}
+                {language === "si" ? "බැගින්" : "each"}
               </span>
             </div>
             <div className="pos-quantity">
@@ -47,7 +48,9 @@ export function BillLines({
                 <Minus size={16} />
               </button>
               <label className="quantity-label">
-                <span className="sr-only">{t.billing.quantity} {item.name}</span>
+                <span className="sr-only">
+                  {t.billing.quantity} {item.name}
+                </span>
                 <input
                   type="number"
                   inputMode="numeric"
@@ -87,11 +90,7 @@ export function BillLines({
           </div>
         );
       })}
-      {!lines.length && (
-        <p className="muted small">
-          {t.billing.emptyDesc}
-        </p>
-      )}
+      {!lines.length && <p className="muted small">{t.billing.emptyDesc}</p>}
     </div>
   );
 }

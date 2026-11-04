@@ -20,6 +20,11 @@ export function PayrollView({
         <div>
           <strong>{t.payroll.noticeTitle}</strong>
           <p>{t.payroll.noticeDesc}</p>
+          <p>
+            {language === "si"
+              ? "එක් මාසික වැටුප් කෙටුම්පතකට ව්‍යාපාරයේ සියලුම ශාඛා ඇතුළත් වේ."
+              : "Each monthly payroll draft includes every branch in this business."}
+          </p>
         </div>
         <span className="status booked">{t.payroll.draftsOnly}</span>
       </div>
@@ -39,11 +44,14 @@ export function PayrollView({
                 </div>
                 <div className="payroll-period">
                   <h2>
-                    {new Intl.DateTimeFormat(language === "si" ? "si-LK" : "en", {
-                      month: "long",
-                      year: "numeric",
-                      timeZone: "UTC",
-                    }).format(
+                    {new Intl.DateTimeFormat(
+                      language === "si" ? "si-LK" : "en",
+                      {
+                        month: "long",
+                        year: "numeric",
+                        timeZone: "UTC",
+                      },
+                    ).format(
                       new Date(`${run.period_start.slice(0, 10)}T12:00:00Z`),
                     )}
                   </h2>

@@ -35,10 +35,15 @@ export function I18nProvider({
   const [language, setLanguageState] = useState<Language>("en");
   const [needsPrompt, setNeedsPrompt] = useState(false);
   const [initialized, setInitialized] = useState(false);
+  useEffect(() => {
+    document.documentElement.lang = language === "si" ? "si-LK" : "en";
+  }, [language]);
 
   useEffect(() => {
     try {
-      const stored = localStorage.getItem(LANGUAGE_STORAGE_KEY) as Language | null;
+      const stored = localStorage.getItem(
+        LANGUAGE_STORAGE_KEY,
+      ) as Language | null;
       if (stored === "en" || stored === "si") {
         setLanguageState(stored);
         setNeedsPrompt(false);
@@ -72,7 +77,10 @@ export function I18nProvider({
     [setLanguage],
   );
 
-  const t = useMemo(() => translations[language] ?? translations.en, [language]);
+  const t = useMemo(
+    () => translations[language] ?? translations.en,
+    [language],
+  );
 
   return (
     <I18nContext.Provider

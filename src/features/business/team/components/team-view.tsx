@@ -29,7 +29,8 @@ export function TeamView({
         <div>
           <h2>{t.team.peopleBehindChair}</h2>
           <p>
-            {staff.filter((person) => person.active).length} {t.team.activeMembersCount}
+            {staff.filter((person) => person.active).length}{" "}
+            {t.team.activeMembersCount}
           </p>
         </div>
         <span className="small-caps">{t.team.yourTeam}</span>
@@ -49,7 +50,7 @@ export function TeamView({
                       style={{
                         marginLeft: 6,
                         display: "inline-block",
-                        background: "rgba(18, 53, 36, 0.08)",
+                        background: "var(--mint)",
                         color: "var(--teal)",
                         padding: "1px 6px",
                         borderRadius: 4,

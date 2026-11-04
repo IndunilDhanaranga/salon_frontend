@@ -1,7 +1,7 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 import { Check, RefreshCw } from "lucide-react";
-import { api } from "@/lib/api";
+import { useBranchApi } from "@/features/workspace/branch-context";
 import { money, message } from "@/lib/format";
 import { subscriptionFeatures, subscriptionStatusLabel } from "@/lib/access";
 import type { SubscriptionResponse, Tenant } from "@/lib/types";
@@ -9,6 +9,7 @@ import { SubscriptionPlans } from "./subscription-plans";
 import { useTranslation } from "@/lib/i18n";
 
 export function SubscriptionView({ tenant }: { tenant: Tenant }) {
+  const api = useBranchApi();
   const { t, language } = useTranslation();
   const [response, setResponse] = useState<SubscriptionResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -103,24 +104,40 @@ export function SubscriptionView({ tenant }: { tenant: Tenant }) {
                   </dd>
                 </div>
                 <div>
-                  <dt>{language === "si" ? "වත්මන් කාලසීමාව ඇරඹුම" : "Current period starts"}</dt>
+                  <dt>
+                    {language === "si"
+                      ? "වත්මන් කාලසීමාව ඇරඹුම"
+                      : "Current period starts"}
+                  </dt>
                   <dd>{date(subscription.current_period_start)}</dd>
                 </div>
                 <div>
-                  <dt>{language === "si" ? "ප්‍රවේශය අවසන් වීම" : "Access ends"}</dt>
+                  <dt>
+                    {language === "si" ? "ප්‍රවේශය අවසන් වීම" : "Access ends"}
+                  </dt>
                   <dd>{date(subscription.current_period_end)}</dd>
                 </div>
                 <div>
-                  <dt>{language === "si" ? "නොමිලේ අත්හදා බැලීම ඇරඹුම" : "Free trial started"}</dt>
+                  <dt>
+                    {language === "si"
+                      ? "නොමිලේ අත්හදා බැලීම ඇරඹුම"
+                      : "Free trial started"}
+                  </dt>
                   <dd>{date(subscription.trial_starts_at)}</dd>
                 </div>
                 <div>
-                  <dt>{language === "si" ? "නොමිලේ අත්හදා බැලීම අවසන් වීම" : "Free trial ends"}</dt>
+                  <dt>
+                    {language === "si"
+                      ? "නොමිලේ අත්හදා බැලීම අවසන් වීම"
+                      : "Free trial ends"}
+                  </dt>
                   <dd>{date(subscription.trial_ends_at)}</dd>
                 </div>
                 {subscription.cancelled_at && (
                   <div>
-                    <dt>{language === "si" ? "අවලංගු කරන ලදි" : "Cancelled"}</dt>
+                    <dt>
+                      {language === "si" ? "අවලංගු කරන ලදි" : "Cancelled"}
+                    </dt>
                     <dd>{date(subscription.cancelled_at)}</dd>
                   </div>
                 )}
@@ -137,7 +154,11 @@ export function SubscriptionView({ tenant }: { tenant: Tenant }) {
               </ul>
               {!subscription.access_allowed && (
                 <div className="form-note">
-                  <strong>{language === "si" ? "ඔබේ දත්ත සුරක්ෂිතව ඇත." : "Your business data is retained."}</strong>
+                  <strong>
+                    {language === "si"
+                      ? "ඔබේ දත්ත සුරක්ෂිතව ඇත."
+                      : "Your business data is retained."}
+                  </strong>
                   <p>
                     {language === "si"
                       ? "ගිණුම යළි සක්‍රිය කිරීමට පරිපාලක අමතන්න."

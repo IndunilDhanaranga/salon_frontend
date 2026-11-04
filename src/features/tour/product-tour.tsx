@@ -54,7 +54,9 @@ export function ProductTour({
       <div className="tour-header">
         <span className="tour-kicker">
           <Compass size={17} />{" "}
-          {language === "si" ? "ඔබේ සැලූනය, පැහැදිලි කිරීම" : "YOUR SALON, EXPLAINED"}
+          {language === "si"
+            ? "ඔබේ සැලූනය, පැහැදිලි කිරීම"
+            : "YOUR SALON, EXPLAINED"}
         </span>
         <button
           type="button"
@@ -113,8 +115,12 @@ export function ProductTour({
           onClick={() => (isLast ? onClose() : setIndex(index + 1))}
         >
           {isLast
-            ? (language === "si" ? "ක්‍රියාකාරී වන්න" : "Explore workspace")
-            : (language === "si" ? "මීළඟ" : "Next")}
+            ? language === "si"
+              ? "ක්‍රියාකාරී වන්න"
+              : "Explore workspace"
+            : language === "si"
+              ? "මීළඟ"
+              : "Next"}
           {isLast ? <Check size={16} /> : <ArrowRight size={16} />}
         </button>
       </div>

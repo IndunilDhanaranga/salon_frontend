@@ -14,6 +14,8 @@ export type PlanValues = Pick<
   | "name"
   | "description"
   | "price_minor"
+  | "included_branches"
+  | "price_per_additional_branch_minor"
   | "currency"
   | "billing_interval"
   | "active"

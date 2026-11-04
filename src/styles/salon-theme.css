@@ -1,0 +1,576 @@
+/* Salon palette: black navigation, champagne gold actions, ivory surfaces. */
+:root {
+  --canvas: #f7f5ef;
+  --surface: #fffdf7;
+  --surface-subtle: #f2eee3;
+  --card-bg: var(--surface);
+  --ink: #242421;
+  --muted: #6f6a60;
+  --line: #e2ddd2;
+  --pine: #2b2b27;
+  --pine-deep: #191918;
+  --teal: var(--pine);
+  --mint: #eee9de;
+  --accent: #e5d3aa;
+  --accent-ink: #5f4d2c;
+  --sidebar-text: #f5f1e7;
+  --sidebar-surface: #2b2b27;
+  --sidebar-hover: #35352f;
+  --sidebar-line: #5c584f;
+  --sidebar-muted: #c8c1b3;
+  --sidebar-label: #ded8cb;
+  --brand-border: #b4a17d;
+  --control-border: #978d7c;
+  --control-hover: #7f7056;
+  --menu-shadow: 0 8px 24px #1919181f;
+  --action: #d8c18d;
+  --action-ink: #242421;
+  --action-hover: #cbb17b;
+  --focus: #8b6f35;
+  --success-ink: #315b43;
+  --success-surface: #e9f1e9;
+  --warning-ink: #735a1c;
+  --warning-surface: #fbf0d9;
+  --danger: #a23f38;
+  --danger-bg: #fbecea;
+  --radius: 12px;
+}
+
+body {
+  color-scheme: light;
+}
+.currency-amount {
+  display: block;
+  font-variant-numeric: tabular-nums;
+}
+::selection {
+  background: var(--accent);
+  color: var(--pine-deep);
+}
+input,
+select,
+textarea {
+  caret-color: var(--pine);
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline-color: var(--focus);
+}
+button:disabled {
+  cursor: not-allowed;
+}
+.button {
+  font-size: 13px;
+  min-height: 44px;
+  font-weight: 600;
+}
+.button.primary {
+  background: var(--action);
+  color: var(--action-ink);
+  border-color: var(--action);
+}
+.button.primary:hover:not(:disabled) {
+  background: var(--action-hover);
+}
+.button.secondary:hover:not(:disabled) {
+  background: var(--mint);
+  border-color: var(--brand-border);
+}
+.button:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.text-button {
+  font-size: 12px;
+}
+.small-button {
+  font-size: 12px;
+}
+.icon-button {
+  min-width: 40px;
+  min-height: 40px;
+}
+.icon-button:hover:not(:disabled) {
+  background: var(--mint);
+}
+h1 {
+  font-size: 2rem;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.page-heading p {
+  font-size: 13px;
+  line-height: 1.7;
+  max-width: 65ch;
+}
+.page-heading .eyebrow {
+  display: none;
+}
+.section-heading h2 {
+  font-size: 17px;
+}
+.section-heading p {
+  font-size: 12px;
+}
+.stat-top {
+  font-size: 12px;
+  color: var(--muted);
+}
+.stat-top > svg {
+  color: var(--pine);
+}
+.stat-note {
+  font-size: 11px;
+  line-height: 1.6;
+}
+.stat > strong {
+  letter-spacing: -0.035em;
+}
+.stat {
+  border-color: var(--line);
+  box-shadow: 0 2px 4px #19191803;
+}
+table {
+  font-size: 12px;
+}
+th {
+  font-size: 11px;
+  background: var(--surface-subtle);
+}
+td {
+  border-color: var(--line);
+}
+.cell-sub {
+  font-size: 11px;
+  line-height: 1.5;
+}
+.small-caps {
+  color: var(--muted);
+}
+.field-hint {
+  font-size: 12px;
+  line-height: 1.65;
+}
+.status {
+  font-size: 11px;
+  padding: 7px 9px;
+}
+.status.completed {
+  color: var(--success-ink);
+  background: var(--success-surface);
+}
+.status.booked {
+  color: var(--warning-ink);
+  background: var(--warning-surface);
+}
+.status.cancelled {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+label {
+  font-size: 13px;
+}
+input,
+select,
+textarea {
+  border-color: var(--control-border);
+  background: var(--surface);
+}
+input:hover,
+select:hover,
+textarea:hover {
+  border-color: var(--control-hover);
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--muted);
+}
+.form-note,
+.inline-form {
+  background: var(--surface-subtle);
+}
+.form-note {
+  font-size: 13px;
+}
+.row-action {
+  color: var(--pine);
+}
+.row-action:hover {
+  background: var(--mint);
+  border-color: var(--brand-border);
+}
+.panel-footer {
+  font-size: 11px;
+}
+.live-dot {
+  background: var(--action);
+}
+.avatar {
+  background: var(--mint);
+  color: var(--pine-deep);
+}
+.client-avatar {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.daily-note {
+  background: var(--accent);
+}
+.daily-note .eyebrow,
+.daily-note p {
+  color: var(--accent-ink);
+}
+.daily-note p {
+  font-size: 12px;
+}
+.note-graphic > span {
+  border-color: var(--brand-border);
+}
+.daily-note h2 {
+  letter-spacing: -0.035em;
+}
+.sidebar {
+  background: var(--pine-deep);
+  color: var(--sidebar-text);
+  padding-top: 24px;
+}
+.sidebar .brand {
+  margin-bottom: 25px;
+}
+.workspace-select {
+  margin-bottom: 22px;
+}
+.workspace-select select {
+  background: var(--sidebar-surface);
+  border-color: var(--sidebar-line);
+  color: var(--sidebar-text);
+}
+.workspace-select .eyebrow,
+.workspace-role,
+.profile > div > span {
+  color: var(--sidebar-muted);
+}
+.sidebar .nav-item {
+  color: var(--sidebar-label);
+  font-size: 13px;
+  min-height: 44px;
+}
+.sidebar .nav-item.selected {
+  background: var(--accent);
+  color: var(--pine-deep);
+}
+.sidebar .nav-item:hover:not(.selected) {
+  background: var(--sidebar-hover);
+  color: var(--sidebar-text);
+}
+.sidebar-note {
+  display: none;
+}
+.sidebar-bottom {
+  padding-top: 16px;
+}
+.profile {
+  border-color: var(--sidebar-line);
+}
+.profile .icon-button:hover {
+  background: var(--sidebar-hover);
+}
+.sidebar .mobile-menu-toggle {
+  border-color: var(--sidebar-line);
+  color: var(--sidebar-text);
+  background: var(--sidebar-surface);
+}
+.topbar {
+  font-size: 12px;
+}
+.topbar-date {
+  font-size: 11px;
+}
+.auth-story {
+  background: var(--pine-deep);
+  color: var(--sidebar-text);
+}
+.auth-editorial .light {
+  color: var(--sidebar-muted);
+}
+.auth-editorial h1 {
+  letter-spacing: -0.04em;
+}
+.auth-editorial > p {
+  color: var(--sidebar-label);
+}
+.story-line {
+  color: var(--sidebar-label);
+}
+.auth-foot {
+  color: var(--sidebar-muted);
+  border-color: var(--sidebar-line);
+}
+.auth-note {
+  font-size: 11px;
+}
+.demo-box p {
+  font-size: 11px;
+  line-height: 1.6;
+}
+.demo-mark {
+  background: var(--accent);
+}
+.auth-form-wrap {
+  background: var(--canvas);
+}
+.team-summary .count,
+.payroll-icon,
+.role-icon,
+.catalog-icon {
+  background: var(--mint);
+  color: var(--pine);
+}
+.team-person h3,
+.mini-person strong {
+  font-size: 13px;
+}
+.mini-person > div > span {
+  font-size: 11px;
+}
+.team-row p {
+  font-size: 12px;
+}
+.team-row .small-caps {
+  font-size: 10px;
+}
+.payroll-notice {
+  background: var(--mint);
+}
+.payroll-notice p {
+  font-size: 12px;
+}
+.payroll-total {
+  font-variant-numeric: tabular-nums;
+}
+.pos-picker {
+  background: var(--surface-subtle);
+}
+.pos-item:hover:not(:disabled) {
+  background: var(--mint);
+  border-color: var(--brand-border);
+}
+.pos-item:active:not(:disabled) {
+  background: var(--accent);
+}
+.pos-item-icon,
+.pos-item.product .pos-item-icon {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.pos-item-price {
+  color: var(--muted);
+  font-size: 12px;
+}
+.pos-filters > button.selected {
+  background: var(--accent);
+  border-color: var(--brand-border);
+  color: var(--accent-ink);
+}
+.filter-tabs button > span {
+  background: var(--mint);
+}
+.permission-grid label {
+  font-size: 12px;
+}
+.permissions-fieldset legend {
+  font-size: 12px;
+}
+.platform-sidebar,
+.platform-mobile-bar,
+.platform-topbar {
+  background: var(--pine-deep);
+  color: var(--sidebar-text);
+}
+.platform-sidebar .nav-item {
+  color: var(--sidebar-label);
+}
+.platform-nav-button.is-active {
+  background: var(--accent);
+  color: var(--ink);
+  border-color: var(--brand-border);
+  box-shadow: none;
+}
+.platform-nav-button.is-active:hover {
+  background: var(--mint);
+  color: var(--ink);
+}
+.platform-quick-card {
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+}
+.platform-quick-card:hover {
+  border-color: var(--brand-border);
+}
+.platform-admin-pill {
+  background: var(--sidebar-surface);
+  border-color: var(--sidebar-line);
+}
+.platform-admin-info .cell-sub,
+.platform-sidebar .platform-admin-info > span {
+  color: var(--sidebar-muted);
+}
+.platform-portal-tag {
+  color: var(--accent);
+}
+.platform-tab-placeholder,
+.subscription-card {
+  background: var(--surface);
+}
+.platform-stats .stat {
+  background: var(--surface);
+}
+.subscription-plan-summary {
+  background: var(--surface-subtle);
+}
+.demo-banner {
+  background: var(--mint);
+  border-color: var(--brand-border);
+}
+.demo-banner-icon {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+.demo-banner-copy p {
+  color: var(--accent-ink);
+}
+.tour-kicker,
+.tour-tips svg {
+  color: var(--accent-ink);
+}
+.tour-tips {
+  background: var(--surface-subtle);
+}
+.tour-progress span.complete {
+  background: var(--action);
+}
+.language-dialog {
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  margin: auto;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 0;
+  color: var(--ink);
+  background: var(--surface);
+  overflow: auto;
+  box-shadow: 0 20px 65px #1919182b;
+}
+.language-dialog::backdrop {
+  background: #19191870;
+}
+.language-dialog .language-modal-card {
+  max-width: none;
+  width: 100%;
+  box-shadow: none;
+}
+.workspace-footer {
+  font-size: 11px;
+}
+@media (max-width: 1024px) {
+  .topbar {
+    flex-wrap: wrap;
+    padding: 12px 0;
+  }
+  .topbar-right {
+    flex-wrap: wrap;
+    min-width: 0;
+  }
+  .branch-select-button {
+    max-width: 100%;
+  }
+}
+@media (max-width: 760px) {
+  h1 {
+    font-size: 1.75rem;
+  }
+  .sidebar {
+    padding-top: 18px;
+  }
+  .sidebar .brand {
+    margin-bottom: 0;
+  }
+  .sidebar .nav-item {
+    font-size: 13px;
+  }
+  .sidebar-bottom {
+    border-color: var(--sidebar-line);
+  }
+  .sidebar-bottom > .nav-item {
+    font-size: 12px;
+  }
+  .page-heading p {
+    font-size: 13px;
+  }
+  .stat-top {
+    font-size: 12px;
+  }
+  .stat-note {
+    font-size: 11px;
+  }
+  .stat > strong {
+    font-size: 25px;
+  }
+  .topbar-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .topbar-date {
+    max-width: none;
+  }
+  .button,
+  .icon-button,
+  .text-button,
+  .row-action,
+  .filter-tabs button,
+  .branch-pill,
+  .reports-tab {
+    min-height: 44px;
+  }
+  .icon-button,
+  .row-action {
+    min-width: 44px;
+  }
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  .branch-dropdown-wrapper {
+    max-width: 100%;
+  }
+  .branch-dropdown-menu {
+    max-width: calc(100vw - 32px);
+  }
+  .branch-name-label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .platform-sidebar .nav-item {
+    min-height: 44px;
+  }
+  .team-summary .mini-person {
+    width: 100%;
+    display: flex;
+  }
+}
+@media print {
+  :root {
+    --canvas: #fff;
+    --ink: #111;
+    --muted: #444;
+  }
+  .demo-banner {
+    display: none;
+  }
+}

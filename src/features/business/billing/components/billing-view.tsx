@@ -3,7 +3,7 @@ import { canPermission } from "@/lib/access";
 
 import { useCallback, useEffect, useState } from "react";
 import { Plus, Receipt } from "lucide-react";
-import { api } from "@/lib/api";
+import { useBranchApi } from "@/features/workspace/branch-context";
 import type {
   CatalogItem,
   ListResponse,
@@ -18,6 +18,7 @@ import { BillingCards } from "./billing-cards";
 import { useTranslation } from "@/lib/i18n";
 
 export function BillingView({ tenant }: { tenant: Tenant }) {
+  const api = useBranchApi();
   const { t, language } = useTranslation();
   const [orders, setOrders] = useState<Order[]>([]);
   const [catalog, setCatalog] = useState<CatalogItem[]>([]);
@@ -128,7 +129,8 @@ export function BillingView({ tenant }: { tenant: Tenant }) {
                       <td>
                         <strong>{order.number}</strong>
                         <span className="cell-sub">
-                          {order.items.length} {language === "si" ? "අයිතම" : "items"}
+                          {order.items.length}{" "}
+                          {language === "si" ? "අයිතම" : "items"}
                         </span>
                       </td>
                       <td>
@@ -141,12 +143,15 @@ export function BillingView({ tenant }: { tenant: Tenant }) {
                         )}
                       </td>
                       <td>
-                        {new Intl.DateTimeFormat(language === "si" ? "si-LK" : "en", {
-                          timeZone: tenant.timezone,
-                          day: "numeric",
-                          month: "short",
-                          year: "numeric",
-                        }).format(new Date(order.created_at))}
+                        {new Intl.DateTimeFormat(
+                          language === "si" ? "si-LK" : "en",
+                          {
+                            timeZone: tenant.timezone,
+                            day: "numeric",
+                            month: "short",
+                            year: "numeric",
+                          },
+                        ).format(new Date(order.created_at))}
                       </td>
                       <td className="money-label">
                         {money(order.total_minor, tenant.currency)}
@@ -155,7 +160,9 @@ export function BillingView({ tenant }: { tenant: Tenant }) {
                         <span
                           className={`status ${order.status === "paid" ? "completed" : "booked"}`}
                         >
-                          {order.status === "paid" ? t.billing.paid : t.billing.unpaid}
+                          {order.status === "paid"
+                            ? t.billing.paid
+                            : t.billing.unpaid}
                         </span>
                       </td>
                       <td>

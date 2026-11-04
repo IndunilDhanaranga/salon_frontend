@@ -1,6 +1,6 @@
 # Salon workspace
 
-A Next.js frontend and Laravel API starter for running a salon SaaS. Each business has its own appointments, people, roles, prices, customer bills, and payroll drafts. A separate platform administration area manages business availability.
+A Next.js frontend and Laravel API for running a salon SaaS. Each business has its own branches, appointments, people, roles, prices, customer bills, expenses, staff advances, reports, and payroll drafts. A separate platform administration area manages businesses, subscription plans, trials, and administrator roles.
 
 The adjacent `Haircut_backend` project uses **MySQL `haircut_master`**. Its `central` and `tenant` connections initially share this physical database. Dedicated business databases are a future deployment tier with a documented migration procedure.
 
@@ -38,18 +38,20 @@ Open [the local application](http://127.0.0.1:3000). The local-only seeder creat
 
 To check on a real phone, run `npm run dev:lan` and open `http://<your-computer-LAN-address>:3000` on the same Wi-Fi network. The Next.js server still talks to Laravel locally, so the phone does not need direct access to port 8000. Desktop preview uses the default local-only dev command.
 
-| Area | Email | Password |
-| --- | --- | --- |
-| Business owner | `demo@salon.test` | `password` |
+| Area               | Email              | Password   |
+| ------------------ | ------------------ | ---------- |
+| Business owner     | `demo@salon.test`  | `password` |
 | SaaS administrator | `admin@salon.test` | `password` |
 
 The owner can switch between Studio One and The Cutting Room. The SaaS administrator can inspect businesses and suspend or resume them; platform status does not grant access to salon operations. Create a new workspace through registration to start with an empty business.
+
+New workspaces must complete **Add your first branch** before opening the dashboard or any business module. A branch name is required; code, phone, and address are optional. The saved branch becomes the active main branch. Refreshing or signing in again returns to this setup screen until it is complete. Existing workspaces with an active branch continue normally.
 
 ## Manage SaaS plans and subscriptions
 
 Sign in with `admin@salon.test` and `password` to open SaaS administration. These are local demo credentials created by the backend seeder.
 
-1. Open **Subscription plans** and create a plan with its name, price, billing currency, monthly/yearly interval, and included modules.
+1. Open **Subscription plans** and create a plan with its name, base price, billing currency, monthly/yearly interval, included branches, additional branch price, and included modules. Enable **Multiple branches** for branch management.
 2. Open **Businesses**, choose **Manage subscription**, and assign a plan with its access expiry date. Activation and renewal are recorded manually; they do not charge a card or collect a payment.
 3. Archive a plan to stop new assignments. Existing subscriptions keep the price and included modules recorded when they were assigned.
 4. Use the business workspace's **Subscription** page to check the current plan, trial end date, and available plans.
@@ -63,17 +65,21 @@ The subscription migration gives existing businesses a one-time initial trial wh
 ## What works
 
 - Sign-in, salon registration, sign-out, and switching authorized businesses.
+- Required first-branch setup with server-side enforcement before business operations.
 - A permission-aware guided tour from sign-in or the workspace, with Next, Back, Skip, Close, and keyboard support.
 - A visible Exit demo control that returns to sign-in and resets the demo so it can be reopened cleanly.
 - Permission-driven sidebar navigation and create, edit, payment, payroll, and access actions, backed by Laravel authorization on every endpoint.
 - Protected owner roles, custom roles, member assignment, and access revocation.
 - Staff compensation records and appointments with completion/cancellation.
-- Monthly base-salary and completed-service-commission payroll drafts.
+- Business-wide monthly payroll drafts with base salaries, completed-appointment and paid-bill commission snapshots, and recorded staff advances.
 - Service/product catalog with prices and availability.
 - Mobile POS with searchable catalog, quantities, calculated totals, customer bills, manual payment recording, and printable receipts.
 - Separate SaaS business/account directory and business suspension controls.
 - Dynamic subscription plans, manual activation/renewal/cancellation, and automatic one-month business trials.
-- Responsive forms, scrollable tables, keyboard-accessible dialogs, and a teal/mint theme.
+- Branch assignments and branch-filtered operations, business expenses, staff advances, and financial reports.
+- Platform roles and permission-aware administration pages, with financial totals separated by currency.
+- English/Sinhala preferences, responsive forms, scrollable tables, and native onboarding dialogs.
+- Ivory surfaces, champagne gold actions and highlights, and black navigation. Theme tokens live in `src/styles/salon-theme.css`.
 
 Laravel calculates money in integer minor units. Bills preserve line descriptions, quantities, prices, and totals. Payroll preserves its calculation snapshots. Login tokens stay in an HttpOnly cookie managed by the Next.js API bridge; they are not stored in browser JavaScript storage.
 
@@ -93,6 +99,10 @@ src/
       catalog/               Services, products, pricing
       billing/               POS, bills, receipt workflow
       payroll/               Draft payroll views
+      branches/              Locations and branch pricing
+      deductions/            Expenses and staff advances
+      reports/               Business financial reports
+      subscription/          Subscription status and available plans
     platform/                SaaS administration
     tour/                    Guided walkthrough and demo controls
   lib/                       Shared API contracts, formatting, client helpers
@@ -107,6 +117,7 @@ See [architecture and phased development](docs/architecture.md) and [API convent
 
 ```powershell
 npm run typecheck
+npm test
 npm run build
 npm run format:check
 ```
@@ -122,6 +133,8 @@ Backend tests use isolated temporary test databases and do not reset `haircut_ma
 
 ## Scope and next phases
 
-This is a working starter. Payroll currently generates immutable monthly drafts; statutory deductions, attendance proration, approval, payslips, and payment disbursement are still required for a full payroll product. Bill payment is a manual record, not a card charge. Tax, refunds, inventory, and fiscal invoice requirements are not implemented. Bills and appointments are independent; payroll commission currently comes from completed appointments.
+Payroll generates immutable monthly drafts across every branch; generating or reading these drafts requires access to all branches. Staff advances reduce draft net pay, with a floor of zero. Statutory deductions, attendance proration, approval, payslips, and payment disbursement remain future work. Bill payment is a manual record, not a card charge. Tax, refunds, inventory, and fiscal invoice requirements are not implemented. Bills and appointments remain independent commission sources; there is no automatic reconciliation when both represent the same service.
 
 Dedicated database provisioning, automatic recurring subscription payment collection, password recovery/invitations, audit trails, exports, background jobs, and deployment hardening remain on the roadmap. Do not run the local demo seeder against a production environment.
+
+See the [project review and validation record](docs/project-audit-2026-11-03.md) for the latest review scope, fixes, test results, and verification limits.

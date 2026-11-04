@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { X, ArrowRight } from "lucide-react";
 import type { BookingStaff, Branch, Staff, Tenant } from "@/lib/types";
-import { api } from "@/lib/api";
+import { useBranchApi } from "@/features/workspace/branch-context";
 import { message, salonDateTime } from "@/lib/format";
 import { useTranslation } from "@/lib/i18n";
 
@@ -31,6 +31,7 @@ export function WorkspaceForm({
   onClose,
   onSaved,
 }: Props) {
+  const api = useBranchApi();
   const { t, language } = useTranslation();
   const dialog = useRef<HTMLDialogElement>(null);
   const [busy, setBusy] = useState(false);
@@ -122,9 +123,6 @@ export function WorkspaceForm({
         event.preventDefault();
         if (!busy) onClose();
       }}
-      onClick={(event) => {
-        if (event.target === event.currentTarget && !busy) onClose();
-      }}
     >
       <div className="dialog-header">
         <span className="eyebrow">{tenant.name}</span>
@@ -158,7 +156,11 @@ export function WorkspaceForm({
           <AppointmentFields tenant={tenant} staff={staff} />
         )}
         {kind === "staff" && (
-          <StaffFields editing={editing} branches={branches} />
+          <StaffFields
+            editing={editing}
+            branches={branches}
+            canManageLogin={tenant.permissions.includes("access.manage")}
+          />
         )}
         {kind === "payroll" && <PayrollFields tenant={tenant} />}
         {error && (

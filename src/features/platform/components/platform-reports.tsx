@@ -22,12 +22,14 @@ export function PlatformReports({
   reports,
   tenants,
   busy,
+  canManageSubscriptions,
   onManageTenant,
   onExtendTrial,
 }: {
   reports: PlatformReportsResponse | null;
   tenants: PlatformTenant[];
   busy: boolean;
+  canManageSubscriptions: boolean;
   onManageTenant: (tenant: PlatformTenant) => void;
   onExtendTrial: (tenantId: string) => Promise<void>;
 }) {
@@ -41,6 +43,7 @@ export function PlatformReports({
   }
 
   const { financials, subscriptions, growth, ecosystem } = reports;
+  const amounts = financials.by_currency ?? [financials];
   const totalSubs = subscriptions.total || 1;
   const activeCount = subscriptions.by_status.active || 0;
   const trialingCount = subscriptions.by_status.trialing || 0;
@@ -66,7 +69,13 @@ export function PlatformReports({
             Monthly Recurring Revenue (MRR)
             <DollarSign size={19} />
           </div>
-          <strong>{money(financials.mrr_minor, financials.currency)}</strong>
+          <strong>
+            {amounts.map((amount) => (
+              <span className="currency-amount" key={amount.currency}>
+                {money(amount.mrr_minor, amount.currency)}
+              </span>
+            ))}
+          </strong>
           <span className="stat-note">
             Contracted active subscription run-rate
           </span>
@@ -77,7 +86,13 @@ export function PlatformReports({
             Annual Run-Rate (ARR)
             <TrendingUp size={19} />
           </div>
-          <strong>{money(financials.arr_minor, financials.currency)}</strong>
+          <strong>
+            {amounts.map((amount) => (
+              <span className="currency-amount" key={amount.currency}>
+                {money(amount.arr_minor, amount.currency)}
+              </span>
+            ))}
+          </strong>
           <span className="stat-note">Projected 12-month platform value</span>
         </article>
 
@@ -87,7 +102,11 @@ export function PlatformReports({
             <Sparkles size={19} />
           </div>
           <strong>
-            {money(financials.total_gmv_minor, financials.currency)}
+            {amounts.map((amount) => (
+              <span className="currency-amount" key={amount.currency}>
+                {money(amount.total_gmv_minor, amount.currency)}
+              </span>
+            ))}
           </strong>
           <span className="stat-note">
             Gross retail & service checkout across salons
@@ -280,15 +299,17 @@ export function PlatformReports({
                       </td>
                       <td>
                         <div className="subscription-row-actions">
-                          <button
-                            type="button"
-                            className="button secondary small-button"
-                            disabled={busy}
-                            onClick={() => void onExtendTrial(item.id)}
-                          >
-                            +30 Days Free
-                          </button>
-                          {fullTenant && (
+                          {canManageSubscriptions && (
+                            <button
+                              type="button"
+                              className="button secondary small-button"
+                              disabled={busy}
+                              onClick={() => void onExtendTrial(item.id)}
+                            >
+                              +30 Days Free
+                            </button>
+                          )}
+                          {canManageSubscriptions && fullTenant && (
                             <button
                               type="button"
                               className="button primary small-button"

@@ -25,7 +25,7 @@ The frontend never determines whether a user may access a tenant or whether a pa
 
 ## Tenant ownership
 
-Use a business-level tenant rather than creating a tenant for every employee. A business can gain multiple branches later. Branches remain inside that tenant's business data.
+Use a business-level tenant rather than creating a tenant for every employee. Multiple branches are implemented inside that tenant. Operational branch scopes apply to staff, orders, appointments, expenses, and identifier lookups. The frontend forwards the toolbar selection through a shared branch API context. The server validates branch selections and write payloads independently.
 
 ### Platform data
 
@@ -36,11 +36,11 @@ Use a business-level tenant rather than creating a tenant for every employee. A 
 - Subscription plans, current business subscriptions, and subscription term history.
 - Future dedicated storage routing, connection/secret references, and provisioning state.
 
-An employee record is separate from a user account. A salon may employ people who never sign in. A central account can optionally be linked to an employee through a stable identifier when that capability is added.
+An employee record is separate from a user account. A salon may employ people who never sign in. Creating a new staff login requires access-management permission and stores an explicit `staff.user_id` link. Reads never infer this link from a matching name or email. Editing staff contact details does not change the central account's credentials.
 
 ### Business data
 
-Every operational record carries `tenant_id`, including after a move to a dedicated database. Initial records include employees, appointments, catalog items, orders and their line items, payroll runs, and payroll items. Add customer profiles, richer invoicing/payment records, expenses, attendance, and commission ledgers in later stages.
+Every operational record carries `tenant_id`, including after a move to a dedicated database. Current records include branches, employees, appointments, catalog items, orders and lines, expenses and staff advances, payroll runs, and payroll items. Customer profiles, richer invoicing/payment records, attendance, and commission ledgers remain later stages.
 
 Keep tenant and record identifiers stable during extraction. Avoid SQL joins and required foreign keys across the logical `central`/`tenant` boundary. Those work in one database but become obstacles when a tenant moves. Use stable identifiers and explicit application lookups for central references.
 
@@ -69,6 +69,8 @@ Model scopes provide a useful default but are not a complete security boundary. 
 For jobs and long-running workers, capture the tenant identifier in the job payload, resolve it when the job starts, and clear both context and connections in a `finally` block. Never reuse a previous job's tenant context.
 
 Keep payroll and compensation access narrower than appointment access. Permission checks belong on the server, including requests made outside the UI.
+
+Payroll drafts and role/member management span the entire business and therefore require all-branch access. Payroll ignores the selected branch while retaining tenant isolation. Financial reports require `reports.view`; `dashboard.view` alone does not grant financial reporting access. Platform directory fields are filtered by their own platform read permissions, independently of overview access.
 
 ## Business access management
 

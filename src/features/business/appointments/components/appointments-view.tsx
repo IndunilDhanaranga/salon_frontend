@@ -22,7 +22,8 @@ export function AppointmentsView({
         <div>
           <h2>{t.appointments.bookTitle}</h2>
           <p>
-            {appointments.length} {t.appointments.appointmentsCount} · {t.appointments.allDates} · {tenant.timezone}
+            {appointments.length} {t.appointments.appointmentsCount} ·{" "}
+            {t.appointments.allDates} · {tenant.timezone}
           </p>
         </div>
         <span className="small-caps">{t.appointments.yourSchedule}</span>

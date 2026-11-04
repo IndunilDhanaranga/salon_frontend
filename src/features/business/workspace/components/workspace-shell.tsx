@@ -70,7 +70,7 @@ const navigation = [
     id: "reports",
     name: "Reports",
     icon: BarChart3,
-    permission: "dashboard.view",
+    permission: "reports.view",
   },
   {
     id: "access",
@@ -116,7 +116,8 @@ export function WorkspaceShell({
     team: t.nav.team,
     catalog: t.nav.catalog,
     billing: t.nav.billing,
-    deductions: (t.nav as Record<string, string>).deductions ?? "Deductions & Advances",
+    deductions:
+      (t.nav as Record<string, string>).deductions ?? "Deductions & Advances",
     payroll: t.nav.payroll,
     reports: t.nav.reports ?? "Reports",
     access: t.nav.access,
@@ -227,7 +228,9 @@ export function WorkspaceShell({
             <span className="avatar">{initials(session.user.name)}</span>
             <div>
               <strong>{session.user.name}</strong>
-              <span>{tenant.role === "owner" ? t.access.owner : tenant.role}</span>
+              <span>
+                {tenant.role === "owner" ? t.access.owner : tenant.role}
+              </span>
             </div>
             <button
               aria-label={t.nav.signOut}

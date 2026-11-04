@@ -72,11 +72,11 @@ export async function handleBackend(
   if (tenant && endpoint.tenant) headers.set("X-Tenant", tenant);
   const branch = request.headers.get("x-branch");
   if (branch) headers.set("X-Branch", branch);
-  const rawBase =
-    process.env.LARAVEL_API_URL ?? "http://127.0.0.1:8000/api/v1";
+  const rawBase = process.env.LARAVEL_API_URL ?? "http://127.0.0.1:8000/api/v1";
   const base = rawBase.replace(/\/+$/, "");
-  const isLocalBase =
-    /^(https?:\/\/)?(127\.0\.0\.1|localhost)(:\d+)?/i.test(base);
+  const isLocalBase = /^(https?:\/\/)?(127\.0\.0\.1|localhost)(:\d+)?/i.test(
+    base,
+  );
 
   if (process.env.VERCEL && isLocalBase) {
     console.error(

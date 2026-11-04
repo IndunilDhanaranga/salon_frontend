@@ -48,10 +48,7 @@ export function BusinessContent({ workspace: w, tenant, session }: Props) {
     (can("branches.view") || can("branches.manage") || can("dashboard.view"))
   )
     return (
-      <BranchesView
-        tenant={tenant}
-        onBranchChanged={() => void w.refresh()}
-      />
+      <BranchesView tenant={tenant} onBranchChanged={() => void w.refresh()} />
     );
   if (w.view === "appointments" && can("appointments.view"))
     return (
@@ -81,7 +78,7 @@ export function BusinessContent({ workspace: w, tenant, session }: Props) {
     return <DeductionsView tenant={tenant} />;
   if (w.view === "payroll" && can("payroll.view"))
     return <PayrollView runs={w.data.payroll} tenant={tenant} />;
-  if (w.view === "reports" && (can("reports.view") || can("dashboard.view")))
+  if (w.view === "reports" && can("reports.view"))
     return <BusinessReportsView tenant={tenant} />;
   if (w.view === "access" && can("access.manage"))
     return <AccessView tenant={tenant} currentUserId={session.user.id} />;

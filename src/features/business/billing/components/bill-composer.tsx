@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { X, Receipt } from "lucide-react";
-import { api } from "@/lib/api";
+import { useBranchApi } from "@/features/workspace/branch-context";
 import type { CatalogItem, Order, Tenant } from "@/lib/types";
 import { message, money } from "@/lib/format";
 import { PosCatalogPicker } from "../pos-catalog-picker";
@@ -26,6 +26,7 @@ export function BillComposer({
   onSaved: (order: Order) => Promise<void>;
   onClose: () => void;
 }) {
+  const api = useBranchApi();
   const { t, language } = useTranslation();
   const [lines, setLines] = useState<{ id: string; quantity: number }[]>([]);
   const [selectedStaffId, setSelectedStaffId] = useState(defaultStaffId || "");
@@ -48,7 +49,7 @@ export function BillComposer({
         tenant: tenant.slug,
         body: {
           customer_name: form.get("customer_name"),
-          staff_id: canAssignStaff ? (selectedStaffId || undefined) : undefined,
+          staff_id: canAssignStaff ? selectedStaffId || undefined : undefined,
           items: lines.map((line) => ({
             catalog_item_id: line.id,
             quantity: line.quantity,
@@ -153,7 +154,9 @@ export function BillComposer({
           }
         />
         <div className="bill-total">
-          <span>{t.billing.total} ({tenant.currency})</span>
+          <span>
+            {t.billing.total} ({tenant.currency})
+          </span>
           <strong>{money(total, tenant.currency)}</strong>
         </div>
         <div className="form-grid">

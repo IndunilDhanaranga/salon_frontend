@@ -3,8 +3,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  background: #e8f1e5;
-  border: 1px solid #cbdcc8;
+  background: var(--mint);
+  border: 1px solid var(--line);
   border-radius: 8px;
   margin-top: 20px;
   padding: 15px 18px;
@@ -19,9 +19,9 @@
   place-items: center;
   width: 34px;
   height: 34px;
-  background: #d6e7ce;
+  background: var(--accent);
   border-radius: 7px;
-  color: #45673c;
+  color: var(--accent-ink);
   flex-shrink: 0;
 }
 .demo-banner-copy strong {
@@ -31,7 +31,7 @@
 .demo-banner-copy p {
   font-size: 10px;
   line-height: 1.6;
-  color: #5b7058;
+  color: var(--muted);
   margin-top: 4px;
 }
 .demo-banner-actions {
@@ -54,10 +54,10 @@
   padding: 25px;
   color: var(--ink);
   background: var(--surface);
-  box-shadow: 0 18px 70px #12312838;
+  box-shadow: 0 18px 70px #19191838;
 }
 .tour-dialog::backdrop {
-  background: #18382c3d;
+  background: #1919183d;
 }
 .tour-header {
   display: flex;
@@ -72,7 +72,7 @@
   font-size: 9px;
   letter-spacing: 1px;
   font-weight: 600;
-  color: #5d7959;
+  color: var(--accent-ink);
 }
 .tour-counter {
   font-size: 10px;
@@ -93,7 +93,7 @@
 .tour-tips {
   padding: 16px;
   margin: 20px 0;
-  background: #f1f6ee;
+  background: var(--mint);
   border-radius: 7px;
   list-style: none;
 }
@@ -110,7 +110,7 @@
 .tour-tips svg {
   margin-top: 2px;
   flex-shrink: 0;
-  color: #4e7650;
+  color: var(--accent-ink);
 }
 .tour-progress {
   display: flex;
@@ -120,11 +120,11 @@
 .tour-progress span {
   flex: 1;
   height: 4px;
-  background: #e7ece4;
+  background: var(--mint);
   border-radius: 4px;
 }
 .tour-progress span.complete {
-  background: #628760;
+  background: var(--action);
 }
 .tour-actions {
   display: flex;

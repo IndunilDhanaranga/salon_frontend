@@ -3,12 +3,13 @@ import { canPermission } from "@/lib/access";
 
 import { useCallback, useEffect, useState } from "react";
 import { Plus, Scissors, Package, ArrowUpRight, X } from "lucide-react";
-import { api } from "@/lib/api";
+import { useBranchApi } from "@/features/workspace/branch-context";
 import type { CatalogItem, ListResponse, Tenant } from "@/lib/types";
 import { message, money } from "@/lib/format";
 import { useTranslation } from "@/lib/i18n";
 
 export function CatalogView({ tenant }: { tenant: Tenant }) {
+  const api = useBranchApi();
   const { t } = useTranslation();
   const [items, setItems] = useState<CatalogItem[]>([]);
   const [form, setForm] = useState<CatalogItem | null | undefined>(undefined);
@@ -203,7 +204,9 @@ export function CatalogView({ tenant }: { tenant: Tenant }) {
                     </div>
                   </td>
                   <td className="capitalize">
-                    {item.type === "service" ? t.catalog.service : t.catalog.product}
+                    {item.type === "service"
+                      ? t.catalog.service
+                      : t.catalog.product}
                   </td>
                   <td className="money-label">
                     {money(item.price_minor, tenant.currency)}

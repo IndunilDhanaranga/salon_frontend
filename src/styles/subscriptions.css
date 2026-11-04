@@ -177,7 +177,7 @@
   background: var(--surface);
 }
 .subscription-dialog::backdrop {
-  background: rgb(16 49 41 / 45%);
+  background: rgb(25 25 24 / 45%);
 }
 .subscription-dialog-body {
   padding: 1.5rem;
@@ -451,7 +451,7 @@
   width: 270px;
   flex: 0 0 270px;
   background: var(--pine);
-  color: #f1f7f5;
+  color: var(--sidebar-text);
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -895,7 +895,7 @@
 
 .platform-role-card.is-super {
   border-color: var(--pine);
-  background: linear-gradient(180deg, #f7fbf9 0%, var(--surface) 100%);
+  background: var(--canvas);
 }
 
 .role-card-title-row {

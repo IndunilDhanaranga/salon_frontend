@@ -22,7 +22,13 @@ export function useWorkspace() {
   const [form, setForm] = useState<FormKind | null>(null);
   const [editing, setEditing] = useState<Staff | null>(null);
   const [tourOpen, setTourOpen] = useState(false);
-  const business = useWorkspaceData(slug, platform, branchId, setSession, setView);
+  const business = useWorkspaceData(
+    slug,
+    platform,
+    branchId,
+    setSession,
+    setView,
+  );
   const tenant = session?.tenants.find((item) => item.slug === slug);
   const sessionRef = useRef(session);
   sessionRef.current = session;
@@ -103,9 +109,12 @@ export function useWorkspace() {
       resetSession("Your session has expired. Please sign in again.");
       return;
     }
-    const timer = window.setTimeout(() => {
-      resetSession("Your session has expired. Please sign in again.");
-    }, Math.min(remaining, 2_147_483_647));
+    const timer = window.setTimeout(
+      () => {
+        resetSession("Your session has expired. Please sign in again.");
+      },
+      Math.min(remaining, 2_147_483_647),
+    );
     return () => window.clearTimeout(timer);
   }, [session?.expires_at, resetSession]);
 
@@ -224,12 +233,38 @@ export function useWorkspace() {
     setBranchId("all");
     setView(firstView(session?.tenants.find((item) => item.slug === value)));
   }
+  function selectBranch(value: string) {
+    business.clear();
+    setForm(null);
+    setEditing(null);
+    setTourOpen(false);
+    setBranchId(value);
+  }
   function selectPlatform(value: boolean) {
     business.clear();
     setForm(null);
     setEditing(null);
     setTourOpen(false);
     setPlatform(value);
+  }
+  async function completeBranchSetup() {
+    const userId = sessionRef.current?.user.id;
+    const next = await api<Session>("me");
+    if (!userId || sessionRef.current?.user.id !== userId) return;
+    const selected = next.tenants.find((item) => item.slug === slug);
+    if (!selected || selected.needs_branch_setup) {
+      throw new ApiError(
+        "Branch setup is not complete. Refresh your workspace and try again.",
+        409,
+      );
+    }
+    business.clear();
+    sessionRef.current = next;
+    setSession(next);
+    setForm(null);
+    setEditing(null);
+    setView(firstView(selected));
+    await business.refresh();
   }
   async function logout() {
     setBusy(true);
@@ -284,7 +319,11 @@ export function useWorkspace() {
       : emptyWorkspace;
 
   useEffect(() => {
-    if (!data.hasAllBranchesAccess && data.activeBranchId && branchId === "all") {
+    if (
+      !data.hasAllBranchesAccess &&
+      data.activeBranchId &&
+      branchId === "all"
+    ) {
       setBranchId(data.activeBranchId);
     }
   }, [data.hasAllBranchesAccess, data.activeBranchId, branchId]);
@@ -295,7 +334,7 @@ export function useWorkspace() {
     tenant,
     platform,
     branchId,
-    setBranchId,
+    setBranchId: selectBranch,
     branches: data.branches,
     activeBranchId: data.activeBranchId,
     hasAllBranchesAccess: data.hasAllBranchesAccess,
@@ -314,6 +353,7 @@ export function useWorkspace() {
     authenticate,
     selectTenant,
     selectPlatform,
+    completeBranchSetup,
     logout,
     updateStatus,
     openForm,

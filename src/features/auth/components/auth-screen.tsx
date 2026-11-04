@@ -93,7 +93,7 @@ export function AuthScreen({
           <h2>{register ? "Make yourself at home." : "Welcome back."}</h2>
           <p className="muted">
             {register
-              ? "Create your salon and your owner account."
+              ? "Create your owner account, then add your first salon branch."
               : "Sign in and see what’s happening today."}
           </p>
           {notice && (

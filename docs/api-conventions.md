@@ -50,31 +50,47 @@ GET requests have no body. Mutations send a JSON object; the helper sends `{}` w
 
 The helper always sends same-origin credentials and disables caching. It never reads or writes bearer tokens. Do not store authentication tokens in local storage. Selecting a tenant only chooses request context; Laravel still checks membership and permissions on every request.
 
+Business feature components use `useBranchApi()` inside `BranchApiProvider` so requests inherit the toolbar's branch selection. Explicit `branch` options override that selection. Workspace loaders send their branch explicitly. The bridge forwards `X-Branch`; Laravel validates branch membership and scopes both lists and identifier lookups. A conflicting `branch_id` query and header is rejected. Payroll is business-wide and requires all-branch access, regardless of toolbar selection.
+
 ## Resource groups
 
-| Resource                                       | Methods       | Tenant header |
-| ---------------------------------------------- | ------------- | ------------- |
-| `login`, `register`                            | POST          | No            |
-| `me`                                           | GET           | No            |
-| `logout`                                       | POST          | No            |
-| `admin/dashboard`                              | GET           | No            |
-| `admin/tenants/{uuid}`                         | PATCH         | No            |
-| `dashboard`                                    | GET           | Required      |
-| `staff`                                        | GET, POST     | Required      |
-| `staff/{uuid}`                                 | PATCH         | Required      |
-| `appointments`                                 | GET, POST     | Required      |
-| `appointment-options`                          | GET           | Required      |
-| `appointments/{uuid}`                          | PATCH         | Required      |
-| `payroll`                                      | GET, POST     | Required      |
-| `catalog`                                      | GET, POST     | Required      |
-| `catalog/{uuid}`                               | PATCH         | Required      |
-| `orders`                                       | GET, POST     | Required      |
-| `orders/{uuid}`                                | GET, PATCH    | Required      |
-| `access`                                       | GET           | Required      |
-| `access/roles`, `access/members`               | POST          | Required      |
-| `access/roles/{uuid}`, `access/members/{uuid}` | PATCH, DELETE | Required      |
+| Resource                                                                     | Methods       | Tenant header |
+| ---------------------------------------------------------------------------- | ------------- | ------------- |
+| `login`, `register`                                                          | POST          | No            |
+| `me`                                                                         | GET           | No            |
+| `logout`                                                                     | POST          | No            |
+| `admin/dashboard`                                                            | GET           | No            |
+| `admin/reports`, `admin/plans`, `admin/access`                               | GET           | No            |
+| `admin/plans`, `admin/access/roles`                                          | POST          | No            |
+| `admin/plans/{uuid}`, `admin/access/roles/{uuid}`, `admin/users/{uuid}/role` | PATCH         | No            |
+| `admin/access/roles/{uuid}`                                                  | DELETE        | No            |
+| `admin/tenants/{uuid}/subscription`                                          | GET, PATCH    | No            |
+| `admin/tenants/{uuid}/subscription/trial`                                    | POST          | No            |
+| `admin/tenants/{uuid}`                                                       | PATCH         | No            |
+| `dashboard`                                                                  | GET           | Required      |
+| `reports`, `subscription`, `deduction-options`                               | GET           | Required      |
+| `deductions`, `branches`                                                     | GET, POST     | Required      |
+| `deductions/{uuid}`                                                          | DELETE        | Required      |
+| `branches/{uuid}`                                                            | PATCH, DELETE | Required      |
+| `staff`                                                                      | GET, POST     | Required      |
+| `staff/{uuid}`                                                               | PATCH         | Required      |
+| `appointments`                                                               | GET, POST     | Required      |
+| `appointment-options`                                                        | GET           | Required      |
+| `appointments/{uuid}`                                                        | PATCH         | Required      |
+| `payroll`                                                                    | GET, POST     | Required      |
+| `catalog`                                                                    | GET, POST     | Required      |
+| `catalog/{uuid}`                                                             | PATCH         | Required      |
+| `orders`                                                                     | GET, POST     | Required      |
+| `orders/{uuid}`                                                              | GET, PATCH    | Required      |
+| `access`                                                                     | GET           | Required      |
+| `access/roles`, `access/members`                                             | POST          | Required      |
+| `access/roles/{uuid}`, `access/members/{uuid}`                               | PATCH, DELETE | Required      |
 
 Platform administration checks `is_platform_admin` in Laravel. It does not imply membership in a salon or grant access to salon payroll. Tenant resources use `X-Tenant: <salon-slug>` and server-side membership permissions. Owner roles and owner memberships are protected from reassignment and removal. A role assigned to members cannot be deleted; the API returns `409 Conflict` until those assignments are changed.
+
+Platform routes additionally check their named platform permission. The dashboard response includes metrics only with `platform.dashboard.view`, business records with `platform.tenants.view` or `platform.subscriptions.manage`, and account records with `platform.users.view`. Platform financial responses include currency-specific totals; legacy scalar totals represent LKR only. Business reports require `reports.view`; business access management requires all-branch access. Branch mutations require `branches.manage`; additional branch creation and existing branch mutations also require the subscription's `branches` module. DELETE deactivates a branch and preserves history.
+
+Registration creates an owner and workspace without a placeholder branch. Each session tenant includes `needs_branch_setup`, computed from active branch records. While true, business endpoints return HTTP 409 with `code: "branch_setup_required"`. Session, logout, subscription recovery, and authorized branch endpoints remain available. `POST branches` creates the first branch as active and main; a multiple-branches entitlement is required only for additional locations. The frontend presents a required setup page before loading operational data and refreshes its session after creation. See [first-branch setup](branch-setup.md).
 
 The booking options endpoint requires `appointments.manage` and returns active staff IDs, names, job titles, and active flags only. Booking users do not need `staff.view`, which explicitly includes compensation. Manage permissions require their corresponding view permissions; `orders.manage` also requires `catalog.view`. The role editor includes these dependencies automatically, and Laravel validates them independently. Users cannot edit their own role or change/remove their own membership.
 

@@ -3,6 +3,8 @@ import "./globals.css";
 import "@/styles/tour.css";
 import "@/styles/pos.css";
 import "@/styles/subscriptions.css";
+import "@/styles/salon-theme.css";
+import "@/styles/branch-setup.css";
 
 export const metadata: Metadata = {
   title: "Salon / Daily workspace",

@@ -92,7 +92,8 @@ export function ReceiptDialog({
                 <td>
                   <strong>{item.name}</strong>
                   <span className="cell-sub">
-                    {money(item.unit_price_minor, tenant.currency)} {language === "si" ? "බැගින්" : "each"}
+                    {money(item.unit_price_minor, tenant.currency)}{" "}
+                    {language === "si" ? "බැගින්" : "each"}
                   </span>
                 </td>
                 <td>{item.quantity}</td>
@@ -102,7 +103,9 @@ export function ReceiptDialog({
           </tbody>
         </table>
         <div className="bill-total">
-          <span>{t.billing.total} ({tenant.currency})</span>
+          <span>
+            {t.billing.total} ({tenant.currency})
+          </span>
           <strong>{money(order.total_minor, tenant.currency)}</strong>
         </div>
         <div className="receipt-payment">
@@ -115,9 +118,7 @@ export function ReceiptDialog({
             <span className="capitalize">{order.payment_method}</span>
           )}
         </div>
-        <p className="receipt-thanks">
-          {t.billing.thankYou}
-        </p>
+        <p className="receipt-thanks">{t.billing.thankYou}</p>
       </article>
       <div className="no-print">
         {error && (

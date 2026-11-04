@@ -6,6 +6,7 @@ const permissionFeatures: Record<string, SubscriptionFeature> = {
   catalog: "catalog",
   orders: "orders",
   payroll: "payroll",
+  branches: "branches",
 };
 
 /** Subscription entitlements and user permissions are independent requirements. */
@@ -28,7 +29,12 @@ export function hasFeature(tenant: Tenant, feature: SubscriptionFeature) {
 }
 
 export function canPermission(tenant: Tenant, permission: string) {
-  if (!hasBusinessAccess(tenant))
+  if (tenant.needs_branch_setup) return false;
+  if (!hasBusinessAccess(tenant)) return false;
+  if (
+    (permission.startsWith("payroll.") || permission === "access.manage") &&
+    tenant.has_all_branches_access === false
+  )
     return false;
   if (permission === "deductions.view") {
     return (
@@ -42,10 +48,19 @@ export function canPermission(tenant: Tenant, permission: string) {
       tenant.permissions.includes("payroll.manage")
     );
   }
-  if (!tenant.permissions.includes(permission))
-    return false;
+  if (!tenant.permissions.includes(permission)) return false;
   const feature = permissionFeatures[permission.split(".")[0]];
   return !feature || hasFeature(tenant, feature);
+}
+
+/** The first location is required even on a plan without multiple branches. */
+export function canSetUpFirstBranch(tenant: Tenant) {
+  return (
+    tenant.needs_branch_setup === true &&
+    hasBusinessAccess(tenant) &&
+    tenant.permissions.includes("branches.manage") &&
+    tenant.has_all_branches_access !== false
+  );
 }
 
 export function subscriptionStatusLabel(subscription: Subscription | null) {

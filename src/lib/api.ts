@@ -40,7 +40,9 @@ export async function api<T>(
       }
     }
   }
-  const queryString = searchParams.toString() ? `?${searchParams.toString()}` : "";
+  const queryString = searchParams.toString()
+    ? `?${searchParams.toString()}`
+    : "";
 
   const method = options.method ?? "GET";
   if (method === "GET" && options.body !== undefined) {

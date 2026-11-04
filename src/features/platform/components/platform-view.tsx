@@ -5,6 +5,7 @@ import { RefreshCw, AlertCircle } from "lucide-react";
 import type { PlatformTenant, Plan, Session } from "@/lib/types";
 import { usePlatform } from "../hooks/use-platform";
 import type { PlatformTab } from "../types";
+import { availablePlatformTab } from "../platform-access";
 import { PlatformSidebar } from "./platform-sidebar";
 import { PlatformOverview } from "./platform-overview";
 import { PlatformReports } from "./platform-reports";
@@ -27,7 +28,9 @@ export function PlatformView({
 }) {
   const { t, language } = useTranslation();
   const p = usePlatform(session, onLogout);
-  const [tab, setTab] = useState<PlatformTab>("dashboard");
+  const [requestedTab, setTab] = useState<PlatformTab>("dashboard");
+  const allowedTab = availablePlatformTab(requestedTab, p.hasPerm);
+  const tab = allowedTab ?? "dashboard";
   const [mobileOpen, setMobileOpen] = useState(false);
 
   // Modal dialog states
@@ -157,7 +160,20 @@ export function PlatformView({
           </div>
         )}
 
-        {p.loading && !p.data ? (
+        {!allowedTab ? (
+          <div className="panel empty-state" role="status">
+            <h2>
+              {language === "si"
+                ? "ප්‍රවේශ අවසර අවශ්‍යයි"
+                : "Access permissions needed"}
+            </h2>
+            <p>
+              {language === "si"
+                ? "පද්ධති පරිපාලකගෙන් ඔබගේ භූමිකාවට අවසර ලබා ගන්න."
+                : "Ask a platform administrator to enable a page for your role."}
+            </p>
+          </div>
+        ) : p.loading && !p.data && !p.plans && !p.access && !p.reports ? (
           <div className="platform-loading-box" aria-busy="true">
             <RefreshCw size={24} className="spin" />
             <p>Loading platform workspace…</p>
@@ -170,14 +186,18 @@ export function PlatformView({
                 busy={busy}
                 onTab={setTab}
                 onManageSubscription={(tenant) => setManagingTenant(tenant)}
+                hasPerm={p.hasPerm}
               />
             )}
 
-            {tab === "reports" && p.data && (
+            {tab === "reports" && (
               <PlatformReports
                 reports={p.reports}
-                tenants={p.data.tenants}
+                tenants={p.data?.tenants ?? []}
                 busy={busy}
+                canManageSubscriptions={p.hasPerm(
+                  "platform.subscriptions.manage",
+                )}
                 onManageTenant={(tenant) => setManagingTenant(tenant)}
                 onExtendTrial={async (id) => {
                   await p.extendTrial(id, 30);

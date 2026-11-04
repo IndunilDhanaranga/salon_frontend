@@ -26,6 +26,12 @@ export function PlanFormDialog({
     plan ? (plan.price_minor / 100).toString() : "5000",
   );
   const [currency, setCurrency] = useState(plan?.currency ?? "LKR");
+  const [includedBranches, setIncludedBranches] = useState(
+    String(plan?.included_branches ?? 1),
+  );
+  const [extraBranchPrice, setExtraBranchPrice] = useState(
+    String((plan?.price_per_additional_branch_minor ?? 0) / 100),
+  );
   const [billingInterval, setBillingInterval] = useState<"month" | "year">(
     plan?.billing_interval ?? "month",
   );
@@ -68,6 +74,20 @@ export function PlanFormDialog({
     }
 
     const price_minor = Math.round(parsedPrice * 100);
+    const included = Number(includedBranches);
+    const extraPrice = Number(extraBranchPrice);
+    if (
+      !Number.isInteger(included) ||
+      included < 1 ||
+      included > 100 ||
+      !Number.isFinite(extraPrice) ||
+      extraPrice < 0
+    ) {
+      setError(
+        "Enter 1–100 included branches and a valid additional branch price.",
+      );
+      return;
+    }
 
     try {
       await onSave(
@@ -75,6 +95,8 @@ export function PlanFormDialog({
           name: name.trim(),
           description: description.trim() || null,
           price_minor,
+          included_branches: included,
+          price_per_additional_branch_minor: Math.round(extraPrice * 100),
           currency,
           billing_interval: billingInterval,
           active: plan ? plan.active : true,
@@ -175,6 +197,40 @@ export function PlanFormDialog({
             </select>
           </div>
         </div>
+
+        <div className="form-grid">
+          <label htmlFor="plan-included-branches">
+            Included branches
+            <input
+              id="plan-included-branches"
+              type="number"
+              min="1"
+              max="100"
+              step="1"
+              required
+              value={includedBranches}
+              onChange={(event) => setIncludedBranches(event.target.value)}
+            />
+          </label>
+          <label htmlFor="plan-branch-price">
+            Price per additional branch ({currency})
+            <input
+              id="plan-branch-price"
+              type="number"
+              min="0"
+              max="1000000000"
+              step="0.01"
+              required
+              value={extraBranchPrice}
+              onChange={(event) => setExtraBranchPrice(event.target.value)}
+            />
+          </label>
+        </div>
+        <p className="field-hint">
+          Additional active branches use this price for each{" "}
+          {billingInterval === "year" ? "yearly" : "monthly"} billing period.
+          Enable Multiple branches below to allow branch management.
+        </p>
 
         <fieldset className="permissions-fieldset">
           <legend>Included Feature Modules</legend>

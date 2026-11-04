@@ -1,0 +1,110 @@
+.branch-setup-page {
+  min-height: 100dvh;
+  padding: 28px;
+  background: var(--canvas);
+}
+.branch-setup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  max-width: 1050px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+.branch-setup-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.branch-setup-actions label {
+  margin: 0;
+  min-width: 160px;
+  max-width: 260px;
+}
+.branch-setup-content {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+  align-items: start;
+  gap: 64px;
+  max-width: 1050px;
+  margin: 72px auto 40px;
+}
+.branch-setup-icon {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--accent);
+  color: var(--ink);
+  margin-bottom: 24px;
+}
+.branch-setup-intro h1 {
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.25;
+  max-width: 15ch;
+}
+.branch-setup-intro p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.8;
+  max-width: 40ch;
+  margin: 20px 0;
+}
+.branch-setup-workspace {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+.branch-setup-form {
+  padding: 28px;
+  overflow: visible;
+}
+.branch-setup-note {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--muted);
+  margin: 0 0 20px;
+}
+.branch-setup-form .button.full {
+  white-space: normal;
+  line-height: 1.5;
+}
+.branch-setup-refresh {
+  min-height: 44px;
+  margin-top: 12px;
+}
+@media (max-width: 760px) {
+  .branch-setup-page {
+    padding: 20px 16px;
+  }
+  .branch-setup-header {
+    gap: 16px;
+  }
+  .branch-setup-content {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    margin: 36px auto 20px;
+  }
+  .branch-setup-intro h1 {
+    max-width: none;
+  }
+  .branch-setup-intro p {
+    margin: 12px 0;
+  }
+  .branch-setup-icon {
+    margin-bottom: 16px;
+  }
+  .branch-setup-form {
+    padding: 22px 18px;
+  }
+  .branch-setup-form input,
+  .branch-setup-actions select {
+    font-size: 16px;
+  }
+  .branch-setup-actions {
+    gap: 8px;
+  }
+}

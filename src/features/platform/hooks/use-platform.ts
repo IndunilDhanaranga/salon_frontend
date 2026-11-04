@@ -27,16 +27,11 @@ export function usePlatform(session?: Session, onLogout?: () => void) {
   const [error, setError] = useState("");
 
   const permissions = session?.user?.platform_permissions ?? [];
-  const isSuperAdmin =
-    !session?.user?.platform_role_id ||
-    session?.user?.platform_role === "Super Administrator";
-
   const hasPerm = useCallback(
     (perm: string) => {
-      if (isSuperAdmin) return true;
-      return permissions.includes(perm);
+      return !!session?.user.is_platform_admin && permissions.includes(perm);
     },
-    [isSuperAdmin, permissions],
+    [session?.user.is_platform_admin, permissions],
   );
 
   const load = useCallback(
@@ -44,31 +39,39 @@ export function usePlatform(session?: Session, onLogout?: () => void) {
       setLoading(true);
       setError("");
       try {
-        const promises: Promise<unknown>[] = [
-          api<PlatformDashboard>("admin/dashboard", { signal }).then(setData),
-        ];
+        const promises: Promise<unknown>[] = [];
+        if (
+          [
+            "platform.dashboard.view",
+            "platform.tenants.view",
+            "platform.subscriptions.manage",
+            "platform.users.view",
+          ].some(hasPerm)
+        ) {
+          promises.push(
+            api<PlatformDashboard>("admin/dashboard", { signal }).then(setData),
+          );
+        }
 
         if (hasPerm("platform.plans.view")) {
           promises.push(
-            api<AdminPlansResponse>("admin/plans", { signal })
-              .then(setPlans)
-              .catch(() => null),
+            api<AdminPlansResponse>("admin/plans", { signal }).then(setPlans),
           );
         }
 
         if (hasPerm("platform.reports.view")) {
           promises.push(
-            api<PlatformReportsResponse>("admin/reports", { signal })
-              .then(setReports)
-              .catch(() => null),
+            api<PlatformReportsResponse>("admin/reports", { signal }).then(
+              setReports,
+            ),
           );
         }
 
         if (hasPerm("platform.access.manage")) {
           promises.push(
-            api<PlatformAccessResponse>("admin/access", { signal })
-              .then(setAccess)
-              .catch(() => null),
+            api<PlatformAccessResponse>("admin/access", { signal }).then(
+              setAccess,
+            ),
           );
         }
 
@@ -85,7 +88,7 @@ export function usePlatform(session?: Session, onLogout?: () => void) {
         if (!signal?.aborted) setLoading(false);
       }
     },
-    [hasPerm],
+    [hasPerm, onLogout],
   );
 
   useEffect(() => {

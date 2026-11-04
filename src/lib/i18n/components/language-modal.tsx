@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Check, Globe, Sparkles } from "lucide-react";
 import { useTranslation } from "../i18n-context";
 import type { Language } from "../types";
@@ -9,15 +9,24 @@ export function LanguagePreferenceModal() {
   const { language, needsLanguageSelection, completeLanguageSelection } =
     useTranslation();
   const [selected, setSelected] = useState<Language>(language);
+  const dialog = useRef<HTMLDialogElement>(null);
+  useEffect(() => {
+    const node = dialog.current;
+    if (needsLanguageSelection) node?.showModal();
+    return () => node?.close();
+  }, [needsLanguageSelection]);
 
   if (!needsLanguageSelection) return null;
 
   return (
-    <div
-      className="language-modal-overlay"
-      role="dialog"
-      aria-modal="true"
+    <dialog
+      ref={dialog}
+      className="language-dialog"
       aria-labelledby="lang-modal-title"
+      onCancel={(event) => {
+        event.preventDefault();
+        completeLanguageSelection(selected);
+      }}
     >
       <div className="language-modal-card">
         <div
@@ -36,7 +45,7 @@ export function LanguagePreferenceModal() {
               width: 40,
               height: 40,
               borderRadius: "50%",
-              background: "rgba(18, 53, 36, 0.08)",
+              background: "var(--mint)",
               color: "var(--teal)",
               flexShrink: 0,
             }}
@@ -78,7 +87,8 @@ export function LanguagePreferenceModal() {
             lineHeight: 1.5,
           }}
         >
-          Select your preferred display language for the workspace. You can change this anytime from the top navigation bar.
+          Select your preferred display language for the workspace. You can
+          change this anytime from the top navigation bar.
           <br />
           <span
             style={{
@@ -88,7 +98,8 @@ export function LanguagePreferenceModal() {
               display: "inline-block",
             }}
           >
-            ඔබ කැමති භාෂාව තෝරාගන්න. මෙය ඉහළ මෙනුවෙන් (Navbar) ඕනෑම වේලාවක වෙනස් කළ හැක.
+            ඔබ කැමති භාෂාව තෝරාගන්න. මෙය ඉහළ මෙනුවෙන් (Navbar) ඕනෑම වේලාවක වෙනස්
+            කළ හැක.
           </span>
         </p>
 
@@ -114,10 +125,7 @@ export function LanguagePreferenceModal() {
                 selected === "en"
                   ? "2px solid var(--teal)"
                   : "1px solid var(--line)",
-              background:
-                selected === "en"
-                  ? "rgba(18, 53, 36, 0.05)"
-                  : "var(--surface)",
+              background: selected === "en" ? "var(--mint)" : "var(--surface)",
               cursor: "pointer",
               textAlign: "left",
               transition: "all 0.15s ease",
@@ -173,10 +181,7 @@ export function LanguagePreferenceModal() {
                 selected === "si"
                   ? "2px solid var(--teal)"
                   : "1px solid var(--line)",
-              background:
-                selected === "si"
-                  ? "rgba(18, 53, 36, 0.05)"
-                  : "var(--surface)",
+              background: selected === "si" ? "var(--mint)" : "var(--surface)",
               cursor: "pointer",
               textAlign: "left",
               transition: "all 0.15s ease",
@@ -242,6 +247,6 @@ export function LanguagePreferenceModal() {
           </button>
         </div>
       </div>
-    </div>
+    </dialog>
   );
 }

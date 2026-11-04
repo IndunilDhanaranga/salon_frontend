@@ -9,6 +9,8 @@ export interface User {
 }
 
 export interface Tenant {
+  needs_branch_setup?: boolean;
+  has_all_branches_access?: boolean;
   id: string;
   name: string;
   slug: string;
@@ -22,12 +24,7 @@ export interface Tenant {
 }
 
 export type SubscriptionFeature =
-  | "staff"
-  | "appointments"
-  | "catalog"
-  | "orders"
-  | "payroll"
-  | "branches";
+  "staff" | "appointments" | "catalog" | "orders" | "payroll" | "branches";
 export interface Plan {
   id: string;
   name: string;
@@ -140,7 +137,8 @@ export interface PlatformDashboard {
     active_paid_subscriptions?: number;
     active_trials?: number;
     mrr_minor?: number;
-  };
+    mrr_by_currency?: Record<string, number>;
+  } | null;
   tenants: PlatformTenant[];
   users: User[];
 }
@@ -167,6 +165,12 @@ export interface PlatformReportsResponse {
     arr_minor: number;
     total_gmv_minor: number;
     currency: string;
+    by_currency?: {
+      currency: string;
+      mrr_minor: number;
+      arr_minor: number;
+      total_gmv_minor: number;
+    }[];
   };
   subscriptions: {
     total: number;
@@ -431,7 +435,12 @@ export interface BusinessReportResponse {
     currency: string;
     branch_id?: string | null;
     is_centralized?: boolean;
-    branches?: { id: string; name: string; code?: string | null; is_main: boolean }[];
+    branches?: {
+      id: string;
+      name: string;
+      code?: string | null;
+      is_main: boolean;
+    }[];
   };
   sales: {
     gross_revenue_minor: number;

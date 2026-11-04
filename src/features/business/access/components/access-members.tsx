@@ -72,8 +72,10 @@ export function AccessMembers({
                         </option>
                       ))}
                     </select>
+                  ) : member.role === "Owner" ? (
+                    t.access.owner
                   ) : (
-                    member.role === "Owner" ? t.access.owner : member.role
+                    member.role
                   )}
                 </td>
                 <td>
@@ -81,7 +83,7 @@ export function AccessMembers({
                     <span
                       className="branch-chip-xs"
                       style={{
-                        background: "rgba(18, 53, 36, 0.08)",
+                        background: "var(--mint)",
                         color: "var(--teal)",
                         padding: "2px 8px",
                         borderRadius: 4,
@@ -128,13 +130,19 @@ export function AccessMembers({
                       disabled={busy}
                       onClick={() => onRevoke(member.id)}
                     >
-                      {language === "si" ? "ප්‍රවේශය අවලංගු කරන්න" : "Revoke access"}
+                      {language === "si"
+                        ? "ප්‍රවේශය අවලංගු කරන්න"
+                        : "Revoke access"}
                     </button>
                   ) : (
                     <span className="status completed">
                       {own
-                        ? (language === "si" ? "ඔබගේ ගිණුම" : "Your account")
-                        : (language === "si" ? "ආරක්ෂිතයි" : "Protected")}
+                        ? language === "si"
+                          ? "ඔබගේ ගිණුම"
+                          : "Your account"
+                        : language === "si"
+                          ? "ආරක්ෂිතයි"
+                          : "Protected"}
                     </span>
                   )}
                 </td>

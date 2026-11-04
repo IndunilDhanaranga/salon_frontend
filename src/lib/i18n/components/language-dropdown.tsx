@@ -100,7 +100,7 @@ export function LanguageDropdown({ className }: { className?: string }) {
             background: "var(--surface)",
             border: "1px solid var(--line)",
             borderRadius: 8,
-            boxShadow: "0 8px 24px rgba(18, 53, 36, 0.12)",
+            boxShadow: "var(--menu-shadow)",
             padding: "4px 0",
             overflow: "hidden",
             animation: "fadeIn 0.15s ease",
@@ -124,7 +124,7 @@ export function LanguageDropdown({ className }: { className?: string }) {
                   width: "100%",
                   padding: "7px 12px",
                   border: "none",
-                  background: isSelected ? "rgba(18, 53, 36, 0.06)" : "transparent",
+                  background: isSelected ? "var(--mint)" : "transparent",
                   color: isSelected ? "var(--teal)" : "var(--ink)",
                   fontWeight: isSelected ? 600 : 400,
                   fontSize: "11px",
@@ -133,7 +133,13 @@ export function LanguageDropdown({ className }: { className?: string }) {
                   transition: "background 0.12s ease",
                 }}
               >
-                <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+                <span
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 8,
+                  }}
+                >
                   <span style={{ fontSize: "14px" }}>{item.flag}</span>
                   <span>{item.nativeName}</span>
                 </span>

@@ -39,6 +39,7 @@ export const ENDPOINTS: Array<{
     tenant: true,
   },
   { pattern: /^access$/, methods: ["GET"], tenant: true },
+  { pattern: /^deduction-options$/, methods: ["GET"], tenant: true },
   { pattern: /^access\/(roles|members)$/, methods: ["POST"], tenant: true },
   {
     pattern: new RegExp(`^access/(roles|members)/${UUID}$`, "i"),
@@ -46,7 +47,8 @@ export const ENDPOINTS: Array<{
     tenant: true,
   },
   {
-    pattern: /^(staff|appointments|payroll|catalog|orders|deductions|deduction-options|branches)$/,
+    pattern:
+      /^(staff|appointments|payroll|catalog|orders|deductions|branches)$/,
     methods: ["GET", "POST"],
     tenant: true,
   },

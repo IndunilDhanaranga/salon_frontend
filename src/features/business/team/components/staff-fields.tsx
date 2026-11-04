@@ -5,9 +5,11 @@ import { useTranslation } from "@/lib/i18n";
 export function StaffFields({
   editing,
   branches = [],
+  canManageLogin = false,
 }: {
   editing: Staff | null;
   branches?: Branch[];
+  canManageLogin?: boolean;
 }) {
   const { t, language } = useTranslation();
   return (
@@ -18,7 +20,7 @@ export function StaffFields({
           name="name"
           autoFocus
           required
-          maxLength={120}
+          maxLength={100}
           defaultValue={editing?.name}
         />
       </label>
@@ -27,7 +29,7 @@ export function StaffFields({
         <input
           name="job_title"
           required
-          maxLength={120}
+          maxLength={100}
           placeholder={t.forms.jobTitlePlaceholder}
           defaultValue={editing?.job_title}
         />
@@ -35,10 +37,7 @@ export function StaffFields({
       {branches.length > 0 && (
         <label>
           {t.branches.assignBranch}
-          <select
-            name="branch_id"
-            defaultValue={editing?.branch_id ?? ""}
-          >
+          <select name="branch_id" defaultValue={editing?.branch_id ?? ""}>
             <option value="">{t.branches.unassigned}</option>
             {branches.map((b) => (
               <option key={b.id} value={b.id}>
@@ -51,7 +50,11 @@ export function StaffFields({
       )}
       <div className="form-grid">
         <label>
-          {t.forms.emailLogin}
+          {editing?.user_id
+            ? language === "si"
+              ? "කාර්ය මණ්ඩල සම්බන්ධතා ඊමේල්"
+              : "Staff contact email"
+            : t.forms.emailLogin}
           <input
             name="email"
             type="email"
@@ -59,21 +62,30 @@ export function StaffFields({
             placeholder="staff@salon.test"
           />
         </label>
-        <label>
-          {t.forms.loginPassword}
-          <input
-            name="password"
-            type="password"
-            minLength={8}
-            maxLength={72}
-            placeholder={
-              editing
-                ? t.forms.passwordPlaceholderEdit
-                : t.forms.passwordPlaceholderNew
-            }
-          />
-        </label>
+        {canManageLogin && !editing?.user_id && (
+          <label>
+            {t.forms.loginPassword}
+            <input
+              name="password"
+              type="password"
+              minLength={8}
+              maxLength={72}
+              placeholder={
+                editing
+                  ? t.forms.passwordPlaceholderEdit
+                  : t.forms.passwordPlaceholderNew
+              }
+            />
+          </label>
+        )}
       </div>
+      {editing?.user_id && (
+        <p className="field-hint">
+          {language === "si"
+            ? "පිවිසුම් ගිණුම වෙනම කළමනාකරණය කෙරේ."
+            : "Updating staff contact details does not change the linked login account."}
+        </p>
+      )}
       <label>
         {t.forms.phoneOptional}
         <input
@@ -117,11 +129,13 @@ export function StaffFields({
         />
         {t.forms.activeTeamMember}
       </label>
-      <p className="field-hint">
-        {language === "si"
-          ? "විද්‍යුත් තැපෑලක් සහ මුරපදයක් ලබාදීමෙන් මෙම සාමාජිකයාට සේවක (Staff) ගිණුමක් ස්වයංක්‍රීයව සෑදේ."
-          : "Providing an email and password automatically creates a user account with the Staff role so this team member can sign in to the salon workspace."}
-      </p>
+      {canManageLogin && !editing?.user_id && (
+        <p className="field-hint">
+          {language === "si"
+            ? "විද්‍යුත් තැපෑලක් සහ මුරපදයක් ලබාදීමෙන් මෙම සාමාජිකයාට සේවක (Staff) ගිණුමක් ස්වයංක්‍රීයව සෑදේ."
+            : "Providing an email and password automatically creates a user account with the Staff role so this team member can sign in to the salon workspace."}
+        </p>
+      )}
     </>
   );
 }

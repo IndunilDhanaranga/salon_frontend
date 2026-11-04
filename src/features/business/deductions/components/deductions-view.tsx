@@ -25,7 +25,7 @@ import {
   Banknote,
   Send,
 } from "lucide-react";
-import { api } from "@/lib/api";
+import { useBranchApi } from "@/features/workspace/branch-context";
 import { initials, message, money } from "@/lib/format";
 import type {
   Deduction,
@@ -53,6 +53,7 @@ const CATEGORY_ICONS: Record<string, typeof Package> = {
 };
 
 export function DeductionsView({ tenant }: { tenant: Tenant }) {
+  const api = useBranchApi();
   const { t, language } = useTranslation();
   const canManage =
     canPermission(tenant, "deductions.manage") ||
@@ -100,8 +101,7 @@ export function DeductionsView({ tenant }: { tenant: Tenant }) {
       setLoading(true);
       setError("");
       try {
-        const typeQuery =
-          selectedType === "all" ? "" : `&type=${selectedType}`;
+        const typeQuery = selectedType === "all" ? "" : `&type=${selectedType}`;
         const res = await api<DeductionListResponse>(
           `deductions?range=${selectedRange}${typeQuery}`,
           {
@@ -290,7 +290,9 @@ export function DeductionsView({ tenant }: { tenant: Tenant }) {
 
   const items = data?.data ?? [];
   const businessItemsCount = items.filter((d) => d.type === "business").length;
-  const advanceItemsCount = items.filter((d) => d.type === "staff_advance").length;
+  const advanceItemsCount = items.filter(
+    (d) => d.type === "staff_advance",
+  ).length;
 
   return (
     <div className="deductions-content">
@@ -301,7 +303,7 @@ export function DeductionsView({ tenant }: { tenant: Tenant }) {
             <span>{t.deductions.kpis.totalDeductions}</span>
             <Coins size={18} strokeWidth={1.6} />
           </div>
-          <strong style={{ color: "#c93b3b" }}>
+          <strong style={{ color: "var(--danger)" }}>
             {money(data?.summary.total_minor ?? 0, tenant.currency)}
           </strong>
           <span className="stat-note">
@@ -325,8 +327,11 @@ export function DeductionsView({ tenant }: { tenant: Tenant }) {
             <span>{t.deductions.kpis.staffAdvances}</span>
             <Wallet size={18} strokeWidth={1.6} />
           </div>
-          <strong style={{ color: "#553299" }}>
-            {money(data?.summary.total_staff_advance_minor ?? 0, tenant.currency)}
+          <strong style={{ color: "var(--pine)" }}>
+            {money(
+              data?.summary.total_staff_advance_minor ?? 0,
+              tenant.currency,
+            )}
           </strong>
           <span className="stat-note">{t.payroll.deductions}</span>
         </article>
@@ -338,8 +343,8 @@ export function DeductionsView({ tenant }: { tenant: Tenant }) {
           </div>
           <strong>{rangeLabels[range]}</strong>
           <span className="stat-note">
-            {businessItemsCount} {t.deductions.dailyDeductions} · {advanceItemsCount}{" "}
-            {t.deductions.staffAdvances}
+            {businessItemsCount} {t.deductions.dailyDeductions} ·{" "}
+            {advanceItemsCount} {t.deductions.staffAdvances}
           </span>
         </article>
       </section>
@@ -400,18 +405,25 @@ export function DeductionsView({ tenant }: { tenant: Tenant }) {
         {/* Toolbar: Range Pills */}
         <div className="deductions-toolbar">
           <div className="deductions-range-group">
-            {(["today", "7d", "30d", "month", "last_month", "all"] as RangeOption[]).map(
-              (r) => (
-                <button
-                  key={r}
-                  className={`range-pill ${range === r ? "selected" : ""}`}
-                  onClick={() => setRange(r)}
-                  disabled={loading}
-                >
-                  {rangeLabels[r]}
-                </button>
-              ),
-            )}
+            {(
+              [
+                "today",
+                "7d",
+                "30d",
+                "month",
+                "last_month",
+                "all",
+              ] as RangeOption[]
+            ).map((r) => (
+              <button
+                key={r}
+                className={`range-pill ${range === r ? "selected" : ""}`}
+                onClick={() => setRange(r)}
+                disabled={loading}
+              >
+                {rangeLabels[r]}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -947,7 +959,10 @@ export function DeductionsView({ tenant }: { tenant: Tenant }) {
 
                     <p>
                       {isAdvance ? `${tenant.name} · ` : ""}
-                      {item.notes || (isAdvance ? t.deductions.type.staff_advance : tenant.name)}
+                      {item.notes ||
+                        (isAdvance
+                          ? t.deductions.type.staff_advance
+                          : tenant.name)}
                     </p>
 
                     <div className="mobile-record-meta">
@@ -970,7 +985,7 @@ export function DeductionsView({ tenant }: { tenant: Tenant }) {
                           className="button secondary small-button"
                           onClick={() => handleDelete(item.id)}
                           disabled={deletingId === item.id}
-                          style={{ color: "#c93b3b", width: "100%" }}
+                          style={{ color: "var(--danger)", width: "100%" }}
                         >
                           <Trash2 size={14} />
                           {t.common.delete}

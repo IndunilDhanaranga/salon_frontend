@@ -53,7 +53,8 @@ export function WorkspaceHeading({
       ? t.topbar.overview
       : view === "access"
         ? t.topbar.rolesAndAccess
-        : (t.nav as Record<string, string>)[view] || heading.label.toLowerCase();
+        : (t.nav as Record<string, string>)[view] ||
+          heading.label.toLowerCase();
 
   return (
     <>
@@ -89,7 +90,6 @@ export function WorkspaceHeading({
       </div>
       <header className="page-heading">
         <div>
-          <span className="eyebrow">{heading.label}</span>
           <h1>{heading.title}</h1>
           <p>{heading.description}</p>
         </div>

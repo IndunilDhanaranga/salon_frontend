@@ -17,7 +17,10 @@ export function WorkspaceDetails({
     [t.workspaceDetails.address, tenant.slug],
     [t.workspaceDetails.currency, tenant.currency],
     [t.workspaceDetails.timezone, tenant.timezone],
-    [t.workspaceDetails.yourRole, tenant.role === "owner" ? t.access.owner : tenant.role],
+    [
+      t.workspaceDetails.yourRole,
+      tenant.role === "owner" ? t.access.owner : tenant.role,
+    ],
     [
       t.workspaceDetails.dataStorage,
       tenant.storage_mode === "shared"

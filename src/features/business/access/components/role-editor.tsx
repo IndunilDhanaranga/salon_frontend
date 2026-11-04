@@ -67,7 +67,13 @@ export function RoleEditor({
       }}
     >
       <div className="inline-form-title">
-        <h3>{role ? (language === "si" ? "භූමිකාව සංස්කරණය" : "Edit role") : t.access.addRole}</h3>
+        <h3>
+          {role
+            ? language === "si"
+              ? "භූමිකාව සංස්කරණය"
+              : "Edit role"
+            : t.access.addRole}
+        </h3>
         <button
           type="button"
           className="icon-button"

@@ -1,6 +1,22 @@
 import type { TranslationDictionary } from "../types";
 
 export const si: TranslationDictionary = {
+  branchSetup: {
+    title: "ඔබගේ පළමු ශාඛාව එක් කරන්න",
+    description:
+      "වෙන්කිරීම්, කාර්ය මණ්ඩලය හෝ පාරිභෝගික බිල්පත් කළමනාකරණයට පෙර එක් සක්‍රිය ශාඛාවක් සාදන්න.",
+    submit: "ශාඛාව සාදා වැඩ අවකාශයට පිවිසෙන්න",
+    continue: "වැඩ අවකාශයට පිවිසෙන්න",
+    mainHint:
+      "ශාඛාවේ නම පමණක් අනිවාර්යයි. මෙය ඔබගේ ප්‍රධාන ශාඛාව වේ. පසුව එහි විස්තර යාවත්කාලීන කළ හැකිය.",
+    namePlaceholder: "උදා. කොළඹ නගර සැලුන්",
+    waitingForOwner:
+      "පළමු ශාඛාව සෑදීමට ව්‍යාපාර හිමිකරු හෝ ශාඛා පරිපාලකවරයා අමතන්න.",
+    subscriptionRequired:
+      "ශාඛාව සැකසීමට සක්‍රිය ප්‍රවේශය අවශ්‍යයි. පද්ධති පරිපාලක අමතා නැවත පරීක්ෂා කරන්න.",
+    switchWorkspace: "වැඩ අවකාශය",
+    refresh: "තත්ත්වය නැවත පරීක්ෂා කරන්න",
+  },
   common: {
     save: "සුරකින්න",
     cancel: "අවලංගු කරන්න",
@@ -86,7 +102,8 @@ export const si: TranslationDictionary = {
     branches: {
       label: "බහු-ශාඛා කළමනාකරණය",
       title: "ශාඛා සහ ස්ථාන",
-      description: "සැලූන් ශාඛා කිහිපයක්, ඒවායේ තත්ත්වය සහ ගතික පැකේජ මිලකරණය කළමනාකරණය කරන්න.",
+      description:
+        "සැලූන් ශාඛා කිහිපයක්, ඒවායේ තත්ත්වය සහ ගතික පැකේජ මිලකරණය කළමනාකරණය කරන්න.",
     },
     appointments: {
       label: "දවස පිළිවෙළින් පවත්වා ගන්න",
@@ -111,7 +128,8 @@ export const si: TranslationDictionary = {
     deductions: {
       label: "දෛනික වියදම් සහ අත්තිකාරම්",
       title: "වියදම් සහ වැටුප් අත්තිකාරම්",
-      description: "සැලූන් එකේ දෛනික වියදම්, සුළු මුදල් අඩුකිරීම් සහ කාර්ය මණ්ඩල වැටුප් අත්තිකාරම් කළමනාකරණය.",
+      description:
+        "සැලූන් එකේ දෛනික වියදම්, සුළු මුදල් අඩුකිරීම් සහ කාර්ය මණ්ඩල වැටුප් අත්තිකාරම් කළමනාකරණය.",
     },
     payroll: {
       label: "කාර්ය මණ්ඩලය රැකබලා ගන්න",
@@ -121,7 +139,8 @@ export const si: TranslationDictionary = {
     reports: {
       label: "ව්‍යාපාරික විශ්ලේෂණ සහ වාර්තා",
       title: "සැලූන් ව්‍යාපාර වාර්තා",
-      description: "විකුණුම්, සේවක කාර්යසාධනය, සේවා සහ මූල්‍ය පිළිබඳ සවිස්තරාත්මක වාර්තා.",
+      description:
+        "විකුණුම්, සේවක කාර්යසාධනය, සේවා සහ මූල්‍ය පිළිබඳ සවිස්තරාත්මක වාර්තා.",
     },
     access: {
       label: "නිවැරදි ප්‍රවේශ අයිතීන්",
@@ -168,7 +187,8 @@ export const si: TranslationDictionary = {
     addAppointment: "නව වෙන්කිරීමක්",
     aGoodDayByDesign: "සැලසුම් සහගත සාර්ථක දවසක්",
     makeRoomTitle: "ඔබේ උපරිම සේවය සඳහා ඉඩක් සාදන්න.",
-    makeRoomDesc: "පැහැදිලි කාලසටහනක් සහ රැකබලා ගත් කාර්ය මණ්ඩලයක්. කුඩා දේවලින් විශාල වෙනසක් සිදුවේ.",
+    makeRoomDesc:
+      "පැහැදිලි කාලසටහනක් සහ රැකබලා ගත් කාර්ය මණ්ඩලයක්. කුඩා දේවලින් විශාල වෙනසක් සිදුවේ.",
     yourPeople: "ඔබේ පිරිස",
     addFirstMember: "ආරම්භ කිරීමට ඔබේ පළමු කණ්ඩායම් සාමාජිකයා එක් කරන්න.",
     meetTheTeam: "කණ්ඩායම බලන්න",
@@ -188,9 +208,11 @@ export const si: TranslationDictionary = {
     operatingDeductions: "සැලෝන් මෙහෙයුම් වියදම්",
     staffAdvances: "කාර්ය මණ්ඩල අත්තිකාරම්",
     todayCashBalance: "අද අතැති ශුද්ධ මුදල",
-    growthMessage: "ආදායම සියලු මෙහෙයුම් වියදම් සහ සේවක ගෙවීම් ඉක්මවා ලාභ ලබයි.",
+    growthMessage:
+      "ආදායම සියලු මෙහෙයුම් වියදම් සහ සේවක ගෙවීම් ඉක්මවා ලාභ ලබයි.",
     lossMessage: "වත්මන් මෙහෙයුම් වියදම් සහ අඩුකිරීම් ලැබූ ආදායමට වඩා වැඩිය.",
-    breakEvenMessage: "ආදායම සහ මෙහෙයුම් වියදම් එකිනෙකට සමාන සමතුලිත මට්ටමක පවතී.",
+    breakEvenMessage:
+      "ආදායම සහ මෙහෙයුම් වියදම් එකිනෙකට සමාන සමතුලිත මට්ටමක පවතී.",
   },
   appointments: {
     bookTitle: "වේලාවන් වෙන්කිරීමේ පොත",
@@ -198,7 +220,8 @@ export const si: TranslationDictionary = {
     allDates: "සියලු දින",
     yourSchedule: "ඔබේ කාලසටහන",
     emptyTitle: "සැහැල්ලුවෙන් සිටීමට කාලයයි.",
-    emptyDesc: "තවමත් කිසිදු වෙන්කිරීමක් නැත. දවස ආරම්භ කිරීමට නව වෙන්කිරීමක් එක් කරන්න.",
+    emptyDesc:
+      "තවමත් කිසිදු වෙන්කිරීමක් නැත. දවස ආරම්භ කිරීමට නව වෙන්කිරීමක් එක් කරන්න.",
     time: "වේලාව",
     clientAndService: "පාරිභෝගිකයා සහ සේවාව",
     teamMember: "කාර්ය මණ්ඩල සාමාජිකයා",
@@ -273,10 +296,12 @@ export const si: TranslationDictionary = {
   },
   payroll: {
     noticeTitle: "වැටුප් ගෙවීම සඳහා පැහැදිලි ආරම්භයක්.",
-    noticeDesc: "මූලික වැටුප සහ සම්පූර්ණ කළ සේවා කොමිස් මුදල් කෙටුම්පතක් මෙහි දැක්වේ. ගෙවීමට පෙර විස්තර පරීක්ෂා කරන්න.",
+    noticeDesc:
+      "මූලික වැටුප සහ සම්පූර්ණ කළ සේවා කොමිස් මුදල් කෙටුම්පතක් මෙහි දැක්වේ. ගෙවීමට පෙර විස්තර පරීක්ෂා කරන්න.",
     draftsOnly: "කෙටුම්පත් පමණි",
     emptyTitle: "ඔබේ පළමු වැටුප් ලේඛනය මෙතැනින් ඇරඹේ.",
-    emptyDesc: "සෑම සාමාජිකයෙකුගේම වැටුප් සහ කොමිස් බැලීමට මාසික කෙටුම්පතක් සකසන්න.",
+    emptyDesc:
+      "සෑම සාමාජිකයෙකුගේම වැටුප් සහ කොමිස් බැලීමට මාසික කෙටුම්පතක් සකසන්න.",
     draft: "කෙටුම්පත",
     period: "කාලසීමාව",
     teamMembersCount: "කණ්ඩායම් සාමාජිකයින්",
@@ -305,7 +330,8 @@ export const si: TranslationDictionary = {
   subscription: {
     title: "ඔබේ දායකත්වය",
     currentPlan: "වත්මන් පැකේජය",
-    freeTrialNotice: "ඔබේ පළමු දින 30 සඳහා සියලු ව්‍යාපාරික පහසුකම් නොමිලේ හිමිවේ.",
+    freeTrialNotice:
+      "ඔබේ පළමු දින 30 සඳහා සියලු ව්‍යාපාරික පහසුකම් නොමිලේ හිමිවේ.",
     recordedPlanPrice: "පැකේජ මිල",
     businessAccess: "ව්‍යාපාරික ප්‍රවේශය",
     daysRemaining: "දින ඉතිරිව ඇත",
@@ -370,7 +396,8 @@ export const si: TranslationDictionary = {
   },
   languageModal: {
     title: "ඔබ කැමති භාෂාව කුමක්ද?",
-    subtitle: "ඔබ කැමති භාෂාව තෝරාගන්න. මෙය ඉහළ මෙනුවෙන් (Navbar) ඕනෑම වේලාවක වෙනස් කළ හැක.",
+    subtitle:
+      "ඔබ කැමති භාෂාව තෝරාගන්න. මෙය ඉහළ මෙනුවෙන් (Navbar) ඕනෑම වේලාවක වෙනස් කළ හැක.",
     english: "English",
     englishDesc: "Use workspace in English",
     sinhala: "සිංහල",
@@ -408,7 +435,8 @@ export const si: TranslationDictionary = {
       branches: "බහු-ශාඛා සංසන්දනය",
     },
     branchesComparison: "ශාඛා කාර්යසාධනය සහ ලාභ සංසන්දනය",
-    branchesComparisonDesc: "ශාඛා අතර ආදායම, සේවක වියදම්, මෙහෙයුම් වියදම් සහ ශුද්ධ ලාභය පිළිබඳ කේන්ද්‍රීය සංසන්දනය.",
+    branchesComparisonDesc:
+      "ශාඛා අතර ආදායම, සේවක වියදම්, මෙහෙයුම් වියදම් සහ ශුද්ධ ලාභය පිළිබඳ කේන්ද්‍රීය සංසන්දනය.",
     branch: "ශාඛාව",
     contribution: "ආදායම් දායකත්වය",
     profitMargin: "ලාභ ප්‍රතිශතය",
@@ -468,7 +496,8 @@ export const si: TranslationDictionary = {
   },
   deductions: {
     title: "වියදම් සහ කාර්ය මණ්ඩල අත්තිකාරම්",
-    subtitle: "දෛනික සැලෝන් වියදම්, සුළු වියදම් (Petty cash) සහ කාර්ය මණ්ඩල වැටුප් අත්තිකාරම් කළමනාකරණය කරන්න.",
+    subtitle:
+      "දෛනික සැලෝන් වියදම්, සුළු වියදම් (Petty cash) සහ කාර්ය මණ්ඩල වැටුප් අත්තිකාරම් කළමනාකරණය කරන්න.",
     dailyDeductions: "දෛනික වියදම්",
     staffAdvances: "කාර්ය මණ්ඩල අත්තිකාරම්",
     allDeductions: "සියලු සටහන්",
@@ -485,7 +514,8 @@ export const si: TranslationDictionary = {
     reason: "හේතුව / අවශ්‍යතාවය",
     deleteConfirm: "මෙම වියදම් සටහන ඉවත් කිරීමට ඔබට සහතිකද?",
     noDeductionsFound: "තවමත් කිසිදු වියදමක් සටහන් කර නොමැත",
-    noDeductionsDesc: "ඉහත බොත්තම් භාවිතා කර ඔබේ පළමු දෛනික වියදම හෝ කාර්ය මණ්ඩල අත්තිකාරම සටහන් කරන්න.",
+    noDeductionsDesc:
+      "ඉහත බොත්තම් භාවිතා කර ඔබේ පළමු දෛනික වියදම හෝ කාර්ය මණ්ඩල අත්තිකාරම සටහන් කරන්න.",
     categories: {
       supplies: "සැලෝන් උපකරණ සහ තුවා ආදිය",
       refreshments: "ආහාර පාන සහ තේ වියදම්",
@@ -529,13 +559,16 @@ export const si: TranslationDictionary = {
     activeBranches: "සක්‍රිය ශාඛා",
     includedBranches: "මූලික පැකේජයට ඇතුළත් ශාඛා",
     dynamicPricingTitle: "ගතික දායකත්ව පැකේජ මිලකරණය",
-    dynamicPricingDesc: "ඔබේ සක්‍රිය ශාඛා ගණන අනුව මාසික පැකේජ මිල ස්වයංක්‍රීයව වෙනස් වේ.",
+    dynamicPricingDesc:
+      "ඔබේ සක්‍රිය ශාඛා ගණන අනුව මාසික පැකේජ මිල ස්වයංක්‍රීයව වෙනස් වේ.",
     basePlanPrice: "මූලික පැකේජ මිල",
     additionalBranchFee: "අමතර ශාඛාවකට ගාස්තුව",
     extraBranchesBilled: "අමතර අයකෙරෙන ශාඛා",
     totalMonthlyPrice: "මුළු මාසික දායකත්ව ගාස්තුව",
-    dynamicPricingNote: "මූලික පැකේජය ශාඛා {included}ක් ආවරණය කරයි. එක් එක් අමතර සක්‍රිය ශාඛාවකට මසකට {fee}ක් එකතු වේ.",
-    dynamicPricingPreview: "මෙම ශාඛාව එක් කළ පසු පැකේජ මිල ස්වයංක්‍රීයව යාවත්කාලීන වේ.",
+    dynamicPricingNote:
+      "මූලික පැකේජය ශාඛා {included}ක් ආවරණය කරයි. එක් එක් අමතර සක්‍රිය ශාඛාවකට මසකට {fee}ක් එකතු වේ.",
+    dynamicPricingPreview:
+      "මෙම ශාඛාව එක් කළ පසු පැකේජ මිල ස්වයංක්‍රීයව යාවත්කාලීන වේ.",
     noBranches: "ශාඛා කිසිවක් හමු නොවීය",
     staffCount: "කාර්ය මණ්ඩලය",
     ordersCount: "පාරිභෝගික බිල්පත්",
@@ -548,7 +581,8 @@ export const si: TranslationDictionary = {
     assignBranch: "ශාඛාවට පවරන්න",
     unassigned: "සියල්ල / පවරා නැත",
     deleteBranch: "ශාඛාව මකන්න",
-    confirmDelete: "මෙම ශාඛාව මැකීමට ඔබට විශ්වාසද? ඓතිහාසික බිල්පත් සහ වෙන්කිරීම් දත්ත සුරැකී පවතිනු ඇත.",
+    confirmDelete:
+      "මෙම ශාඛාව මැකීමට ඔබට විශ්වාසද? ඓතිහාසික බිල්පත් සහ වෙන්කිරීම් දත්ත සුරැකී පවතිනු ඇත.",
     cannotDeleteMain: "ප්‍රධාන ශාඛාව මැකිය නොහැක.",
     toggleActive: "ශාඛා තත්ත්වය වෙනස් කරන්න",
   },

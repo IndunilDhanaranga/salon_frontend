@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import {
   Building2,
   Plus,
@@ -19,9 +19,14 @@ import {
   RefreshCw,
   Coins,
 } from "lucide-react";
-import { api } from "@/lib/api";
+import { useBranchApi } from "@/features/workspace/branch-context";
 import { money, message } from "@/lib/format";
-import type { Branch, BranchesResponse, Subscription, Tenant } from "@/lib/types";
+import type {
+  Branch,
+  BranchesResponse,
+  Subscription,
+  Tenant,
+} from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
 import { canPermission } from "@/lib/access";
 
@@ -31,6 +36,7 @@ type Props = {
 };
 
 export function BranchesView({ tenant, onBranchChanged }: Props) {
+  const api = useBranchApi();
   const { t } = useTranslation();
   const [branches, setBranches] = useState<Branch[]>([]);
   const [subscription, setSubscription] = useState<Subscription | null>(
@@ -42,6 +48,15 @@ export function BranchesView({ tenant, onBranchChanged }: Props) {
   const [editingBranch, setEditingBranch] = useState<Branch | null>(null);
   const [modalBusy, setModalBusy] = useState(false);
   const [modalError, setModalError] = useState("");
+  const branchDialog = useRef<HTMLDialogElement>(null);
+  const branchTitleId = useId();
+
+  useEffect(() => {
+    if (!modalOpen) return;
+    const dialog = branchDialog.current;
+    dialog?.showModal();
+    return () => dialog?.close();
+  }, [modalOpen]);
 
   const canManage = canPermission(tenant, "branches.manage");
 
@@ -205,14 +220,16 @@ export function BranchesView({ tenant, onBranchChanged }: Props) {
           </div>
 
           <div className="pricing-metric-box">
-            <span className="metric-label">{t.branches.additionalBranchFee}</span>
+            <span className="metric-label">
+              {t.branches.additionalBranchFee}
+            </span>
             <span className="metric-value">
               +{money(extraBranchFeeMinor, tenant.currency)}
               <span className="metric-unit">/mo</span>
             </span>
             <span className="metric-sub">
-              {t.branches.extraBranchesBilled}: <strong>{extraBranches}</strong> (
-              {activeCount} {t.branches.activeBranches})
+              {t.branches.extraBranchesBilled}: <strong>{extraBranches}</strong>{" "}
+              ({activeCount} {t.branches.activeBranches})
             </span>
           </div>
 
@@ -345,13 +362,15 @@ export function BranchesView({ tenant, onBranchChanged }: Props) {
               <div className="branch-stat-box">
                 <Users size={15} />
                 <span>
-                  <strong>{branch.staff_count ?? 0}</strong> {t.branches.staffCount}
+                  <strong>{branch.staff_count ?? 0}</strong>{" "}
+                  {t.branches.staffCount}
                 </span>
               </div>
               <div className="branch-stat-box">
                 <Receipt size={15} />
                 <span>
-                  <strong>{branch.orders_count ?? 0}</strong> {t.branches.ordersCount}
+                  <strong>{branch.orders_count ?? 0}</strong>{" "}
+                  {t.branches.ordersCount}
                 </span>
               </div>
             </div>
@@ -397,15 +416,23 @@ export function BranchesView({ tenant, onBranchChanged }: Props) {
       {/* Add / Edit Branch Dialog Modal */}
       {modalOpen && (
         <dialog
-          className="modal-dialog"
-          open
-          onKeyDown={(e) => {
-            if (e.key === "Escape" && !modalBusy) setModalOpen(false);
+          ref={branchDialog}
+          className="form-dialog branch-form-modal"
+          aria-labelledby={branchTitleId}
+          aria-busy={modalBusy}
+          onCancel={(event) => {
+            event.preventDefault();
+            if (!modalBusy) setModalOpen(false);
           }}
         >
-          <div className="dialog-content branch-form-modal">
+          <div className="branch-form-content">
             <div className="dialog-header">
-              <span className="eyebrow">{tenant.name}</span>
+              <div>
+                <p className="branch-form-business">{tenant.name}</p>
+                <h2 id={branchTitleId}>
+                  {editingBranch ? t.branches.editBranch : t.branches.addBranch}
+                </h2>
+              </div>
               <button
                 type="button"
                 className="icon-button"
@@ -416,10 +443,6 @@ export function BranchesView({ tenant, onBranchChanged }: Props) {
                 <X size={19} />
               </button>
             </div>
-
-            <h2>
-              {editingBranch ? t.branches.editBranch : t.branches.addBranch}
-            </h2>
 
             {modalError && (
               <div className="error-box" role="alert">

@@ -1,7 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Building2, ChevronDown, Check, Globe, Settings, MapPin } from "lucide-react";
+import {
+  Building2,
+  ChevronDown,
+  Check,
+  Globe,
+  Settings,
+  MapPin,
+} from "lucide-react";
 import type { Branch } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
 
@@ -98,7 +105,7 @@ export function BranchDropdown({
         <span className="branch-name-label">
           {isAll
             ? `${t.branches.allBranches} (${t.branches.centralized})`
-            : currentBranch?.name ?? t.branches.mainBranch}
+            : (currentBranch?.name ?? t.branches.mainBranch)}
         </span>
         {currentBranch?.is_main && (
           <span className="branch-main-chip">{t.branches.mainBranch}</span>
@@ -173,7 +180,10 @@ export function BranchDropdown({
                     </div>
                     {branch.address && (
                       <span className="branch-item-sub">
-                        <MapPin size={11} style={{ display: "inline", marginRight: 3 }} />
+                        <MapPin
+                          size={11}
+                          style={{ display: "inline", marginRight: 3 }}
+                        />
                         {branch.address}
                       </span>
                     )}

@@ -39,9 +39,13 @@ export function AccessRoles({
               <h3>{role.is_owner ? t.access.owner : role.name}</h3>
               <p>
                 {role.is_owner
-                  ? (language === "si" ? "සම්පූර්ණ ප්‍රවේශය · ආරක්ෂිත භූමිකාව" : "Full business access · Protected role")
+                  ? language === "si"
+                    ? "සම්පූර්ණ ප්‍රවේශය · ආරක්ෂිත භූමිකාව"
+                    : "Full business access · Protected role"
                   : role.id === ownRoleId
-                    ? (language === "si" ? "ඔබගේ භූමිකාව · ආරක්ෂිතයි" : "Your role · Protected from self changes")
+                    ? language === "si"
+                      ? "ඔබගේ භූමිකාව · ආරක්ෂිතයි"
+                      : "Your role · Protected from self changes"
                     : `${role.permissions.length} ${language === "si" ? "අවසර" : "permissions"}`}
               </p>
             </div>

@@ -133,7 +133,7 @@ export function MemberEditor({
             padding: "12px 14px",
             border: "1px solid var(--line)",
             borderRadius: 8,
-            background: "rgba(18, 53, 36, 0.02)",
+            background: "var(--mint)",
           }}
         >
           <span

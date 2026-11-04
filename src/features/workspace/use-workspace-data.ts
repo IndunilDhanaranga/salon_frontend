@@ -84,7 +84,7 @@ export function useWorkspaceData(
       setView((current) =>
         canView(current, tenant) ? current : firstView(tenant),
       );
-      if (!hasBusinessAccess(tenant)) {
+      if (!hasBusinessAccess(tenant) || tenant.needs_branch_setup) {
         setData({ ...emptyWorkspace, tenantId: tenant.id });
         return;
       }
@@ -96,19 +96,34 @@ export function useWorkspaceData(
             ? api<Dashboard>("dashboard", { tenant: slug, branch: branchParam })
             : Promise.resolve(null),
           can("appointments.view")
-            ? api<ListResponse<Appointment>>("appointments", { tenant: slug, branch: branchParam })
+            ? api<ListResponse<Appointment>>("appointments", {
+                tenant: slug,
+                branch: branchParam,
+              })
             : Promise.resolve({ data: [] }),
           can("payroll.view")
-            ? api<ListResponse<PayrollRun>>("payroll", { tenant: slug, branch: branchParam })
+            ? api<ListResponse<PayrollRun>>("payroll", {
+                tenant: slug,
+                branch: branchParam,
+              })
             : Promise.resolve({ data: [] }),
           can("staff.view")
-            ? api<ListResponse<Staff>>("staff", { tenant: slug, branch: branchParam })
+            ? api<ListResponse<Staff>>("staff", {
+                tenant: slug,
+                branch: branchParam,
+              })
             : Promise.resolve({ data: [] }),
           can("appointments.manage")
-            ? api<AppointmentOptions>("appointment-options", { tenant: slug, branch: branchParam })
+            ? api<AppointmentOptions>("appointment-options", {
+                tenant: slug,
+                branch: branchParam,
+              })
             : Promise.resolve({ staff: [] }),
           can("branches.view") || can("dashboard.view")
-            ? api<BranchesResponse>("branches", { tenant: slug, branch: branchParam }).catch(() => null)
+            ? api<BranchesResponse>("branches", {
+                tenant: slug,
+                branch: branchParam,
+              }).catch(() => null)
             : Promise.resolve(null),
         ]);
       if (version === epoch.current)
@@ -120,7 +135,10 @@ export function useWorkspaceData(
           staff: staff.data,
           bookingStaff: options.staff,
           branches: branchesRes?.data ?? dashboard?.branches ?? [],
-          activeBranchId: branchesRes?.active_branch_id ?? dashboard?.active_branch_id ?? null,
+          activeBranchId:
+            branchesRes?.active_branch_id ??
+            dashboard?.active_branch_id ??
+            null,
           hasAllBranchesAccess: branchesRes?.has_all_access ?? true,
         });
     } catch (error) {
@@ -128,7 +146,7 @@ export function useWorkspaceData(
       setData(emptyWorkspace);
       setError(message(error));
       if (error instanceof ApiError && error.status === 401) setSession(null);
-      if (error instanceof ApiError && error.status === 403) {
+      if (error instanceof ApiError && [403, 409].includes(error.status)) {
         // Membership may have changed between the session and resource reads.
         const session = await api<Session>("me").catch(() => null);
         if (version === epoch.current && session) setSession(session);

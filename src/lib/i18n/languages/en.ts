@@ -1,6 +1,22 @@
 import type { TranslationDictionary } from "../types";
 
 export const en: TranslationDictionary = {
+  branchSetup: {
+    title: "Add your first branch",
+    description:
+      "Create one active branch before you start managing appointments, your team, or customer bills.",
+    submit: "Create branch & open workspace",
+    continue: "Continue to workspace",
+    mainHint:
+      "Only a branch name is required. This becomes your main branch; you can update its details later.",
+    namePlaceholder: "e.g. Colombo City Salon",
+    waitingForOwner:
+      "Ask a workspace owner or branch administrator to create the first branch.",
+    subscriptionRequired:
+      "This workspace needs active access before branch setup. Contact your platform administrator, then refresh.",
+    switchWorkspace: "Workspace",
+    refresh: "Refresh status",
+  },
   common: {
     save: "Save",
     cancel: "Cancel",
@@ -86,7 +102,8 @@ export const en: TranslationDictionary = {
     branches: {
       label: "MULTI-BRANCH MANAGEMENT",
       title: "Branches & Locations",
-      description: "Manage multiple salon branches, active status, and dynamic package pricing.",
+      description:
+        "Manage multiple salon branches, active status, and dynamic package pricing.",
     },
     appointments: {
       label: "KEEP THE DAY MOVING",
@@ -111,7 +128,8 @@ export const en: TranslationDictionary = {
     deductions: {
       label: "EXPENSES & ADVANCES",
       title: "Deductions & Advances",
-      description: "Daily salon deductions, operating expenses, and staff salary advances.",
+      description:
+        "Daily salon deductions, operating expenses, and staff salary advances.",
     },
     payroll: {
       label: "LOOK AFTER YOUR PEOPLE",
@@ -121,7 +139,8 @@ export const en: TranslationDictionary = {
     reports: {
       label: "SALON ANALYTICS & INSIGHTS",
       title: "Business Reports",
-      description: "Comprehensive sales, staff, services, and financial analysis.",
+      description:
+        "Comprehensive sales, staff, services, and financial analysis.",
     },
     access: {
       label: "THE RIGHT ACCESS",
@@ -168,7 +187,8 @@ export const en: TranslationDictionary = {
     addAppointment: "Add appointment",
     aGoodDayByDesign: "A GOOD DAY, BY DESIGN",
     makeRoomTitle: "Make room for your best work.",
-    makeRoomDesc: "A clear schedule and a looked-after team. The little things make a big difference.",
+    makeRoomDesc:
+      "A clear schedule and a looked-after team. The little things make a big difference.",
     yourPeople: "Your people",
     addFirstMember: "Add your first team member to start.",
     meetTheTeam: "Meet the team",
@@ -188,9 +208,12 @@ export const en: TranslationDictionary = {
     operatingDeductions: "Salon Operating Expenses",
     staffAdvances: "Staff Salary Advances",
     todayCashBalance: "Today's Cash in Hand",
-    growthMessage: "Revenues exceed all operating expenses and staff commitments.",
-    lossMessage: "Operating costs and deductions currently exceed incoming revenues.",
-    breakEvenMessage: "Revenues match operating expenses; maintaining operational balance.",
+    growthMessage:
+      "Revenues exceed all operating expenses and staff commitments.",
+    lossMessage:
+      "Operating costs and deductions currently exceed incoming revenues.",
+    breakEvenMessage:
+      "Revenues match operating expenses; maintaining operational balance.",
   },
   appointments: {
     bookTitle: "The appointment book",
@@ -198,7 +221,8 @@ export const en: TranslationDictionary = {
     allDates: "All dates",
     yourSchedule: "YOUR SCHEDULE",
     emptyTitle: "A little breathing room.",
-    emptyDesc: "No appointments here yet. Add a booking to get the day started.",
+    emptyDesc:
+      "No appointments here yet. Add a booking to get the day started.",
     time: "Time",
     clientAndService: "Client & service",
     teamMember: "Team member",
@@ -273,10 +297,12 @@ export const en: TranslationDictionary = {
   },
   payroll: {
     noticeTitle: "A clear starting point for payday.",
-    noticeDesc: "Drafts snapshot base salary and completed service commissions. Review deductions and local payroll obligations before payment.",
+    noticeDesc:
+      "Drafts snapshot base salary and completed service commissions. Review deductions and local payroll obligations before payment.",
     draftsOnly: "Drafts only",
     emptyTitle: "Your first payday starts here.",
-    emptyDesc: "Generate a monthly draft to see each team member’s salary and commission.",
+    emptyDesc:
+      "Generate a monthly draft to see each team member’s salary and commission.",
     draft: "Draft",
     period: "Period",
     teamMembersCount: "team members",
@@ -305,7 +331,8 @@ export const en: TranslationDictionary = {
   subscription: {
     title: "Your subscription",
     currentPlan: "Current package",
-    freeTrialNotice: "Your first calendar month includes all business features at no charge.",
+    freeTrialNotice:
+      "Your first calendar month includes all business features at no charge.",
     recordedPlanPrice: "Recorded plan price",
     businessAccess: "Business access",
     daysRemaining: "days remaining",
@@ -351,7 +378,8 @@ export const en: TranslationDictionary = {
     sharedDb: "Shared database",
     dedicatedDb: "Dedicated database",
     builtWithRoom: "Built with room to grow",
-    builtWithRoomDesc: "Each business has its own data and access permissions. Dedicated database provisioning is planned for a future phase.",
+    builtWithRoomDesc:
+      "Each business has its own data and access permissions. Dedicated database provisioning is planned for a future phase.",
     manageRoles: "Manage roles & access",
   },
   auth: {
@@ -370,7 +398,8 @@ export const en: TranslationDictionary = {
   },
   languageModal: {
     title: "Which language do you prefer?",
-    subtitle: "Select your preferred language. You can change this anytime from the top navigation bar.",
+    subtitle:
+      "Select your preferred language. You can change this anytime from the top navigation bar.",
     english: "English",
     englishDesc: "Default workspace language",
     sinhala: "සිංහල",
@@ -388,7 +417,8 @@ export const en: TranslationDictionary = {
   },
   businessReports: {
     title: "Business Reports & Analytics",
-    subtitle: "Practical operational reports and financial metrics for your salon.",
+    subtitle:
+      "Practical operational reports and financial metrics for your salon.",
     printReport: "Print report",
     range: "Time period",
     ranges: {
@@ -408,7 +438,8 @@ export const en: TranslationDictionary = {
       branches: "Multi-Branch Comparison",
     },
     branchesComparison: "Branch Performance & Profit Comparison",
-    branchesComparisonDesc: "Centralized comparison of revenue, staff costs, operating expenses, and net profit across branches.",
+    branchesComparisonDesc:
+      "Centralized comparison of revenue, staff costs, operating expenses, and net profit across branches.",
     branch: "Branch",
     contribution: "Revenue Contribution",
     profitMargin: "Profit Margin",
@@ -468,7 +499,8 @@ export const en: TranslationDictionary = {
   },
   deductions: {
     title: "Expenses & Staff Advances",
-    subtitle: "Track daily salon deductions, petty cash expenses, and staff salary advances.",
+    subtitle:
+      "Track daily salon deductions, petty cash expenses, and staff salary advances.",
     dailyDeductions: "Daily Deductions",
     staffAdvances: "Staff Advances",
     allDeductions: "All Entries",
@@ -485,7 +517,8 @@ export const en: TranslationDictionary = {
     reason: "Reason / Purpose",
     deleteConfirm: "Are you sure you want to delete this deduction entry?",
     noDeductionsFound: "No deductions recorded yet",
-    noDeductionsDesc: "Record your first daily business expense or staff advance using the buttons above.",
+    noDeductionsDesc:
+      "Record your first daily business expense or staff advance using the buttons above.",
     categories: {
       supplies: "Salon Supplies & Towels",
       refreshments: "Refreshments & Tea",
@@ -529,13 +562,16 @@ export const en: TranslationDictionary = {
     activeBranches: "Active Branches",
     includedBranches: "Included in Base Plan",
     dynamicPricingTitle: "Dynamic Subscription Package Pricing",
-    dynamicPricingDesc: "Your monthly plan price adjusts dynamically according to the number of active branches.",
+    dynamicPricingDesc:
+      "Your monthly plan price adjusts dynamically according to the number of active branches.",
     basePlanPrice: "Base Plan Price",
     additionalBranchFee: "Fee Per Extra Branch",
     extraBranchesBilled: "Extra Billed Branches",
     totalMonthlyPrice: "Total Monthly Subscription",
-    dynamicPricingNote: "Your base subscription covers {included} branch(es). Each additional active branch adds {fee} per month.",
-    dynamicPricingPreview: "Subscription price will update dynamically upon adding this branch.",
+    dynamicPricingNote:
+      "Your base subscription covers {included} branch(es). Each additional active branch adds {fee} per month.",
+    dynamicPricingPreview:
+      "Subscription price will update dynamically upon adding this branch.",
     noBranches: "No branches found",
     staffCount: "Staff Members",
     ordersCount: "Customer Bills",
@@ -548,7 +584,8 @@ export const en: TranslationDictionary = {
     assignBranch: "Assign to Branch",
     unassigned: "All / Unassigned",
     deleteBranch: "Delete Branch",
-    confirmDelete: "Are you sure you want to delete this branch? Orders and appointments will retain historical records.",
+    confirmDelete:
+      "Are you sure you want to delete this branch? Orders and appointments will retain historical records.",
     cannotDeleteMain: "The main branch cannot be deleted.",
     toggleActive: "Toggle Branch Status",
   },

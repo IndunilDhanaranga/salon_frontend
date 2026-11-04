@@ -66,12 +66,15 @@ export function AppointmentList({
                   </strong>
                   {showDate && (
                     <span className="cell-sub">
-                      {new Intl.DateTimeFormat(language === "si" ? "si-LK" : "en", {
-                        timeZone: tenant.timezone,
-                        day: "numeric",
-                        month: "short",
-                        year: "numeric",
-                      }).format(new Date(appointment.starts_at))}
+                      {new Intl.DateTimeFormat(
+                        language === "si" ? "si-LK" : "en",
+                        {
+                          timeZone: tenant.timezone,
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        },
+                      ).format(new Date(appointment.starts_at))}
                     </span>
                   )}
                   <span className="cell-sub">

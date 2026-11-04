@@ -49,7 +49,9 @@ export function OverviewView({
     canPermission(tenant, "deductions.view") ||
     canPermission(tenant, "payroll.view");
 
-  const [positionPeriod, setPositionPeriod] = useState<"month" | "today">("month");
+  const [positionPeriod, setPositionPeriod] = useState<"month" | "today">(
+    "month",
+  );
 
   const pos = dashboard.business_position;
 
@@ -89,16 +91,18 @@ export function OverviewView({
       value: `-${money(metrics.deductions_today_minor ?? 0, tenant.currency)}`,
       note: t.deductions.title,
       icon: Coins,
-      color: "#c93b3b",
+      color: "var(--danger)",
     });
 
-    const netToday = metrics.net_today_minor ?? (metrics.revenue_today_minor - (metrics.deductions_today_minor ?? 0));
+    const netToday =
+      metrics.net_today_minor ??
+      metrics.revenue_today_minor - (metrics.deductions_today_minor ?? 0);
     stats.push({
       label: t.overview.netPositionToday,
       value: `${netToday >= 0 ? "+" : ""}${money(netToday, tenant.currency)}`,
       note: netToday >= 0 ? t.overview.growthStatus : t.overview.lossStatus,
       icon: netToday >= 0 ? TrendingUp : TrendingDown,
-      color: netToday >= 0 ? "var(--teal)" : "#c93b3b",
+      color: netToday >= 0 ? "var(--teal)" : "var(--danger)",
     });
   } else {
     stats.push({
@@ -171,27 +175,38 @@ export function OverviewView({
         <aside className="day-aside">
           {/* Company Financial Position & Health Panel */}
           {canViewDeductions && pos && (
-            <section className="panel position-panel" aria-label={t.overview.companyPosition}>
+            <section
+              className="panel position-panel"
+              aria-label={t.overview.companyPosition}
+            >
               <div className="position-header">
                 <div>
-                  <span className="eyebrow">{t.overview.businessSituation}</span>
                   <h2>{t.overview.companyPosition}</h2>
                 </div>
                 {/* Growth vs Loss Status Badge */}
                 {pos.status === "growth" && (
-                  <span className="position-badge growth" title={t.overview.growthMessage}>
+                  <span
+                    className="position-badge growth"
+                    title={t.overview.growthMessage}
+                  >
                     <TrendingUp size={14} />
                     {t.overview.growthStatus}
                   </span>
                 )}
                 {pos.status === "loss" && (
-                  <span className="position-badge loss" title={t.overview.lossMessage}>
+                  <span
+                    className="position-badge loss"
+                    title={t.overview.lossMessage}
+                  >
                     <TrendingDown size={14} />
                     {t.overview.lossStatus}
                   </span>
                 )}
                 {pos.status === "break_even" && (
-                  <span className="position-badge break_even" title={t.overview.breakEvenMessage}>
+                  <span
+                    className="position-badge break_even"
+                    title={t.overview.breakEvenMessage}
+                  >
                     <Scale size={14} />
                     {t.overview.breakEvenStatus}
                   </span>
@@ -237,10 +252,16 @@ export function OverviewView({
                   <>
                     <div className="position-row">
                       <span className="row-label">
-                        <TrendingUp size={13} style={{ color: "var(--teal)" }} />
+                        <TrendingUp
+                          size={13}
+                          style={{ color: "var(--teal)" }}
+                        />
                         {t.overview.grossInflow}
                       </span>
-                      <span className="row-value" style={{ color: "var(--teal)" }}>
+                      <span
+                        className="row-value"
+                        style={{ color: "var(--teal)" }}
+                      >
                         +{money(pos.month_revenue_minor, tenant.currency)}
                       </span>
                     </div>
@@ -250,8 +271,15 @@ export function OverviewView({
                         <Receipt size={13} />
                         {t.overview.operatingDeductions}
                       </span>
-                      <span className="row-value" style={{ color: "#c93b3b" }}>
-                        -{money(pos.month_business_expenses_minor, tenant.currency)}
+                      <span
+                        className="row-value"
+                        style={{ color: "var(--danger)" }}
+                      >
+                        -
+                        {money(
+                          pos.month_business_expenses_minor,
+                          tenant.currency,
+                        )}
                       </span>
                     </div>
 
@@ -260,7 +288,10 @@ export function OverviewView({
                         <Wallet size={13} />
                         {t.overview.staffAdvances}
                       </span>
-                      <span className="row-value" style={{ color: "#553299" }}>
+                      <span
+                        className="row-value"
+                        style={{ color: "var(--pine)" }}
+                      >
                         {money(pos.month_staff_advances_minor, tenant.currency)}
                       </span>
                     </div>
@@ -270,23 +301,33 @@ export function OverviewView({
                         <Users size={13} />
                         {t.businessReports.kpis.totalStaffCost}
                       </span>
-                      <span className="row-value" style={{ color: "#c93b3b" }}>
-                        -{money(pos.month_estimated_staff_cost_minor, tenant.currency)}
+                      <span
+                        className="row-value"
+                        style={{ color: "var(--danger)" }}
+                      >
+                        -
+                        {money(
+                          pos.month_estimated_staff_cost_minor,
+                          tenant.currency,
+                        )}
                       </span>
                     </div>
 
                     {/* Net Margin Highlight Row */}
                     <div className="position-row highlight">
                       <span className="row-label">
-                        {t.overview.netMarginThisMonth}
-                        <span className="count" style={{ marginLeft: 6 }}>
+                        <span>{t.overview.netMarginThisMonth}</span>
+                        <span className="count position-margin-rate">
                           {pos.month_net_margin_percentage}%
                         </span>
                       </span>
                       <span
                         className="row-value"
                         style={{
-                          color: pos.month_net_margin_minor >= 0 ? "var(--teal)" : "#c93b3b",
+                          color:
+                            pos.month_net_margin_minor >= 0
+                              ? "var(--teal)"
+                              : "var(--danger)",
                         }}
                       >
                         {pos.month_net_margin_minor >= 0 ? "+" : ""}
@@ -301,7 +342,10 @@ export function OverviewView({
                         <Wallet size={13} style={{ color: "var(--teal)" }} />
                         {t.overview.completedServiceValue}
                       </span>
-                      <span className="row-value" style={{ color: "var(--teal)" }}>
+                      <span
+                        className="row-value"
+                        style={{ color: "var(--teal)" }}
+                      >
                         +{money(pos.today_revenue_minor, tenant.currency)}
                       </span>
                     </div>
@@ -311,8 +355,15 @@ export function OverviewView({
                         <Receipt size={13} />
                         {t.deductions.kpis.dailyBusinessDeductions}
                       </span>
-                      <span className="row-value" style={{ color: "#c93b3b" }}>
-                        -{money(pos.today_business_expenses_minor, tenant.currency)}
+                      <span
+                        className="row-value"
+                        style={{ color: "var(--danger)" }}
+                      >
+                        -
+                        {money(
+                          pos.today_business_expenses_minor,
+                          tenant.currency,
+                        )}
                       </span>
                     </div>
 
@@ -321,18 +372,27 @@ export function OverviewView({
                         <Coins size={13} />
                         {t.deductions.kpis.staffAdvances}
                       </span>
-                      <span className="row-value" style={{ color: "#553299" }}>
-                        -{money(pos.today_staff_advances_minor, tenant.currency)}
+                      <span
+                        className="row-value"
+                        style={{ color: "var(--pine)" }}
+                      >
+                        -
+                        {money(pos.today_staff_advances_minor, tenant.currency)}
                       </span>
                     </div>
 
                     {/* Net Cash In Hand Today */}
                     <div className="position-row highlight">
-                      <span className="row-label">{t.overview.todayCashBalance}</span>
+                      <span className="row-label">
+                        {t.overview.todayCashBalance}
+                      </span>
                       <span
                         className="row-value"
                         style={{
-                          color: pos.today_net_minor >= 0 ? "var(--teal)" : "#c93b3b",
+                          color:
+                            pos.today_net_minor >= 0
+                              ? "var(--teal)"
+                              : "var(--danger)",
                         }}
                       >
                         {pos.today_net_minor >= 0 ? "+" : ""}
@@ -354,7 +414,7 @@ export function OverviewView({
                   {t.overview.viewAllDeductions}
                   <ArrowRight size={13} />
                 </button>
-                {canPermission(tenant, "dashboard.view") && (
+                {canPermission(tenant, "reports.view") && (
                   <button
                     type="button"
                     className="text-button"

@@ -16,6 +16,7 @@ import {
   Megaphone,
   BellRing,
   AlertTriangle,
+  Smartphone,
 } from "lucide-react";
 import { useNotifications } from "../context/notification-context";
 import { useTranslation } from "@/lib/i18n";
@@ -47,21 +48,49 @@ export function NotificationDrawer() {
     filter === "unread" ? !n.read : true,
   );
 
-  const getIcon = (item: InAppNotification) => {
+  const isIOS =
+    typeof navigator !== "undefined" &&
+    (/iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
+
+  const getSubBadgeIcon = (item: InAppNotification) => {
     if (item.isBroadcast) {
-      return <Megaphone size={16} />;
+      return <Megaphone size={10} />;
     }
     switch (item.type) {
       case "appointment":
-        return <Calendar size={16} />;
+        return <Calendar size={10} />;
       case "billing":
-        return <Receipt size={16} />;
+        return <Receipt size={10} />;
       case "payroll":
-        return <Wallet size={16} />;
+        return <Wallet size={10} />;
       case "subscription":
-        return <Sparkles size={16} />;
+        return <Sparkles size={10} />;
       default:
-        return <Info size={16} />;
+        return <Info size={10} />;
+    }
+  };
+
+  const getSubBadgeColor = (item: InAppNotification) => {
+    if (item.isBroadcast) return "broadcast";
+    return item.type;
+  };
+
+  const getAvatarContent = (item: InAppNotification) => {
+    if (item.sender?.name) {
+      return item.sender.name.charAt(0).toUpperCase();
+    }
+    switch (item.type) {
+      case "appointment":
+        return "📅";
+      case "billing":
+        return "💳";
+      case "payroll":
+        return "💼";
+      case "subscription":
+        return "✨";
+      default:
+        return "🔔";
     }
   };
 
@@ -72,9 +101,9 @@ export function NotificationDrawer() {
     );
     if (diffSec < 60) return t.notifications.justNow;
     const diffMin = Math.floor(diffSec / 60);
-    if (diffMin < 60) return `${diffMin} ${t.notifications.minsAgo}`;
+    if (diffMin < 60) return `${diffMin}m`;
     const diffHours = Math.floor(diffMin / 60);
-    if (diffHours < 24) return `${diffHours} ${t.notifications.hoursAgo}`;
+    if (diffHours < 24) return `${diffHours}h`;
     return new Intl.DateTimeFormat(language === "si" ? "si-LK" : "en", {
       month: "short",
       day: "numeric",
@@ -100,17 +129,17 @@ export function NotificationDrawer() {
         aria-hidden="true"
       />
 
-      {/* Slide-out Drawer Panel */}
+      {/* Slide-out Drawer Panel (Facebook Style) */}
       <aside
-        className="notification-drawer"
+        className="notification-drawer fb-notification-drawer"
         role="dialog"
         aria-modal="true"
         aria-label={t.notifications.title}
       >
         {/* Header */}
-        <div className="notification-drawer-header">
+        <div className="notification-drawer-header fb-drawer-header">
           <div className="drawer-title-group">
-            <div className="drawer-bell-icon">
+            <div className="drawer-bell-icon fb-bell-wrap">
               <Bell size={18} />
             </div>
             <div>
@@ -123,8 +152,8 @@ export function NotificationDrawer() {
               )}
             </div>
             {unreadCount > 0 && (
-              <span className="notification-unread-pill">
-                {unreadCount} {t.notifications.unread.toLowerCase()}
+              <span className="notification-unread-pill fb-unread-badge">
+                {unreadCount}
               </span>
             )}
           </div>
@@ -165,7 +194,7 @@ export function NotificationDrawer() {
 
         {/* Push Notification Opt-In Banner */}
         {pushPermission === "default" && (
-          <div className="push-optin-card">
+          <div className="push-optin-card fb-push-card">
             <div className="push-card-icon">
               <BellRing size={16} />
             </div>
@@ -183,11 +212,28 @@ export function NotificationDrawer() {
           </div>
         )}
 
+        {/* iPhone PWA Hint if iOS Safari */}
+        {isIOS && pushPermission !== "granted" && (
+          <div className="push-optin-card ios-card">
+            <div className="push-card-icon">
+              <Smartphone size={16} />
+            </div>
+            <div className="push-card-text">
+              <strong>iPhone Push Notifications</strong>
+              <p>
+                {language === "si"
+                  ? "iPhone මත Lock Screen push ලබාගැනීමට Share (⎋) ඔබා 'Add to Home Screen' තෝරන්න."
+                  : "To receive lock screen alerts on iPhone, tap Share (⎋) → 'Add to Home Screen'."}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Filter Tabs */}
-        <div className="notification-filter-tabs">
+        <div className="notification-filter-tabs fb-tabs">
           <button
             type="button"
-            className={`tab-btn ${filter === "all" ? "active" : ""}`}
+            className={`tab-btn fb-tab-btn ${filter === "all" ? "active" : ""}`}
             onClick={() => setFilter("all")}
           >
             {t.notifications.all}
@@ -195,7 +241,7 @@ export function NotificationDrawer() {
           </button>
           <button
             type="button"
-            className={`tab-btn ${filter === "unread" ? "active" : ""}`}
+            className={`tab-btn fb-tab-btn ${filter === "unread" ? "active" : ""}`}
             onClick={() => setFilter("unread")}
           >
             {t.notifications.unread}
@@ -205,8 +251,8 @@ export function NotificationDrawer() {
           </button>
         </div>
 
-        {/* Notifications List */}
-        <div className="notification-list-body">
+        {/* Notifications List (Facebook Feed Style) */}
+        <div className="notification-list-body fb-feed-list">
           {filtered.length === 0 ? (
             <div className="notification-empty-state">
               <div className="empty-icon-wrap">
@@ -219,66 +265,71 @@ export function NotificationDrawer() {
             filtered.map((item) => (
               <article
                 key={item.id}
-                className={`notification-item ${item.read ? "is-read" : "is-unread"} ${item.priority === "urgent" ? "is-urgent" : ""} ${item.isBroadcast ? "is-broadcast" : ""}`}
+                className={`fb-notif-item ${item.read ? "is-read" : "is-unread"} ${item.priority === "urgent" ? "is-urgent" : ""}`}
                 onClick={() => handleItemClick(item)}
               >
-                <div
-                  className={`notif-icon-badge ${item.isBroadcast ? "broadcast" : item.type}`}
-                >
-                  {getIcon(item)}
+                {/* Facebook Avatar with Mini Sub-Badge */}
+                <div className="fb-avatar-wrap">
+                  <div className="fb-avatar-circle">
+                    {getAvatarContent(item)}
+                  </div>
+                  <div
+                    className={`fb-subbadge ${getSubBadgeColor(item)}`}
+                    aria-hidden="true"
+                  >
+                    {getSubBadgeIcon(item)}
+                  </div>
                 </div>
 
-                <div className="notif-content">
-                  <div className="notif-top">
-                    <div className="notif-title-row">
-                      <h4 className="notif-title">{item.title}</h4>
-                      {item.isBroadcast && (
-                        <span className="notif-broadcast-tag">
-                          {t.notifications.teamNotice}
-                        </span>
-                      )}
-                      {item.priority === "urgent" && (
-                        <span className="notif-urgent-tag">
-                          <AlertTriangle size={10} />
-                          {t.notifications.priorityUrgent}
-                        </span>
-                      )}
-                    </div>
-                    <span className="notif-time">
-                      {formatTime(item.timestamp)}
-                    </span>
+                {/* Content Area */}
+                <div className="fb-notif-content">
+                  <div className="fb-notif-text">
+                    {item.sender?.name && (
+                      <strong className="fb-sender-name">
+                        {item.sender.name}{" "}
+                      </strong>
+                    )}
+                    <span className="fb-notif-title-inline">{item.title}</span>
+                    {item.priority === "urgent" && (
+                      <span className="fb-urgent-pill">
+                        <AlertTriangle size={10} />
+                        {t.notifications.priorityUrgent}
+                      </span>
+                    )}
                   </div>
 
-                  <p className="notif-message">{item.message}</p>
+                  <p className="fb-notif-body">{item.message}</p>
 
-                  {item.sender && (
-                    <div className="notif-sender-info">
-                      <span>{t.notifications.fromSender}: </span>
-                      <strong>{item.sender.name}</strong>
-                      {item.sender.role && ` (${item.sender.role})`}
-                    </div>
-                  )}
-
-                  {item.targetView && (
-                    <div className="notif-action-hint">
-                      <span>{t.notifications.viewDetails}</span>
-                      <ChevronRight size={13} />
-                    </div>
-                  )}
+                  <div className="fb-notif-bottom">
+                    <span className="fb-notif-timestamp">
+                      {formatTime(item.timestamp)}
+                    </span>
+                    {item.targetView && (
+                      <span className="fb-action-hint">
+                        {t.notifications.viewDetails} →
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                <button
-                  type="button"
-                  className="notif-delete-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    removeNotification(item.id);
-                  }}
-                  title={t.notifications.dismiss}
-                  aria-label={t.notifications.dismiss}
-                >
-                  <X size={14} />
-                </button>
+                {/* Right Area: Facebook Blue Dot or Close button */}
+                <div className="fb-notif-right-action">
+                  {!item.read && (
+                    <span className="fb-blue-unread-dot" title="Unread" />
+                  )}
+                  <button
+                    type="button"
+                    className="fb-dismiss-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeNotification(item.id);
+                    }}
+                    title={t.notifications.dismiss}
+                    aria-label={t.notifications.dismiss}
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
               </article>
             ))
           )}
@@ -286,7 +337,7 @@ export function NotificationDrawer() {
 
         {/* Footer */}
         {notifications.length > 0 && (
-          <div className="notification-drawer-footer">
+          <div className="notification-drawer-footer fb-drawer-footer">
             <button
               type="button"
               className="text-button small-text-btn"

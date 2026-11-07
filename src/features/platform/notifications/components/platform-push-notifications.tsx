@@ -6,6 +6,7 @@ import {
   Megaphone,
   Monitor,
   Smartphone,
+  Tablet,
   CheckCircle,
   AlertTriangle,
   Users,
@@ -13,24 +14,18 @@ import {
   Clock,
   Trash2,
   Sparkles,
+  RefreshCw,
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import {
+  fetchServerDevices,
+  playFacebookNotificationSound,
+  type DeviceRecord,
+} from "@/lib/device-registry";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                              */
 /* ------------------------------------------------------------------ */
-
-interface DeviceRecord {
-  id: string;
-  browser: string;
-  os: string;
-  deviceType: "Mobile" | "Desktop" | "Tablet";
-  userEmail?: string;
-  userName?: string;
-  pushPermission: string;
-  registeredAt: string;
-  lastActive: string;
-}
 
 interface SentMessage {
   id: string;
@@ -98,7 +93,6 @@ const QUICK_TEMPLATES: QuickTemplate[] = [
 /*  Storage Keys                                                       */
 /* ------------------------------------------------------------------ */
 
-const DEVICE_REGISTRY_KEY = "salon_device_registry";
 const PUSH_BROADCAST_KEY = "salon_platform_push_broadcast";
 const SENT_HISTORY_KEY = "salon_platform_push_history";
 
@@ -119,6 +113,7 @@ export function PlatformPushNotifications({
   const [message, setMessage] = useState("");
   const [priority, setPriority] = useState<"normal" | "urgent">("normal");
   const [sending, setSending] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
   const [devices, setDevices] = useState<DeviceRecord[]>([]);
   const [sentHistory, setSentHistory] = useState<SentMessage[]>([]);
@@ -132,43 +127,46 @@ export function PlatformPushNotifications({
         ? {
             pageTitle: "පුෂ් දැනුම්දීම් කේන්ද්‍රය",
             pageDesc:
-              "පද්ධතියට එක් වරක් හෝ ප්‍රවේශ වූ සියලුම උපාංග වලට ක්ෂණික දැනුම්දීම් යවන්න.",
+              "පද්ධතියට එක් වරක් හෝ ප්‍රවේශ වූ සියලුම iPhone, MacBook, Android සහ පරිගණක උපාංග වෙත ක්ෂණික දැනුම්දීම් යවන්න.",
             composeTitle: "නව පණිවිඩයක් සකසන්න",
-            composeDesc: "මාතෘකාව සහ පණිවිඩය ටයිප් කර සියලුම උපාංග වෙත යවන්න.",
+            composeDesc:
+              "මාතෘකාව සහ පණිවිඩය ටයිප් කර සියලුම උපාංග වෙත ක්ෂණිකව නිකුත් කරන්න.",
             titleLabel: "මාතෘකාව",
             titlePlaceholder: "උදා: පද්ධති යාවත්කාලීනය, නිවාඩු දැනුම්දීම...",
             messageLabel: "පණිවිඩය",
             messagePlaceholder:
-              "සියලුම පරිශීලකයින්ට ලැබිය යුතු පණිවිඩය ඇතුලත් කරන්න...",
+              "සියලුම පරිශීලකයින්ගේ උපාංග වෙත ලැබිය යුතු පණිවිඩය ඇතුලත් කරන්න...",
             priorityLabel: "ප්‍රමුඛතාවය",
             normal: "සාමාන්‍ය",
-            urgent: "හදිසි",
+            urgent: "හදිසි (Urgent)",
             templates: "ක්ෂණික ආකෘති",
             sendButton: "සියලුම උපාංග වෙත යවන්න",
-            sendingButton: "යවමින්...",
-            registeredDevices: "ලියාපදිංචි උපාංග",
+            sendingButton: "යවමින් පවතී...",
+            registeredDevices: "ලියාපදිංචි උපාංග නාමාවලිය",
             totalDevices: "මුළු උපාංග",
-            mobileDevices: "ජංගම",
-            desktopDevices: "ඩෙස්ක්ටොප්",
-            pushEnabled: "Push සක්‍රිය",
+            mobileDevices: "iPhone / Mobile",
+            desktopDevices: "MacBook / Desktop",
+            pushEnabled: "Push සක්‍රියයි",
             sentHistory: "යැවූ පණිවිඩ ඉතිහාසය",
             noHistory: "තවම පණිවිඩ යවා නැත.",
             deliveredTo: "යවන ලද්දේ",
             devices_suffix: "උපාංග",
             sentBy: "යවූයේ",
             clearHistory: "ඉතිහාසය මකන්න",
-            sentSuccess: "පණිවිඩය සියලුම උපාංග වෙත සාර්ථකව යවන ලදී!",
-            deviceName: "උපාංගය",
+            sentSuccess:
+              "පණිවිඩය සියලුම iPhone, MacBook, Android සහ පරිගණක වෙත සාර්ථකව යවන ලදී!",
+            deviceName: "උපාංගය සහ ආකෘතිය",
             user: "පරිශීලක",
-            lastSeen: "අවසන්ව පෙනුණේ",
-            status: "තත්ත්වය",
+            lastSeen: "අවසන් ක්‍රියාකාරීත්වය",
+            status: "තල්ලු තත්ත්වය",
             enabled: "සක්‍රියයි",
-            disabled: "අක්‍රියයි",
+            disabled: "නොවිමසූ / සීමිත",
+            refresh: "යාවත්කාලීන කරන්න",
           }
         : {
             pageTitle: "Push Notification Center",
             pageDesc:
-              "Send instant browser push notifications to every device that has logged into the system at least once.",
+              "Send instant Facebook-style push notifications to every iPhone, MacBook, Android, and Desktop device that has logged in at least once.",
             composeTitle: "Compose New Message",
             composeDesc:
               "Type a title and message, then broadcast to all registered devices.",
@@ -177,17 +175,17 @@ export function PlatformPushNotifications({
               "e.g. System Update, Holiday Notice, Urgent Alert...",
             messageLabel: "Message Body",
             messagePlaceholder:
-              "Type the notification message all users will receive on their devices...",
+              "Type the notification message all users will receive on their device screens...",
             priorityLabel: "Priority",
             normal: "Normal",
             urgent: "Urgent",
             templates: "Quick Templates",
             sendButton: "Send to All Devices",
             sendingButton: "Broadcasting...",
-            registeredDevices: "Registered Devices",
+            registeredDevices: "Registered Devices Registry",
             totalDevices: "Total Devices",
-            mobileDevices: "Mobile",
-            desktopDevices: "Desktop",
+            mobileDevices: "iPhone / Mobile",
+            desktopDevices: "MacBook / Desktop",
             pushEnabled: "Push Enabled",
             sentHistory: "Sent Message History",
             noHistory: "No messages have been sent yet.",
@@ -195,34 +193,28 @@ export function PlatformPushNotifications({
             devices_suffix: "devices",
             sentBy: "Sent by",
             clearHistory: "Clear History",
-            sentSuccess: "Message successfully sent to all devices!",
-            deviceName: "Device",
+            sentSuccess:
+              "Message successfully broadcasted to all iPhone, MacBook, Android, and PC devices!",
+            deviceName: "Device & Model",
             user: "User",
             lastSeen: "Last Active",
             status: "Push Status",
             enabled: "Enabled",
-            disabled: "Not Enabled",
+            disabled: "Pending / Inactive",
+            refresh: "Refresh Devices",
           },
     [isSi],
   );
 
-  // Load devices and history on mount
-  useEffect(() => {
-    loadDevices();
-    loadHistory();
-  }, []);
-
-  const loadDevices = () => {
+  const loadDevices = useCallback(async () => {
+    setRefreshing(true);
     try {
-      const raw = localStorage.getItem(DEVICE_REGISTRY_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) setDevices(parsed);
-      }
-    } catch {
-      /* empty */
+      const devList = await fetchServerDevices();
+      setDevices(devList);
+    } finally {
+      setRefreshing(false);
     }
-  };
+  }, []);
 
   const loadHistory = () => {
     try {
@@ -236,13 +228,40 @@ export function PlatformPushNotifications({
     }
   };
 
+  // Load devices and history on mount + sync every 10s
+  useEffect(() => {
+    void loadDevices();
+    loadHistory();
+
+    const interval = setInterval(() => {
+      void loadDevices();
+    }, 10000);
+
+    const onFocus = () => void loadDevices();
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [loadDevices]);
+
   const deviceStats = useMemo(() => {
     const total = Math.max(1, devices.length);
     return {
       total,
-      mobile: devices.filter((d) => d.deviceType === "Mobile").length,
+      mobile: devices.filter(
+        (d) =>
+          d.deviceType === "Mobile" ||
+          d.model.includes("iPhone") ||
+          d.model.includes("Android"),
+      ).length,
       desktop: devices.filter(
-        (d) => d.deviceType === "Desktop" || d.deviceType === "Tablet",
+        (d) =>
+          d.deviceType === "Desktop" ||
+          d.deviceType === "Tablet" ||
+          d.model.includes("MacBook") ||
+          d.model.includes("Mac"),
       ).length,
       pushEnabled: devices.filter((d) => d.pushPermission === "granted").length,
     };
@@ -254,7 +273,7 @@ export function PlatformPushNotifications({
     setPriority(tpl.priority);
   };
 
-  const handleSend = useCallback(() => {
+  const handleSend = useCallback(async () => {
     if (!title.trim() || !message.trim()) return;
     setSending(true);
     setSuccessMsg("");
@@ -269,7 +288,18 @@ export function PlatformPushNotifications({
       sentAt: new Date().toISOString(),
     };
 
-    // 1. Write to shared localStorage key so all tabs on same browser pick it up via storage events
+    // 1. Post to central server API so all remote devices (iPhone, MacBook, etc.) receive it
+    try {
+      await fetch("/api/notifications/broadcast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(broadcastPayload),
+      });
+    } catch {
+      /* server fallback */
+    }
+
+    // 2. Write to shared localStorage key for same-browser multi-tab sync
     try {
       localStorage.setItem(
         PUSH_BROADCAST_KEY,
@@ -279,7 +309,7 @@ export function PlatformPushNotifications({
       /* empty */
     }
 
-    // 2. Fire BroadcastChannel for immediate cross-tab delivery
+    // 3. Fire BroadcastChannel for immediate cross-tab delivery
     if (typeof window !== "undefined" && "BroadcastChannel" in window) {
       try {
         const ch = new BroadcastChannel("salon_platform_push");
@@ -290,7 +320,10 @@ export function PlatformPushNotifications({
       }
     }
 
-    // 3. Fire a native browser push notification on the admin's own device
+    // 4. Play Facebook notification chime
+    playFacebookNotificationSound();
+
+    // 5. Fire native browser notification on admin's own machine
     if (
       typeof window !== "undefined" &&
       "Notification" in window &&
@@ -307,7 +340,7 @@ export function PlatformPushNotifications({
       }
     }
 
-    // 4. Save to sent history
+    // 6. Save to sent history
     const historyEntry: SentMessage = {
       id: broadcastPayload.id,
       title: broadcastPayload.title,
@@ -331,7 +364,7 @@ export function PlatformPushNotifications({
     setPriority("normal");
     setSending(false);
     setSuccessMsg(L.sentSuccess);
-    setTimeout(() => setSuccessMsg(""), 4000);
+    setTimeout(() => setSuccessMsg(""), 4500);
   }, [title, message, priority, senderName, deviceStats.total, sentHistory, L]);
 
   const clearHistory = () => {
@@ -355,6 +388,20 @@ export function PlatformPushNotifications({
     } catch {
       return ts;
     }
+  };
+
+  const getDeviceIcon = (d: DeviceRecord) => {
+    if (d.model.includes("iPad") || d.deviceType === "Tablet") {
+      return <Tablet size={16} />;
+    }
+    if (
+      d.deviceType === "Mobile" ||
+      d.model.includes("iPhone") ||
+      d.model.includes("Android")
+    ) {
+      return <Smartphone size={16} />;
+    }
+    return <Monitor size={16} />;
   };
 
   return (
@@ -445,7 +492,7 @@ export function PlatformPushNotifications({
           className="push-compose-form"
           onSubmit={(e) => {
             e.preventDefault();
-            handleSend();
+            void handleSend();
           }}
         >
           <div className="push-form-field">
@@ -521,8 +568,19 @@ export function PlatformPushNotifications({
       {/* -------- Device Registry Table -------- */}
       <section className="push-devices-section">
         <div className="push-section-header">
-          <Monitor size={16} />
-          <h3>{L.registeredDevices}</h3>
+          <div className="push-header-left">
+            <Monitor size={16} />
+            <h3>{L.registeredDevices}</h3>
+          </div>
+          <button
+            type="button"
+            className="text-button small-text-btn"
+            onClick={() => void loadDevices()}
+            disabled={refreshing}
+          >
+            <RefreshCw size={13} className={refreshing ? "spin" : ""} />
+            <span>{L.refresh}</span>
+          </button>
         </div>
         <div className="table-scroll-wrapper">
           <table className="data-table push-device-table">
@@ -539,48 +597,60 @@ export function PlatformPushNotifications({
                 <tr>
                   <td colSpan={4} className="empty-cell">
                     {isSi
-                      ? "ලියාපදිංචි උපාංග නොමැත — පරිශීලකයින් ප්‍රවේශ වූ විට මෙහි පෙන්වනු ඇත."
-                      : "No registered devices yet — they appear here after users log in."}
+                      ? "ලියාපදිංචි උපාංග නොමැත — පරිශීලකයින් iPhone, MacBook හෝ Android මඟින් ප්‍රවේශ වූ විට මෙහි පෙන්වනු ඇත."
+                      : "No registered devices yet — they appear here when users log in from iPhone, MacBook, or Android."}
                   </td>
                 </tr>
               ) : (
-                devices.map((d) => (
-                  <tr key={d.id}>
-                    <td>
-                      <div className="device-cell">
-                        {d.deviceType === "Mobile" ? (
-                          <Smartphone size={14} />
-                        ) : (
-                          <Monitor size={14} />
-                        )}
-                        <div>
-                          <strong>
-                            {d.browser} · {d.os}
-                          </strong>
-                          <span className="cell-sub">{d.deviceType}</span>
+                devices.map((d) => {
+                  const isApple =
+                    d.os === "iOS" ||
+                    d.os === "macOS" ||
+                    d.os === "iPadOS" ||
+                    d.model.includes("Apple");
+                  return (
+                    <tr key={d.id}>
+                      <td>
+                        <div className="device-cell">
+                          <div
+                            className={`device-avatar-icon ${isApple ? "apple" : d.deviceType.toLowerCase()}`}
+                          >
+                            {getDeviceIcon(d)}
+                          </div>
+                          <div>
+                            <div className="device-model-row">
+                              <strong>{d.model}</strong>
+                              {isApple && (
+                                <span className="apple-tag">Apple</span>
+                              )}
+                            </div>
+                            <span className="cell-sub">
+                              {d.browser} · {d.os}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td>
-                      <div>
-                        <span>{d.userName || "—"}</span>
-                        {d.userEmail && (
-                          <span className="cell-sub">{d.userEmail}</span>
-                        )}
-                      </div>
-                    </td>
-                    <td>{formatTimestamp(d.lastActive)}</td>
-                    <td>
-                      <span
-                        className={`push-status-tag ${d.pushPermission === "granted" ? "enabled" : "disabled"}`}
-                      >
-                        {d.pushPermission === "granted"
-                          ? L.enabled
-                          : L.disabled}
-                      </span>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td>
+                        <div>
+                          <span>{d.userName || "—"}</span>
+                          {d.userEmail && (
+                            <span className="cell-sub">{d.userEmail}</span>
+                          )}
+                        </div>
+                      </td>
+                      <td>{formatTimestamp(d.lastActive)}</td>
+                      <td>
+                        <span
+                          className={`push-status-tag ${d.pushPermission === "granted" ? "enabled" : "disabled"}`}
+                        >
+                          {d.pushPermission === "granted"
+                            ? L.enabled
+                            : L.disabled}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
@@ -590,8 +660,10 @@ export function PlatformPushNotifications({
       {/* -------- Sent History -------- */}
       <section className="push-history-section">
         <div className="push-section-header">
-          <Clock size={16} />
-          <h3>{L.sentHistory}</h3>
+          <div className="push-header-left">
+            <Clock size={16} />
+            <h3>{L.sentHistory}</h3>
+          </div>
           {sentHistory.length > 0 && (
             <button
               type="button"

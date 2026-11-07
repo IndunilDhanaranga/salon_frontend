@@ -11,7 +11,10 @@ import React, {
 import type { Appointment, Order, PayrollRun, Tenant } from "@/lib/types";
 import type { WorkspaceData } from "@/features/business/hooks/use-business-data";
 import { useTranslation } from "@/lib/i18n";
-import { registerCurrentDevice } from "@/lib/device-registry";
+import {
+  registerCurrentDevice,
+  playFacebookNotificationSound,
+} from "@/lib/device-registry";
 import type {
   BroadcastPayload,
   CurrentUser,
@@ -30,43 +33,6 @@ type Props = {
   onView?: (view: any) => void;
   children: React.ReactNode;
 };
-
-/**
- * Melodic 2-tone chime synthesized in-browser via Web Audio API.
- * Guaranteed zero network dependencies and instantaneous playback.
- */
-function playNotificationChime() {
-  try {
-    if (typeof window === "undefined") return;
-    const AudioCtx =
-      window.AudioContext ||
-      (window as unknown as { webkitAudioContext: typeof AudioContext })
-        .webkitAudioContext;
-    if (!AudioCtx) return;
-    const ctx = new AudioCtx();
-    if (ctx.state === "suspended") {
-      void ctx.resume();
-    }
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = "sine";
-    // Soft two-pitch chime (F#5 739.99 Hz -> A#5 932.33 Hz)
-    osc.frequency.setValueAtTime(739.99, ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(932.33, ctx.currentTime + 0.12);
-
-    gain.gain.setValueAtTime(0.08, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.38);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start();
-    osc.stop(ctx.currentTime + 0.39);
-  } catch {
-    // Autoplay restrictions or unavailable audio context
-  }
-}
 
 /**
  * Native Browser Web Push Notification
@@ -144,7 +110,7 @@ export function NotificationProvider({
       setPushPermission(result);
       registerCurrentDevice(currentUser, tenant.slug);
       if (result === "granted") {
-        playNotificationChime();
+        playFacebookNotificationSound();
         triggerBrowserPush(
           language === "si"
             ? "තල්ලු දැනුම්දීම් සක්‍රිය කරන ලදී"
@@ -287,7 +253,7 @@ export function NotificationProvider({
               if (prev.some((item) => item.id === notifItem.id)) return prev;
               return [notifItem, ...prev];
             });
-            playNotificationChime();
+            playFacebookNotificationSound();
             triggerBrowserPush(
               notifItem.title,
               notifItem.message,
@@ -319,7 +285,7 @@ export function NotificationProvider({
             });
 
             // Trigger instant push and audio feedback for the received broadcast
-            playNotificationChime();
+            playFacebookNotificationSound();
             triggerBrowserPush(
               payload.title,
               payload.message,
@@ -352,7 +318,7 @@ export function NotificationProvider({
               if (prev.some((item) => item.id === notifItem.id)) return prev;
               return [notifItem, ...prev];
             });
-            playNotificationChime();
+            playFacebookNotificationSound();
             triggerBrowserPush(
               notifItem.title,
               notifItem.message,
@@ -377,6 +343,75 @@ export function NotificationProvider({
       }
     };
   }, [broadcastStorageKey, tenant.slug, onView]);
+
+  // 2B. Central Server Broadcast Sync: Ensures iPhones, iPads, MacBooks, and remote PCs all receive alerts
+  useEffect(() => {
+    let lastSync = new Date(Date.now() - 60000).toISOString();
+
+    const syncServerBroadcasts = async () => {
+      try {
+        const res = await fetch(
+          `/api/notifications/broadcast?since=${encodeURIComponent(lastSync)}`,
+          { cache: "no-store" },
+        );
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json.broadcasts) && json.broadcasts.length > 0) {
+            lastSync = new Date().toISOString();
+            json.broadcasts.forEach(
+              (b: {
+                id: string;
+                title: string;
+                message: string;
+                sentAt: string;
+                sentBy: string;
+                priority?: "normal" | "urgent";
+                category?: string;
+                targetView?: string;
+              }) => {
+                const notifItem: InAppNotification = {
+                  id: b.id,
+                  type: (b.category as any) || "system",
+                  title: b.title,
+                  message: b.message,
+                  timestamp: b.sentAt,
+                  read: false,
+                  sender: { name: b.sentBy, role: "Platform Broadcast" },
+                  isBroadcast: true,
+                  priority: b.priority || "normal",
+                  targetView: b.targetView as any,
+                };
+                setBroadcastNotifications((prev) => {
+                  if (prev.some((item) => item.id === notifItem.id))
+                    return prev;
+                  return [notifItem, ...prev];
+                });
+                playFacebookNotificationSound();
+                triggerBrowserPush(
+                  notifItem.title,
+                  notifItem.message,
+                  notifItem.targetView,
+                  onView,
+                );
+                setActiveToast(notifItem);
+              },
+            );
+          }
+        }
+      } catch {
+        // Network sync silent fallback
+      }
+    };
+
+    const interval = setInterval(syncServerBroadcasts, 8000);
+    const onFocus = () => void syncServerBroadcasts();
+    window.addEventListener("focus", onFocus);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener("focus", onFocus);
+    };
+  }, [onView]);
 
   // 3. Generate smart operational notifications from live tenant business data
   const operationalNotifications = useMemo<InAppNotification[]>(() => {
@@ -594,7 +629,7 @@ export function NotificationProvider({
         return updated;
       });
 
-      playNotificationChime();
+      playFacebookNotificationSound();
       triggerBrowserPush(
         newNotif.title,
         newNotif.message,
@@ -653,8 +688,26 @@ export function NotificationProvider({
         }
       }
 
-      // 3. Play chime and show toast on sender's device too
-      playNotificationChime();
+      // 3. Post to central server API for cross-device delivery (iPhone, MacBook, Android)
+      void fetch("/api/notifications/broadcast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: newBroadcast.id,
+          title: newBroadcast.title,
+          message: newBroadcast.message,
+          priority: newBroadcast.priority,
+          category: newBroadcast.type,
+          targetAudience: newBroadcast.audience,
+          targetView: newBroadcast.targetView,
+          sentBy: newBroadcast.sender?.name || "Salon Team",
+        }),
+      }).catch(() => {
+        // Local fallback
+      });
+
+      // 4. Play Facebook chime and show toast on sender's device too
+      playFacebookNotificationSound();
       triggerBrowserPush(
         newBroadcast.title,
         newBroadcast.message,

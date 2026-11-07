@@ -1,0 +1,60 @@
+{
+  "devices": [
+    {
+      "id": "dev-windows-chrome-dy8gd",
+      "browser": "Chrome",
+      "os": "Windows",
+      "deviceType": "Desktop",
+      "model": "Windows PC",
+      "userEmail": "admin@salon.test",
+      "userName": "Platform Admin",
+      "pushPermission": "granted",
+      "registeredAt": "2026-11-07T11:24:41.728Z",
+      "lastActive": "2026-11-07T12:19:12.598Z"
+    },
+    {
+      "id": "dev-windows-edge-uhxln",
+      "browser": "Edge",
+      "os": "Windows",
+      "deviceType": "Desktop",
+      "model": "Windows PC",
+      "userEmail": "admin@salon.test",
+      "userName": "Platform Admin",
+      "pushPermission": "granted",
+      "registeredAt": "2026-11-07T11:24:44.474Z",
+      "lastActive": "2026-11-07T12:20:02.271Z"
+    }
+  ],
+  "broadcasts": [
+    {
+      "id": "push-1794054048116-0hbvk",
+      "title": "Enna En",
+      "message": "occoovdo",
+      "priority": "normal",
+      "category": "system",
+      "targetAudience": "all",
+      "sentBy": "Platform Admin",
+      "sentAt": "2026-11-07T12:20:48.128Z"
+    },
+    {
+      "id": "push-1794054013970-vfm1x",
+      "title": "Urgent System Notice",
+      "message": "Important: Please review this urgent notice and take necessary action immediately.",
+      "priority": "urgent",
+      "category": "system",
+      "targetAudience": "all",
+      "sentBy": "Platform Admin",
+      "sentAt": "2026-11-07T12:20:14.026Z"
+    },
+    {
+      "id": "push-1794053966517-ix7vm",
+      "title": "Urgent System Notice",
+      "message": "Important: Please review this urgent notice and take necessary action immediately.",
+      "priority": "urgent",
+      "category": "system",
+      "targetAudience": "all",
+      "sentBy": "Platform Admin",
+      "sentAt": "2026-11-07T12:19:26.822Z"
+    }
+  ]
+}

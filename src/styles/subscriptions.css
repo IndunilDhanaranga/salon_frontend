@@ -448,38 +448,39 @@
 }
 
 .platform-sidebar {
-  width: 270px;
-  flex: 0 0 270px;
-  background: var(--pine);
+  width: 228px;
+  flex: 0 0 228px;
+  background: var(--pine-deep);
   color: var(--sidebar-text);
   display: flex;
   flex-direction: column;
   position: sticky;
   top: 0;
   height: 100vh;
-  border-right: 1px solid rgba(255, 255, 255, 0.08);
-  padding: 1.25rem 1rem;
+  border-right: 1px solid var(--sidebar-line);
+  padding: 14px 8px 10px;
   z-index: 40;
+  box-sizing: border-box;
 }
 
 .platform-sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  margin-bottom: 1rem;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--sidebar-line);
+  margin-bottom: 10px;
 }
 
 .platform-sidebar .brand {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  color: #fff;
+  gap: 6px;
+  color: var(--sidebar-text);
   font-family: var(--font-display);
-  font-size: 1.25rem;
+  font-size: 19px;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
   text-decoration: none;
 }
 
@@ -549,18 +550,21 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.65rem 0.85rem;
+  gap: 8px;
+  padding: 6px 8px;
+  height: 34px;
+  min-height: 34px;
   background: transparent;
   border: 1px solid transparent;
-  border-radius: var(--radius);
-  color: rgba(255, 255, 255, 0.75);
+  border-radius: 6px;
+  color: var(--sidebar-label);
   font: inherit;
-  font-size: 13px;
-  font-weight: 550;
+  font-size: 12.5px;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
   text-align: left;
+  box-sizing: border-box;
 }
 
 .platform-nav-button:hover {
@@ -1139,13 +1143,16 @@
 
   .platform-sidebar {
     position: fixed;
-    top: 50px;
+    top: 0;
     left: 0;
     bottom: 0;
-    height: calc(100vh - 50px);
+    width: min(84vw, 305px);
+    height: 100dvh;
     transform: translateX(-100%);
-    transition: transform 0.25s ease;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 6px 0 28px rgba(0, 0, 0, 0.45);
+    border-radius: 0 24px 24px 0;
+    z-index: 1001;
   }
 
   .platform-sidebar.is-open {

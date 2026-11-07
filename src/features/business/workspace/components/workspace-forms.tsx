@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { X, ArrowRight } from "lucide-react";
 import type { BookingStaff, Branch, Staff, Tenant } from "@/lib/types";
-import { useBranchApi } from "@/features/workspace/branch-context";
+import { useBranchApi } from "@/features/business/branches/branch-context";
 import { message, salonDateTime } from "@/lib/format";
 import { useTranslation } from "@/lib/i18n";
 

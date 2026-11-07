@@ -23,40 +23,93 @@ export function AccessMembers({
 }: Props) {
   const { t, language } = useTranslation();
   return (
-    <div className="table-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>{t.payroll.member}</th>
-            <th>{t.access.roleName}</th>
-            <th>{t.branches.branchAccess}</th>
-            <th>{t.access.permissions}</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.members.map((member) => {
-            const role = data.roles.find((item) => item.id === member.role_id);
-            const own = member.user.id === currentUserId;
-            const editable =
-              !own &&
-              role &&
-              !role.is_owner &&
-              role.permissions.every((key) => tenant.permissions.includes(key));
-            return (
-              <tr key={member.id}>
-                <td>
-                  <div className="client-cell">
-                    <span className="client-avatar">
-                      {initials(member.user.name)}
-                    </span>
-                    <div>
-                      <strong>{member.user.name}</strong>
-                      <span className="cell-sub">{member.user.email}</span>
-                    </div>
+    <>
+      <div className="mobile-records" aria-label={t.access.title}>
+        {data.members.map((member) => {
+          const role = data.roles.find((item) => item.id === member.role_id);
+          const own = member.user.id === currentUserId;
+          const editable =
+            !own &&
+            role &&
+            !role.is_owner &&
+            role.permissions.every((key) => tenant.permissions.includes(key));
+          return (
+            <article key={member.id} className="mobile-record">
+              <div className="mobile-record-heading">
+                <div className="client-cell">
+                  <span className="client-avatar">
+                    {initials(member.user.name)}
+                  </span>
+                  <div>
+                    <strong>{member.user.name}</strong>
+                    <span className="cell-sub">{member.user.email}</span>
                   </div>
-                </td>
-                <td>
-                  {editable ? (
+                </div>
+                <span
+                  className="status completed"
+                  style={{ fontSize: "0.75rem" }}
+                >
+                  {member.role === "Owner" ? t.access.owner : member.role}
+                </span>
+              </div>
+
+              <div style={{ marginTop: 12 }}>
+                <span
+                  className="cell-sub"
+                  style={{ display: "block", marginBottom: 6, fontSize: 11 }}
+                >
+                  {t.branches.branchAccess}:
+                </span>
+                {!member.branch_ids || member.branch_ids.length === 0 ? (
+                  <span
+                    className="branch-chip-xs"
+                    style={{
+                      background: "var(--mint)",
+                      color: "var(--teal)",
+                      padding: "3px 8px",
+                      borderRadius: 4,
+                      fontSize: "0.78rem",
+                      fontWeight: 500,
+                      display: "inline-block",
+                    }}
+                  >
+                    🌐 {t.branches.allBranches}
+                  </span>
+                ) : (
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: 4 }}>
+                    {member.branch_ids.map((id) => {
+                      const branch = data.branches?.find((b) => b.id === id);
+                      return (
+                        <span
+                          key={id}
+                          className="branch-chip-xs"
+                          style={{
+                            background: "rgba(0, 0, 0, 0.06)",
+                            padding: "3px 6px",
+                            borderRadius: 4,
+                            fontSize: "0.78rem",
+                            display: "inline-block",
+                          }}
+                        >
+                          🏢 {branch?.name ?? id}
+                        </span>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+              <div className="mobile-record-meta" style={{ marginTop: 14 }}>
+                {editable ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      gap: 10,
+                      width: "100%",
+                    }}
+                  >
                     <select
                       className="compact-select"
                       value={member.role_id}
@@ -65,6 +118,7 @@ export function AccessMembers({
                       onChange={(event) =>
                         onRole(member.id, event.target.value)
                       }
+                      style={{ maxWidth: 160 }}
                     >
                       {assignable.map((item) => (
                         <option value={item.id} key={item.id}>
@@ -72,59 +126,6 @@ export function AccessMembers({
                         </option>
                       ))}
                     </select>
-                  ) : member.role === "Owner" ? (
-                    t.access.owner
-                  ) : (
-                    member.role
-                  )}
-                </td>
-                <td>
-                  {!member.branch_ids || member.branch_ids.length === 0 ? (
-                    <span
-                      className="branch-chip-xs"
-                      style={{
-                        background: "var(--mint)",
-                        color: "var(--teal)",
-                        padding: "2px 8px",
-                        borderRadius: 4,
-                        fontSize: "0.78rem",
-                        fontWeight: 500,
-                        display: "inline-block",
-                      }}
-                    >
-                      🌐 {t.branches.allBranches}
-                    </span>
-                  ) : (
-                    <div
-                      style={{
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 4,
-                      }}
-                    >
-                      {member.branch_ids.map((id) => {
-                        const branch = data.branches?.find((b) => b.id === id);
-                        return (
-                          <span
-                            key={id}
-                            className="branch-chip-xs"
-                            style={{
-                              background: "rgba(0, 0, 0, 0.06)",
-                              padding: "2px 6px",
-                              borderRadius: 4,
-                              fontSize: "0.78rem",
-                              display: "inline-block",
-                            }}
-                          >
-                            🏢 {branch?.name ?? id}
-                          </span>
-                        );
-                      })}
-                    </div>
-                  )}
-                </td>
-                <td>
-                  {editable ? (
                     <button
                       className="text-button danger-text"
                       disabled={busy}
@@ -134,23 +135,159 @@ export function AccessMembers({
                         ? "ප්‍රවේශය අවලංගු කරන්න"
                         : "Revoke access"}
                     </button>
-                  ) : (
-                    <span className="status completed">
-                      {own
-                        ? language === "si"
-                          ? "ඔබගේ ගිණුම"
-                          : "Your account"
-                        : language === "si"
-                          ? "ආරක්ෂිතයි"
-                          : "Protected"}
-                    </span>
-                  )}
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </div>
+                  </div>
+                ) : (
+                  <span className="status completed" style={{ fontSize: 11 }}>
+                    {own
+                      ? language === "si"
+                        ? "ඔබගේ ගිණුම"
+                        : "Your account"
+                      : language === "si"
+                        ? "ආරක්ෂිතයි"
+                        : "Protected"}
+                  </span>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+
+      <div className="table-scroll desktop-record-table">
+        <table>
+          <thead>
+            <tr>
+              <th>{t.payroll.member}</th>
+              <th>{t.access.roleName}</th>
+              <th>{t.branches.branchAccess}</th>
+              <th>{t.access.permissions}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {data.members.map((member) => {
+              const role = data.roles.find(
+                (item) => item.id === member.role_id,
+              );
+              const own = member.user.id === currentUserId;
+              const editable =
+                !own &&
+                role &&
+                !role.is_owner &&
+                role.permissions.every((key) =>
+                  tenant.permissions.includes(key),
+                );
+              return (
+                <tr key={member.id}>
+                  <td>
+                    <div className="client-cell">
+                      <span className="client-avatar">
+                        {initials(member.user.name)}
+                      </span>
+                      <div>
+                        <strong>{member.user.name}</strong>
+                        <span className="cell-sub">{member.user.email}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    {editable ? (
+                      <select
+                        className="compact-select"
+                        value={member.role_id}
+                        disabled={busy}
+                        aria-label={"Role for " + member.user.name}
+                        onChange={(event) =>
+                          onRole(member.id, event.target.value)
+                        }
+                      >
+                        {assignable.map((item) => (
+                          <option value={item.id} key={item.id}>
+                            {item.name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : member.role === "Owner" ? (
+                      t.access.owner
+                    ) : (
+                      member.role
+                    )}
+                  </td>
+                  <td>
+                    {!member.branch_ids || member.branch_ids.length === 0 ? (
+                      <span
+                        className="branch-chip-xs"
+                        style={{
+                          background: "var(--mint)",
+                          color: "var(--teal)",
+                          padding: "2px 8px",
+                          borderRadius: 4,
+                          fontSize: "0.78rem",
+                          fontWeight: 500,
+                          display: "inline-block",
+                        }}
+                      >
+                        🌐 {t.branches.allBranches}
+                      </span>
+                    ) : (
+                      <div
+                        style={{
+                          display: "flex",
+                          flexWrap: "wrap",
+                          gap: 4,
+                        }}
+                      >
+                        {member.branch_ids.map((id) => {
+                          const branch = data.branches?.find(
+                            (b) => b.id === id,
+                          );
+                          return (
+                            <span
+                              key={id}
+                              className="branch-chip-xs"
+                              style={{
+                                background: "rgba(0, 0, 0, 0.06)",
+                                padding: "2px 6px",
+                                borderRadius: 4,
+                                fontSize: "0.78rem",
+                                display: "inline-block",
+                              }}
+                            >
+                              🏢 {branch?.name ?? id}
+                            </span>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </td>
+                  <td>
+                    {editable ? (
+                      <button
+                        className="text-button danger-text"
+                        disabled={busy}
+                        onClick={() => onRevoke(member.id)}
+                      >
+                        {language === "si"
+                          ? "ප්‍රවේශය අවලංගු කරන්න"
+                          : "Revoke access"}
+                      </button>
+                    ) : (
+                      <span className="status completed">
+                        {own
+                          ? language === "si"
+                            ? "ඔබගේ ගිණුම"
+                            : "Your account"
+                          : language === "si"
+                            ? "ආරක්ෂිතයි"
+                            : "Protected"}
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

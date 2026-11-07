@@ -10,6 +10,7 @@ import { PayrollView } from "@/features/business/payroll/components/payroll-view
 import { AccessView } from "@/features/business/access/components/access-view";
 import { CatalogView } from "@/features/business/catalog/components/catalog-view";
 import { BillingView } from "@/features/business/billing/components/billing-view";
+import { PosView } from "@/features/business/billing/components/pos-view";
 import { WorkspaceDetails } from "./workspace-details";
 import { SubscriptionView } from "@/features/business/subscription/components/subscription-view";
 import { BusinessReportsView } from "@/features/business/reports/components/business-reports-view";
@@ -69,8 +70,10 @@ export function BusinessContent({ workspace: w, tenant, session }: Props) {
     );
   if (w.view === "catalog" && can("catalog.view"))
     return <CatalogView tenant={tenant} />;
+  if (w.view === "pos" && can("orders.view"))
+    return <PosView tenant={tenant} onView={w.setView} />;
   if (w.view === "billing" && can("orders.view"))
-    return <BillingView tenant={tenant} />;
+    return <BillingView tenant={tenant} onView={w.setView} />;
   if (
     w.view === "deductions" &&
     (can("deductions.view") || can("payroll.view"))

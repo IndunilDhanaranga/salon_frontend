@@ -13,21 +13,25 @@ import {
 import { api } from "@/lib/api";
 import type { Session } from "@/lib/types";
 import { message } from "@/lib/format";
+import { autoRequestPushPermission } from "@/lib/device-registry";
 
 export function AuthScreen({
   onAuthenticated,
   notice,
+  initialRegister = false,
 }: {
   onAuthenticated: (session: Session, startTour?: boolean) => void;
   notice?: string;
+  initialRegister?: boolean;
 }) {
-  const [register, setRegister] = useState(false);
+  const [register, setRegister] = useState(initialRegister);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
   async function signIn(form: FormData, demo = false, startTour = false) {
     setBusy(true);
     setError("");
+    void autoRequestPushPermission();
     const values = Object.fromEntries(form);
     const body = demo
       ? { email: "demo@salon.test", password: "password" }

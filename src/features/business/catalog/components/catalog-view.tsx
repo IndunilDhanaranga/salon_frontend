@@ -2,7 +2,7 @@
 import { canPermission } from "@/lib/access";
 
 import { useCallback, useEffect, useState } from "react";
-import { Plus, Scissors, Package, ArrowUpRight, X } from "lucide-react";
+import { Plus, Scissors, Package, ArrowUpRight, Edit3, X } from "lucide-react";
 import { useBranchApi } from "@/features/workspace/branch-context";
 import type { CatalogItem, ListResponse, Tenant } from "@/lib/types";
 import { message, money } from "@/lib/format";
@@ -175,65 +175,142 @@ export function CatalogView({ tenant }: { tenant: Tenant }) {
           <p>{t.catalog.subtitle}</p>
         </div>
       ) : (
-        <div className="table-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>{t.catalog.item}</th>
-                <th>{t.catalog.type}</th>
-                <th>{t.catalog.price}</th>
-                <th>{t.catalog.status}</th>
-                <th>
-                  <span className="sr-only">{t.common.edit}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {visible.map((item) => (
-                <tr key={item.id}>
-                  <td>
-                    <div className="client-cell">
-                      <span className="catalog-icon">
-                        {item.type === "service" ? (
-                          <Scissors size={18} />
-                        ) : (
-                          <Package size={18} />
-                        )}
-                      </span>
-                      <strong>{item.name}</strong>
-                    </div>
-                  </td>
-                  <td className="capitalize">
-                    {item.type === "service"
-                      ? t.catalog.service
-                      : t.catalog.product}
-                  </td>
-                  <td className="money-label">
-                    {money(item.price_minor, tenant.currency)}
-                  </td>
-                  <td>
+        <>
+          <div className="mobile-records" aria-label={t.catalog.title}>
+            {visible.map((item) => (
+              <article key={item.id} className="mobile-record">
+                <div className="mobile-record-heading">
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
                     <span
-                      className={`status ${item.active ? "completed" : "cancelled"}`}
+                      className="catalog-icon"
+                      style={{
+                        width: 28,
+                        height: 28,
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
                     >
-                      {item.active ? t.common.active : t.common.inactive}
+                      {item.type === "service" ? (
+                        <Scissors size={15} />
+                      ) : (
+                        <Package size={15} />
+                      )}
                     </span>
-                  </td>
-                  <td>
-                    {canManage && (
-                      <button
-                        className="row-action"
-                        aria-label={`${t.catalog.editItem} ${item.name}`}
-                        onClick={() => setForm(item)}
-                      >
-                        <ArrowUpRight size={18} />
-                      </button>
-                    )}
-                  </td>
+                    <span
+                      className="capitalize"
+                      style={{
+                        fontSize: 12,
+                        color: "var(--muted)",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {item.type === "service"
+                        ? t.catalog.service
+                        : t.catalog.product}
+                    </span>
+                  </div>
+                  <span
+                    className={`status ${item.active ? "completed" : "cancelled"}`}
+                  >
+                    {item.active ? t.common.active : t.common.inactive}
+                  </span>
+                </div>
+                <h3 style={{ margin: "10px 0 4px", fontSize: 15 }}>
+                  {item.name}
+                </h3>
+                <div className="mobile-record-meta" style={{ marginTop: 12 }}>
+                  <strong className="money-label" style={{ fontSize: 14 }}>
+                    {money(item.price_minor, tenant.currency)}
+                  </strong>
+                  {canManage && (
+                    <button
+                      className="button secondary small-button"
+                      aria-label={`${t.catalog.editItem} ${item.name}`}
+                      onClick={() => setForm(item)}
+                      style={{
+                        minHeight: 34,
+                        padding: "0 12px",
+                        gap: 6,
+                        display: "inline-flex",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Edit3 size={14} />
+                      {t.common.edit}
+                    </button>
+                  )}
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="table-scroll desktop-record-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>{t.catalog.item}</th>
+                  <th>{t.catalog.type}</th>
+                  <th>{t.catalog.price}</th>
+                  <th>{t.catalog.status}</th>
+                  <th>
+                    <span className="sr-only">{t.common.edit}</span>
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {visible.map((item) => (
+                  <tr key={item.id}>
+                    <td>
+                      <div className="client-cell">
+                        <span className="catalog-icon">
+                          {item.type === "service" ? (
+                            <Scissors size={18} />
+                          ) : (
+                            <Package size={18} />
+                          )}
+                        </span>
+                        <strong>{item.name}</strong>
+                      </div>
+                    </td>
+                    <td className="capitalize">
+                      {item.type === "service"
+                        ? t.catalog.service
+                        : t.catalog.product}
+                    </td>
+                    <td className="money-label">
+                      {money(item.price_minor, tenant.currency)}
+                    </td>
+                    <td>
+                      <span
+                        className={`status ${item.active ? "completed" : "cancelled"}`}
+                      >
+                        {item.active ? t.common.active : t.common.inactive}
+                      </span>
+                    </td>
+                    <td>
+                      {canManage && (
+                        <button
+                          className="row-action"
+                          aria-label={`${t.catalog.editItem} ${item.name}`}
+                          onClick={() => setForm(item)}
+                        >
+                          <ArrowUpRight size={18} />
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
     </section>
   );

@@ -63,6 +63,7 @@ export interface TranslationDictionary {
     appointments: string;
     team: string;
     catalog: string;
+    pos?: string;
     billing: string;
     deductions: string;
     payroll: string;
@@ -106,6 +107,11 @@ export interface TranslationDictionary {
       description: string;
     };
     catalog: {
+      label: string;
+      title: string;
+      description: string;
+    };
+    pos?: {
       label: string;
       title: string;
       description: string;
@@ -397,6 +403,7 @@ export interface TranslationDictionary {
     plans: string;
     access: string;
     accounts: string;
+    pushNotifications: string;
   };
   businessReports: {
     title: string;
@@ -563,5 +570,62 @@ export interface TranslationDictionary {
     confirmDelete: string;
     cannotDeleteMain: string;
     toggleActive: string;
+  };
+  notifications: {
+    title: string;
+    all: string;
+    unread: string;
+    markAllRead: string;
+    clearAll: string;
+    emptyTitle: string;
+    emptyDesc: string;
+    justNow: string;
+    minsAgo: string;
+    hoursAgo: string;
+    yesterday: string;
+    viewDetails: string;
+    dismiss: string;
+    upcomingAppointment: string;
+    unpaidBill: string;
+    trialExpiring: string;
+    draftPayrollReady: string;
+    sendNotice: string;
+    broadcastTitle: string;
+    broadcastDesc: string;
+    noticeTitle: string;
+    noticeMessage: string;
+    noticeTitlePlaceholder: string;
+    noticeMessagePlaceholder: string;
+    targetAudience: string;
+    allUsers: string;
+    stylists: string;
+    cashiers: string;
+    management: string;
+    category: string;
+    categoryAnnouncement: string;
+    categoryUrgent: string;
+    categoryAppointment: string;
+    categoryBilling: string;
+    priority: string;
+    priorityNormal: string;
+    priorityUrgent: string;
+    actionShortcut: string;
+    noShortcut: string;
+    sendButton: string;
+    sending: string;
+    sentSuccess: string;
+    enablePush: string;
+    pushActive: string;
+    pushBlocked: string;
+    pushBannerTitle: string;
+    pushBannerDesc: string;
+    teamNotice: string;
+    fromSender: string;
+    quickTemplates: string;
+    templateBriefing: string;
+    templateMeeting: string;
+    templatePromo: string;
+    templateRush: string;
+    sendingAs: string;
   };
 }

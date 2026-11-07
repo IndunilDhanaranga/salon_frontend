@@ -7,7 +7,8 @@ export type PlatformTab =
   | "plans"
   | "subscriptions"
   | "access"
-  | "accounts";
+  | "accounts"
+  | "notifications";
 
 export type PlanValues = Pick<
   Plan,

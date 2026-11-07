@@ -83,11 +83,7 @@ export function BranchDropdown({
   }
 
   return (
-    <div
-      ref={containerRef}
-      className="branch-dropdown-wrapper"
-      style={{ position: "relative", display: "inline-block" }}
-    >
+    <div ref={containerRef} className="branch-dropdown-wrapper">
       <button
         type="button"
         className={`branch-select-button ${open ? "open" : ""}`}

@@ -1,7 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { X, Receipt } from "lucide-react";
+import {
+  X,
+  Receipt,
+  Check,
+  Clock,
+  Banknote,
+  CreditCard,
+  History,
+} from "lucide-react";
 import { useBranchApi } from "@/features/workspace/branch-context";
 import type { CatalogItem, Order, Tenant } from "@/lib/types";
 import { message, money } from "@/lib/format";
@@ -17,6 +25,7 @@ export function BillComposer({
   canAssignStaff = true,
   onSaved,
   onClose,
+  onViewBills,
 }: {
   tenant: Tenant;
   catalog: CatalogItem[];
@@ -24,13 +33,17 @@ export function BillComposer({
   defaultStaffId?: string | null;
   canAssignStaff?: boolean;
   onSaved: (order: Order) => Promise<void>;
-  onClose: () => void;
+  onClose?: () => void;
+  onViewBills?: () => void;
 }) {
   const api = useBranchApi();
   const { t, language } = useTranslation();
   const [lines, setLines] = useState<{ id: string; quantity: number }[]>([]);
   const [selectedStaffId, setSelectedStaffId] = useState(defaultStaffId || "");
-  const [paid, setPaid] = useState(false);
+  const [paid, setPaid] = useState(true);
+  const [paymentMethod, setPaymentMethod] = useState<"cash" | "card" | "other">(
+    "cash",
+  );
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const total = lines.reduce(
@@ -55,11 +68,11 @@ export function BillComposer({
             quantity: line.quantity,
           })),
           status: paid ? "paid" : "unpaid",
-          payment_method: paid ? form.get("payment_method") : null,
+          payment_method: paid ? paymentMethod : null,
         },
       });
       await onSaved(result.data);
-      onClose();
+      onClose?.();
     } catch (err) {
       setError(message(err));
     } finally {
@@ -68,19 +81,34 @@ export function BillComposer({
   }
   return (
     <section className="panel bill-composer">
-      <div className="section-heading">
+      <div className="section-heading pos-composer-heading">
         <div>
           <h2>{t.billing.newCustomerBill}</h2>
           <p>{t.billing.subtitle}</p>
         </div>
-        <button
-          className="icon-button"
-          disabled={busy}
-          aria-label={t.common.close}
-          onClick={onClose}
-        >
-          <X size={20} />
-        </button>
+        <div className="pos-composer-actions">
+          {onViewBills && (
+            <button
+              type="button"
+              className="text-button pos-history-pill"
+              onClick={onViewBills}
+            >
+              <History size={14} />
+              <span>{t.billing.title || "Bills"}</span>
+            </button>
+          )}
+          {onClose && (
+            <button
+              type="button"
+              className="icon-button"
+              disabled={busy}
+              aria-label={t.common.close}
+              onClick={onClose}
+            >
+              <X size={20} />
+            </button>
+          )}
+        </div>
       </div>
       <form
         onSubmit={(event) => {
@@ -160,25 +188,75 @@ export function BillComposer({
           <strong>{money(total, tenant.currency)}</strong>
         </div>
         <div className="form-grid">
-          <label>
-            {t.billing.status}
-            <select
-              value={paid ? "paid" : "unpaid"}
-              onChange={(event) => setPaid(event.target.value === "paid")}
+          <div className="pos-status-group">
+            <span className="field-label">{t.billing.status}</span>
+            <div
+              className="pos-btn-group"
+              role="radiogroup"
+              aria-label={t.billing.status}
             >
-              <option value="unpaid">{t.billing.unpaid}</option>
-              <option value="paid">{t.billing.paid}</option>
-            </select>
-          </label>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={paid}
+                className={`pos-toggle-btn ${paid ? "active paid" : ""}`}
+                onClick={() => setPaid(true)}
+              >
+                <Check size={15} strokeWidth={2.4} />
+                <span>{t.billing.paid}</span>
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={!paid}
+                className={`pos-toggle-btn ${!paid ? "active unpaid" : ""}`}
+                onClick={() => setPaid(false)}
+              >
+                <Clock size={15} strokeWidth={2} />
+                <span>{t.billing.unpaid}</span>
+              </button>
+            </div>
+          </div>
+
           {paid && (
-            <label>
-              {t.billing.paymentMethod}
-              <select name="payment_method" required>
-                <option value="cash">{t.billing.cash}</option>
-                <option value="card">{t.billing.card}</option>
-                <option value="other">Other</option>
-              </select>
-            </label>
+            <div className="pos-status-group">
+              <span className="field-label">{t.billing.paymentMethod}</span>
+              <div
+                className="pos-btn-group"
+                role="radiogroup"
+                aria-label={t.billing.paymentMethod}
+              >
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={paymentMethod === "cash"}
+                  className={`pos-toggle-btn ${paymentMethod === "cash" ? "active" : ""}`}
+                  onClick={() => setPaymentMethod("cash")}
+                >
+                  <Banknote size={15} />
+                  <span>{t.billing.cash}</span>
+                </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={paymentMethod === "card"}
+                  className={`pos-toggle-btn ${paymentMethod === "card" ? "active" : ""}`}
+                  onClick={() => setPaymentMethod("card")}
+                >
+                  <CreditCard size={15} />
+                  <span>{t.billing.card}</span>
+                </button>
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={paymentMethod === "other"}
+                  className={`pos-toggle-btn ${paymentMethod === "other" ? "active" : ""}`}
+                  onClick={() => setPaymentMethod("other")}
+                >
+                  <span>Other</span>
+                </button>
+              </div>
+            </div>
           )}
         </div>
         {error && (

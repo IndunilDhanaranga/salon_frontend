@@ -87,26 +87,48 @@ Laravel calculates money in integer minor units. Bills preserve line description
 
 ```text
 src/
-  app/                       Thin App Router entries and server API bridge
+  app/                       Thin App Router entries, route groups, and server API bridge
+    (auth)/                  Authentication entry routes (/login, /register)
+    (platform)/              Platform route group and layout
+    (business)/              Business route group and layout
+    api/                     Next.js API bridge (/api/backend/*)
   features/
-    auth/                    Sign-in and registration
-    workspace/               Session, tenant selection, shell, navigation
-    business/
-      dashboard/             Daily overview
-      appointments/          Appointment book and booking workflow
-      team/                  Staff details and compensation
-      access/                Roles and membership management
-      catalog/               Services, products, pricing
-      billing/               POS, bills, receipt workflow
-      payroll/               Draft payroll views
-      branches/              Locations and branch pricing
-      deductions/            Expenses and staff advances
-      reports/               Business financial reports
-      subscription/          Subscription status and available plans
-    platform/                SaaS administration
-    tour/                    Guided walkthrough and demo controls
-  lib/                       Shared API contracts, formatting, client helpers
-  styles/                    Focused styles including mobile POS
+    platform/                SaaS administration (completely decoupled)
+      layout/                Independent platform shell, sidebar, header
+      dashboard/             Platform overview and KPI metrics
+      businesses/            Business directory, active/suspended lifecycle
+      plans/                 Subscription packages and module control
+      subscriptions/         Tenant subscription assignments and trial extensions
+      administrators/        Central accounts directory and admin management
+      roles/                 Platform RBAC and permissions manager
+      reports/               Financial analytics (MRR, ARR, GMV by currency)
+      services/              Platform API services
+      hooks/                 Platform data hooks
+      config/                Platform navigation configuration
+      types/                 Platform-specific types
+    business/                Salon operations (completely decoupled)
+      layout/                Independent business shell, sidebar, header
+      dashboard/             Daily operational overview
+      appointments/          Appointment book and scheduling workflow
+      billing/               Mobile POS, customer bills, receipt workflow
+      team/                  Staff details and compensation models
+      catalog/               Services, products, dynamic pricing
+      branches/              Multi-branch management and first-branch setup
+      deductions/            Salon expenses and staff cash advances
+      payroll/               Immutable monthly draft payroll runs
+      reports/               Business financial analytics and date filtering
+      access/                Salon custom roles and membership management
+      subscription/          Plan status, entitlements, and upgrade view
+      tour/                  Permission-aware guided product walkthrough
+      services/              Business API services
+      hooks/                 Business data and workspace state hooks
+      config/                Business navigation configuration
+      types/                 Business-specific domain types
+    auth/                    Shared authentication forms and state
+  components/                Truly shared UI components (ui, forms, feedback)
+  lib/                       Shared API contracts, proxy bridge, formatting, i18n
+  types/                     Shared domain interfaces
+  styles/                    Semantic CSS theme tokens and focused styles
 ```
 
 Keep application routes thin, colocate feature components with their workflows, and reuse the shared API contract. Laravel owns authorization, tenancy, billing calculations, and payroll rules. UI checks make actions discoverable only when permitted; they do not replace backend checks.

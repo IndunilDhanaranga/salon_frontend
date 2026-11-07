@@ -1,16 +1,25 @@
 "use client";
+
+import React from "react";
 import { Scissors } from "lucide-react";
-import { AuthScreen } from "@/features/auth/components/auth-screen";
-import { PlatformView } from "@/features/platform/components/platform-view";
-import { WorkspaceShell } from "@/features/business/workspace/components/workspace-shell";
-import { WorkspaceHeading } from "@/features/business/workspace/components/workspace-heading";
-import { WorkspaceForm } from "@/features/business/workspace/components/workspace-forms";
-import { BusinessContent } from "@/features/business/workspace/components/business-content";
+import { AuthScreen } from "@/features/auth";
+import { PlatformView } from "@/features/platform";
+import {
+  BusinessShell,
+  BusinessHeader,
+  BusinessContent,
+  WorkspaceForm,
+  FirstBranchSetup,
+  BranchApiProvider,
+  ProductTour,
+  DemoBanner,
+  NotificationProvider,
+} from "@/features/business";
+import {
+  registerCurrentDevice,
+  setupAutoPushPermission,
+} from "@/lib/device-registry";
 import { useWorkspace } from "./use-workspace";
-import { BranchApiProvider } from "./branch-context";
-import { FirstBranchSetup } from "@/features/business/branches/components/first-branch-setup";
-import { DemoBanner } from "@/features/tour/demo-banner";
-import { ProductTour } from "@/features/tour/product-tour";
 import {
   I18nProvider,
   LanguagePreferenceModal,
@@ -29,6 +38,15 @@ export function SalonWorkspace() {
 function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
   const { session, tenant } = w;
   const { t, needsLanguageSelection } = useTranslation();
+
+  React.useEffect(() => {
+    if (session) {
+      setupAutoPushPermission(session.user, tenant?.slug);
+    } else {
+      setupAutoPushPermission();
+    }
+  }, [session, tenant?.slug]);
+
   if (w.initializing)
     return (
       <main className="initial-loader" aria-busy="true">
@@ -36,6 +54,7 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
         <p>{t.shell.openingWorkspace}</p>
       </main>
     );
+
   if (!session)
     return (
       <>
@@ -47,6 +66,7 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
         <AuthScreen onAuthenticated={w.authenticate} notice={w.sessionNotice} />
       </>
     );
+
   if (w.platform && session.user.is_platform_admin)
     return (
       <>
@@ -60,6 +80,7 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
         />
       </>
     );
+
   if (!tenant)
     return (
       <>
@@ -73,6 +94,7 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
         </main>
       </>
     );
+
   if (tenant.needs_branch_setup)
     return (
       <FirstBranchSetup
@@ -92,6 +114,7 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
         }
       />
     );
+
   const formPermission =
     w.form === "staff"
       ? "staff.manage"
@@ -99,10 +122,12 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
         ? "payroll.manage"
         : "appointments.manage";
   const isDemo = session.user.email === "demo@salon.test";
+
   function exitDemo() {
     w.setTourOpen(false);
     void w.logout();
   }
+
   return (
     <>
       <LanguagePreferenceModal />
@@ -113,111 +138,125 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
             : w.branchId
         }
       >
-        <WorkspaceShell
-          session={session}
+        <NotificationProvider
           tenant={tenant}
-          view={w.view}
-          busy={w.busy || w.loading}
+          currentUser={{
+            id: session.user.id,
+            name: session.user.name,
+            email: session.user.email,
+            role: tenant.role,
+          }}
+          data={w.data}
           onView={w.setView}
-          onTenant={w.selectTenant}
-          onLogout={() => void w.logout()}
-          onTour={() => w.setTourOpen(true)}
-          onPlatform={
-            session.user.is_platform_admin
-              ? () => w.selectPlatform(true)
-              : undefined
-          }
         >
-          <div className="workspace-body">
-            {isDemo && (
-              <DemoBanner
-                busy={w.busy}
+          <BusinessShell
+            session={session}
+            tenant={tenant}
+            view={w.view}
+            busy={w.busy || w.loading}
+            onView={w.setView}
+            onTenant={w.selectTenant}
+            onLogout={() => void w.logout()}
+            onTour={() => w.setTourOpen(true)}
+            onPlatform={
+              session.user.is_platform_admin
+                ? () => w.selectPlatform(true)
+                : undefined
+            }
+          >
+            <div className="workspace-body">
+              {isDemo && (
+                <DemoBanner
+                  busy={w.busy}
+                  loading={w.loading}
+                  onTour={() => w.setTourOpen(true)}
+                  onExit={exitDemo}
+                />
+              )}
+              <BusinessHeader
+                tenant={tenant}
+                view={w.view}
                 loading={w.loading}
-                onTour={() => w.setTourOpen(true)}
-                onExit={exitDemo}
-              />
-            )}
-            <WorkspaceHeading
-              tenant={tenant}
-              view={w.view}
-              loading={w.loading}
-              busy={w.busy}
-              onRefresh={() => void w.refresh()}
-              onForm={w.openForm}
-              branches={w.branches}
-              activeBranchId={w.activeBranchId}
-              selectedBranchId={w.branchId}
-              hasAllBranchesAccess={w.hasAllBranchesAccess}
-              onSelectBranch={w.setBranchId}
-              onManageBranches={() => w.setView("branches")}
-            />
-            {w.error && (
-              <div className="error-box" role="alert">
-                {w.error}
-                <button
-                  className="text-button"
-                  onClick={() => void w.refresh()}
-                >
-                  {t.common.tryAgain}
-                </button>
-              </div>
-            )}
-            {w.loading ? (
-              <div
-                className="workspace-skeleton"
-                aria-busy="true"
-                aria-label={t.common.loading}
-              >
-                <div />
-                <div />
-                <div />
-                <div />
-                <section />
-              </div>
-            ) : (
-              <BusinessContent
-                key={`business:${tenant.id}:${w.branchId}:${tenant.permissions.join(",")}`}
-                workspace={w}
-                tenant={tenant}
-                session={session}
-              />
-            )}
-          </div>
-          <footer className="workspace-footer">
-            <span>
-              salon. <span>{t.shell.footerBrand}</span>
-            </span>
-            <span>{t.shell.footerTagline}</span>
-          </footer>
-          {w.form &&
-            tenant.status === "active" &&
-            tenant.permissions.includes(formPermission) && (
-              <WorkspaceForm
-                key={tenant.id + w.branchId + w.form + (w.editing?.id ?? "new")}
-                kind={w.form}
-                tenant={tenant}
-                staff={w.data.bookingStaff}
+                busy={w.busy}
+                onRefresh={() => void w.refresh()}
+                onForm={w.openForm}
                 branches={w.branches}
-                editing={w.editing}
-                onClose={() => w.setForm(null)}
-                onSaved={w.refresh}
+                activeBranchId={w.activeBranchId}
+                selectedBranchId={w.branchId}
+                hasAllBranchesAccess={w.hasAllBranchesAccess}
+                onSelectBranch={w.setBranchId}
+                onManageBranches={() => w.setView("branches")}
               />
-            )}
-          {w.tourOpen &&
-            !needsLanguageSelection &&
-            !w.loading &&
-            w.data.tenantId === tenant.id &&
-            tenant.status === "active" && (
-              <ProductTour
-                key={`tour:${tenant.id}:${tenant.permissions.join(",")}`}
-                tenant={tenant}
-                isDemo={isDemo}
-                onView={w.setView}
-                onClose={() => w.setTourOpen(false)}
-                onExitDemo={exitDemo}
-              />
-            )}
-        </WorkspaceShell>
+              {w.error && (
+                <div className="error-box" role="alert">
+                  {w.error}
+                  <button
+                    className="text-button"
+                    onClick={() => void w.refresh()}
+                  >
+                    {t.common.tryAgain}
+                  </button>
+                </div>
+              )}
+              {w.loading ? (
+                <div
+                  className="workspace-skeleton"
+                  aria-busy="true"
+                  aria-label={t.common.loading}
+                >
+                  <div />
+                  <div />
+                  <div />
+                  <div />
+                  <section />
+                </div>
+              ) : (
+                <BusinessContent
+                  key={`business:${tenant.id}:${w.branchId}:${tenant.permissions.join(",")}`}
+                  workspace={w}
+                  tenant={tenant}
+                  session={session}
+                />
+              )}
+            </div>
+            <footer className="workspace-footer">
+              <span>
+                salon. <span>{t.shell.footerBrand}</span>
+              </span>
+              <span>{t.shell.footerTagline}</span>
+            </footer>
+            {w.form &&
+              tenant.status === "active" &&
+              tenant.permissions.includes(formPermission) && (
+                <WorkspaceForm
+                  key={
+                    tenant.id + w.branchId + w.form + (w.editing?.id ?? "new")
+                  }
+                  kind={w.form}
+                  tenant={tenant}
+                  staff={w.data.bookingStaff}
+                  branches={w.branches}
+                  editing={w.editing}
+                  onClose={() => w.setForm(null)}
+                  onSaved={w.refresh}
+                />
+              )}
+            {w.tourOpen &&
+              !needsLanguageSelection &&
+              !w.loading &&
+              w.data.tenantId === tenant.id &&
+              tenant.status === "active" && (
+                <ProductTour
+                  key={`tour:${tenant.id}:${tenant.permissions.join(",")}`}
+                  tenant={tenant}
+                  isDemo={isDemo}
+                  onView={w.setView}
+                  onClose={() => w.setTourOpen(false)}
+                  onExitDemo={exitDemo}
+                />
+              )}
+          </BusinessShell>
+        </NotificationProvider>
       </BranchApiProvider>
     </>
   );

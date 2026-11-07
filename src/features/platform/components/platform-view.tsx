@@ -1,21 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { RefreshCw, AlertCircle } from "lucide-react";
+import React, { useState } from "react";
+import { RefreshCw } from "lucide-react";
 import type { PlatformTenant, Plan, Session } from "@/lib/types";
 import { usePlatform } from "../hooks/use-platform";
 import type { PlatformTab } from "../types";
 import { availablePlatformTab } from "../platform-access";
-import { PlatformSidebar } from "./platform-sidebar";
-import { PlatformOverview } from "./platform-overview";
-import { PlatformReports } from "./platform-reports";
-import { BusinessDirectory } from "./business-directory";
-import { PlanDirectory } from "./plan-directory";
-import { PlatformAccessManager } from "./platform-access-manager";
-import { AccountDirectory } from "./account-directory";
-import { PlanFormDialog } from "./plan-form-dialog";
-import { SubscriptionDialog } from "./subscription-dialog";
-import { useTranslation, LanguageDropdown } from "@/lib/i18n";
+import { PlatformShell } from "../layout/platform-shell";
+import { PlatformOverview } from "../dashboard/components/platform-overview";
+import { PlatformReports } from "../reports/components/platform-reports";
+import { BusinessDirectory } from "../businesses/components/business-directory";
+import { PlanDirectory } from "../plans/components/plan-directory";
+import { PlanFormDialog } from "../plans/components/plan-form-dialog";
+import { PlatformAccessManager } from "../roles/components/platform-access-manager";
+import { AccountDirectory } from "../administrators/components/account-directory";
+import { SubscriptionDialog } from "../subscriptions/components/subscription-dialog";
+import { PlatformPushNotifications } from "../notifications/components/platform-push-notifications";
+import { useTranslation } from "@/lib/i18n";
 
 export function PlatformView({
   session,
@@ -26,7 +27,7 @@ export function PlatformView({
   onBusiness?: () => void;
   onLogout: () => Promise<void>;
 }) {
-  const { t, language } = useTranslation();
+  const { language } = useTranslation();
   const p = usePlatform(session, onLogout);
   const [requestedTab, setTab] = useState<PlatformTab>("dashboard");
   const allowedTab = availablePlatformTab(requestedTab, p.hasPerm);
@@ -80,6 +81,11 @@ export function PlatformView({
             subtitle:
               "පද්ධති පරිපාලකයින් සහ ව්‍යාපාර ක්‍රියාකරුවන්ගේ ඒකාබද්ධ ලේඛනය.",
           },
+          notifications: {
+            title: "පුෂ් දැනුම්දීම් කේන්ද්‍රය",
+            subtitle:
+              "පද්ධතියට අවම වශයෙන් එක් වරක් ප්‍රවේශ වූ සියලුම උපාංග වෙත ක්ෂණික පණිවිඩ යවන්න.",
+          },
         }
       : {
           dashboard: {
@@ -116,140 +122,113 @@ export function PlatformView({
             subtitle:
               "Unified registry of platform administrators and business operators across salons.",
           },
+          notifications: {
+            title: "Push Notification Center",
+            subtitle:
+              "Send instant push notifications to every device that has logged into the system at least once.",
+          },
         };
 
   return (
-    <div className="platform-layout-shell">
-      <PlatformSidebar
-        tab={tab}
-        onTab={setTab}
-        session={session}
-        hasPerm={p.hasPerm}
-        mobileOpen={mobileOpen}
-        onMobileToggle={() => setMobileOpen(!mobileOpen)}
-        onBusiness={onBusiness}
-        onLogout={onLogout}
-        busy={busy}
-      />
+    <PlatformShell
+      session={session}
+      tab={tab}
+      tabTitle={tabTitles[tab].title}
+      tabSubtitle={tabTitles[tab].subtitle}
+      hasPerm={p.hasPerm}
+      allowedTab={allowedTab}
+      busy={busy}
+      error={p.error}
+      mobileOpen={mobileOpen}
+      onMobileToggle={() => setMobileOpen(!mobileOpen)}
+      onTab={setTab}
+      onRefresh={() => void p.load()}
+      onBusiness={onBusiness}
+      onLogout={onLogout}
+    >
+      {p.loading && !p.data && !p.plans && !p.access && !p.reports ? (
+        <div className="platform-loading-box" aria-busy="true">
+          <RefreshCw size={24} className="spin" />
+          <p>Loading platform workspace…</p>
+        </div>
+      ) : (
+        <div className="platform-tab-content">
+          {tab === "dashboard" && p.data && (
+            <PlatformOverview
+              data={p.data}
+              busy={busy}
+              onTab={setTab}
+              onManageSubscription={(tenant) => setManagingTenant(tenant)}
+              hasPerm={p.hasPerm}
+            />
+          )}
 
-      <main className="platform-workspace-main">
-        <header className="page-heading platform-page-header">
-          <div>
-            <span className="eyebrow">{t.platform.title}</span>
-            <h1>{tabTitles[tab].title}</h1>
-            <p>{tabTitles[tab].subtitle}</p>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <LanguageDropdown />
-            <button
-              type="button"
-              className="button secondary"
-              disabled={busy}
-              onClick={() => void p.load()}
-            >
-              <RefreshCw size={16} className={busy ? "spin" : ""} />
-              <span>{t.common.refresh}</span>
-            </button>
-          </div>
-        </header>
+          {tab === "reports" && (
+            <PlatformReports
+              reports={p.reports}
+              tenants={p.data?.tenants ?? []}
+              busy={busy}
+              canManageSubscriptions={p.hasPerm(
+                "platform.subscriptions.manage",
+              )}
+              onManageTenant={(tenant) => setManagingTenant(tenant)}
+              onExtendTrial={async (id) => {
+                await p.extendTrial(id, 30);
+              }}
+            />
+          )}
 
-        {p.error && (
-          <div className="error-box" role="alert">
-            <AlertCircle size={16} />
-            <span>{p.error}</span>
-          </div>
-        )}
+          {(tab === "businesses" || tab === "subscriptions") && p.data && (
+            <BusinessDirectory
+              tenants={p.data.tenants}
+              busy={busy}
+              canManageTenants={p.hasPerm("platform.tenants.manage")}
+              canManageSubscriptions={p.hasPerm(
+                "platform.subscriptions.manage",
+              )}
+              onToggle={(t) =>
+                void p.toggleBusiness(
+                  t.id,
+                  t.status === "active" ? "suspended" : "active",
+                )
+              }
+              onManage={(t) => setManagingTenant(t)}
+            />
+          )}
 
-        {!allowedTab ? (
-          <div className="panel empty-state" role="status">
-            <h2>
-              {language === "si"
-                ? "ප්‍රවේශ අවසර අවශ්‍යයි"
-                : "Access permissions needed"}
-            </h2>
-            <p>
-              {language === "si"
-                ? "පද්ධති පරිපාලකගෙන් ඔබගේ භූමිකාවට අවසර ලබා ගන්න."
-                : "Ask a platform administrator to enable a page for your role."}
-            </p>
-          </div>
-        ) : p.loading && !p.data && !p.plans && !p.access && !p.reports ? (
-          <div className="platform-loading-box" aria-busy="true">
-            <RefreshCw size={24} className="spin" />
-            <p>Loading platform workspace…</p>
-          </div>
-        ) : (
-          <div className="platform-tab-content">
-            {tab === "dashboard" && p.data && (
-              <PlatformOverview
-                data={p.data}
-                busy={busy}
-                onTab={setTab}
-                onManageSubscription={(tenant) => setManagingTenant(tenant)}
-                hasPerm={p.hasPerm}
-              />
-            )}
+          {tab === "plans" && p.plans && (
+            <PlanDirectory
+              catalog={p.plans}
+              busy={busy}
+              canManagePlans={p.hasPerm("platform.plans.manage")}
+              onEdit={(plan) => setEditingPlan(plan)}
+              onArchive={(plan) => void p.archivePlan(plan.id, !plan.active)}
+            />
+          )}
 
-            {tab === "reports" && (
-              <PlatformReports
-                reports={p.reports}
-                tenants={p.data?.tenants ?? []}
-                busy={busy}
-                canManageSubscriptions={p.hasPerm(
-                  "platform.subscriptions.manage",
-                )}
-                onManageTenant={(tenant) => setManagingTenant(tenant)}
-                onExtendTrial={async (id) => {
-                  await p.extendTrial(id, 30);
-                }}
-              />
-            )}
+          {tab === "access" && (
+            <PlatformAccessManager
+              access={p.access}
+              currentUserId={session.user.id}
+              busy={busy}
+              onSaveRole={p.saveRole}
+              onDeleteRole={p.deleteRole}
+              onAssignUserRole={p.assignUserRole}
+            />
+          )}
 
-            {(tab === "businesses" || tab === "subscriptions") && p.data && (
-              <BusinessDirectory
-                tenants={p.data.tenants}
-                busy={busy}
-                canManageTenants={p.hasPerm("platform.tenants.manage")}
-                canManageSubscriptions={p.hasPerm(
-                  "platform.subscriptions.manage",
-                )}
-                onToggle={(t) =>
-                  void p.toggleBusiness(
-                    t.id,
-                    t.status === "active" ? "suspended" : "active",
-                  )
-                }
-                onManage={(t) => setManagingTenant(t)}
-              />
-            )}
+          {tab === "accounts" && p.data && (
+            <AccountDirectory users={p.data.users} />
+          )}
 
-            {tab === "plans" && p.plans && (
-              <PlanDirectory
-                catalog={p.plans}
-                busy={busy}
-                canManagePlans={p.hasPerm("platform.plans.manage")}
-                onEdit={(plan) => setEditingPlan(plan)}
-                onArchive={(plan) => void p.archivePlan(plan.id, !plan.active)}
-              />
-            )}
-
-            {tab === "access" && (
-              <PlatformAccessManager
-                access={p.access}
-                currentUserId={session.user.id}
-                busy={busy}
-                onSaveRole={p.saveRole}
-                onDeleteRole={p.deleteRole}
-                onAssignUserRole={p.assignUserRole}
-              />
-            )}
-
-            {tab === "accounts" && p.data && (
-              <AccountDirectory users={p.data.users} />
-            )}
-          </div>
-        )}
-      </main>
+          {tab === "notifications" && (
+            <PlatformPushNotifications
+              senderName={session.user.name}
+              busy={busy}
+            />
+          )}
+        </div>
+      )}
 
       {/* Package Form Dialog */}
       {editingPlan !== undefined && p.plans && (
@@ -273,6 +252,6 @@ export function PlatformView({
           onExtendTrial={p.extendTrial}
         />
       )}
-    </div>
+    </PlatformShell>
   );
 }

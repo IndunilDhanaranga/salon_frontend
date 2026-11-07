@@ -8,6 +8,7 @@ export const platformTabPermissions: Record<PlatformTab, string> = {
   subscriptions: "platform.subscriptions.manage",
   access: "platform.access.manage",
   accounts: "platform.users.view",
+  notifications: "platform.dashboard.view",
 };
 
 export function availablePlatformTab(

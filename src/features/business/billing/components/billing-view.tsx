@@ -16,8 +16,15 @@ import { BillComposer } from "./bill-composer";
 import { ReceiptDialog } from "./receipt-dialog";
 import { BillingCards } from "./billing-cards";
 import { useTranslation } from "@/lib/i18n";
+import type { View } from "../../config/navigation";
 
-export function BillingView({ tenant }: { tenant: Tenant }) {
+export function BillingView({
+  tenant,
+  onView,
+}: {
+  tenant: Tenant;
+  onView?: (view: View) => void;
+}) {
   const api = useBranchApi();
   const { t, language } = useTranslation();
   const [orders, setOrders] = useState<Order[]>([]);
@@ -89,7 +96,13 @@ export function BillingView({ tenant }: { tenant: Tenant }) {
             <button
               className="button primary small-button"
               disabled={busy}
-              onClick={() => setCompose(true)}
+              onClick={() => {
+                if (onView) {
+                  onView("pos");
+                } else {
+                  setCompose(true);
+                }
+              }}
             >
               <Plus size={16} />
               {t.billing.newBill}

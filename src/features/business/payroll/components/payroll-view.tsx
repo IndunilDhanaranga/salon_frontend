@@ -67,7 +67,64 @@ export function PayrollView({
                 </strong>
                 <ChevronDown size={19} />
               </summary>
-              <div className="table-scroll">
+              <div
+                className="mobile-records"
+                aria-label={t.payroll.totalPayroll}
+              >
+                {run.items.map((item) => (
+                  <article key={item.id} className="mobile-record">
+                    <div className="mobile-record-heading">
+                      <strong>{item.staff_name}</strong>
+                      <span
+                        className="status completed"
+                        style={{
+                          fontVariantNumeric: "tabular-nums",
+                          fontWeight: 600,
+                        }}
+                      >
+                        {money(item.net_minor, tenant.currency)}
+                      </span>
+                    </div>
+                    <div
+                      style={{
+                        display: "grid",
+                        gridTemplateColumns: "1fr 1fr",
+                        gap: "6px 12px",
+                        marginTop: 10,
+                        fontSize: 11,
+                        color: "var(--muted)",
+                      }}
+                    >
+                      <div>
+                        <span>{t.payroll.salary}: </span>
+                        <strong style={{ color: "var(--ink)" }}>
+                          {money(item.base_salary_minor, tenant.currency)}
+                        </strong>
+                      </div>
+                      <div>
+                        <span>{t.payroll.commissionEarned}: </span>
+                        <strong style={{ color: "var(--ink)" }}>
+                          {money(item.commission_minor, tenant.currency)}
+                        </strong>
+                      </div>
+                      <div>
+                        <span>{t.payroll.allowances}: </span>
+                        <strong style={{ color: "var(--ink)" }}>
+                          {money(item.allowance_minor, tenant.currency)}
+                        </strong>
+                      </div>
+                      <div>
+                        <span>{t.payroll.deductions}: </span>
+                        <strong style={{ color: "var(--ink)" }}>
+                          {money(item.deduction_minor, tenant.currency)}
+                        </strong>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              <div className="table-scroll desktop-record-table">
                 <table>
                   <thead>
                     <tr>

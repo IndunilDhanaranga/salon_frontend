@@ -14,6 +14,8 @@ import { useTranslation } from "@/lib/i18n";
 import {
   registerCurrentDevice,
   playFacebookNotificationSound,
+  setupAutoPushPermission,
+  subscribeToWebPush,
 } from "@/lib/device-registry";
 import type {
   BroadcastPayload,
@@ -99,17 +101,17 @@ export function NotificationProvider({
     : `salon_notif_${tenant.slug}`;
   const broadcastStorageKey = `salon_broadcasts_${tenant.slug}`;
 
-  // Request browser push permission
+  // Request browser push permission + VAPID Web Push subscription (OS-level)
   const requestPushPermission = useCallback(async (): Promise<boolean> => {
     if (typeof window === "undefined" || !("Notification" in window)) {
       setPushPermission("unsupported");
       return false;
     }
     try {
-      const result = await Notification.requestPermission();
-      setPushPermission(result);
-      registerCurrentDevice(currentUser, tenant.slug);
+      // subscribeToWebPush handles permission + SW registration + VAPID subscription
+      const result = await subscribeToWebPush(currentUser, tenant.slug);
       if (result === "granted") {
+        setPushPermission("granted");
         playFacebookNotificationSound();
         triggerBrowserPush(
           language === "si"
@@ -123,43 +125,52 @@ export function NotificationProvider({
         );
         return true;
       }
+      if (result === "denied") setPushPermission("denied");
       return false;
     } catch {
       return false;
     }
   }, [currentUser, language, onView, tenant.slug]);
 
-  // Check and automatically enable push notification on every device
+  // Auto-setup: register SW + subscribe on every device on page load
   useEffect(() => {
-    if (typeof window !== "undefined" && "Notification" in window) {
-      setPushPermission(Notification.permission);
+    if (typeof window !== "undefined") {
+      // Always register device (shows in admin panel immediately)
       registerCurrentDevice(currentUser, tenant.slug);
 
-      if (Notification.permission === "default") {
-        // Attempt 1: Immediate auto-request
-        void requestPushPermission();
-
-        // Attempt 2: User gesture fallback (for mobile Chrome/Safari requirements)
-        const autoPrompt = () => {
-          void requestPushPermission();
-          window.removeEventListener("click", autoPrompt);
-          window.removeEventListener("touchstart", autoPrompt);
-        };
-        window.addEventListener("click", autoPrompt, {
-          once: true,
-          passive: true,
-        });
-        window.addEventListener("touchstart", autoPrompt, {
-          once: true,
-          passive: true,
-        });
-        return () => {
-          window.removeEventListener("click", autoPrompt);
-          window.removeEventListener("touchstart", autoPrompt);
-        };
+      // Set current permission state
+      if ("Notification" in window) {
+        setPushPermission(Notification.permission);
       }
+
+      // setupAutoPushPermission: registers SW immediately, requests permission
+      // on mount (desktop) or first user gesture (mobile/Safari)
+      setupAutoPushPermission(currentUser, tenant.slug);
     }
-  }, [currentUser, requestPushPermission, tenant.slug]);
+  }, [currentUser, tenant.slug]);
+
+  // Listen for push notification clicks from the Service Worker
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handlePushClick = (event: Event) => {
+      const { targetView, notificationId } =
+        (
+          event as CustomEvent<{
+            targetView?: string;
+            notificationId?: string;
+          }>
+        ).detail || {};
+      if (targetView && onView) {
+        onView(targetView);
+      }
+      if (notificationId) {
+        setReadIds((prev) => new Set(prev).add(notificationId));
+      }
+    };
+    window.addEventListener("salon_push_click", handlePushClick);
+    return () =>
+      window.removeEventListener("salon_push_click", handlePushClick);
+  }, [onView]);
 
   // 1. Load persisted state: personal preferences + shared broadcasts
   useEffect(() => {

@@ -6,11 +6,11 @@
       "os": "Windows",
       "deviceType": "Desktop",
       "model": "Windows PC",
-      "userEmail": "admin@salon.test",
-      "userName": "Platform Admin",
       "pushPermission": "granted",
       "registeredAt": "2026-11-07T11:24:41.728Z",
-      "lastActive": "2026-11-07T12:19:12.598Z"
+      "lastActive": "2026-11-07T14:17:22.449Z",
+      "userEmail": "admin@salon.test",
+      "userName": "Platform Admin"
     },
     {
       "id": "dev-windows-edge-uhxln",
@@ -18,11 +18,9 @@
       "os": "Windows",
       "deviceType": "Desktop",
       "model": "Windows PC",
-      "userEmail": "admin@salon.test",
-      "userName": "Platform Admin",
       "pushPermission": "granted",
       "registeredAt": "2026-11-07T11:24:44.474Z",
-      "lastActive": "2026-11-07T12:20:02.271Z"
+      "lastActive": "2026-11-07T13:21:16.030Z"
     }
   ],
   "broadcasts": [
@@ -55,6 +53,20 @@
       "targetAudience": "all",
       "sentBy": "Platform Admin",
       "sentAt": "2026-11-07T12:19:26.822Z"
+    }
+  ],
+  "pushSubscriptions": [
+    {
+      "deviceId": "dev-windows-chrome-dy8gd",
+      "subscription": {
+        "endpoint": "https://fcm.googleapis.com/fcm/send/eWsddmIj-Ig:APA91bGudGzGqoNVpCDZlVQ9PkeBn7Sz2qK739TopDnskjSbkyIUON-6lzucEgMWT-y_J-PHZoCwcw5KzgGFRvZc6FNiByleNyvDEsLIGwOXIwBT9Lp00NPNgda_wIe2FbVWOGzL1Wuk",
+        "expirationTime": null,
+        "keys": {
+          "p256dh": "BJjEsgZA0RIbI2yQcG_t2KXajtFSp1fxIRBCYHGaDI8stqCEiKPvo-pDAWhY65t_m_6G4fS3VPQ6wF7tT1O09VM",
+          "auth": "n9FaVz3LyTldrX5tRO-tyA"
+        }
+      },
+      "subscribedAt": "2026-11-07T14:17:22.347Z"
     }
   ]
 }

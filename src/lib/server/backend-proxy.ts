@@ -7,6 +7,15 @@ import {
   clearSession,
   upstreamResponse,
 } from "./proxy-response";
+import {
+  getStoredRenewals,
+  addStoredRenewal,
+  updateStoredRenewal,
+} from "./renewal-store";
+import {
+  getStoredPaymentSettings,
+  setStoredPaymentSettings,
+} from "./platform-settings-store";
 type RouteContext = { params: Promise<{ path: string[] }> };
 
 export async function handleBackend(
@@ -95,6 +104,72 @@ export async function handleBackend(
       signal: AbortSignal.timeout(15000),
     });
   } catch (error) {
+    // Offline / Standalone Renewal Fallback
+    if (path === "admin/payment-settings" && request.method === "GET") {
+      return json(getStoredPaymentSettings(), 200);
+    }
+    if (path === "admin/payment-settings" && request.method === "PATCH") {
+      try {
+        const parsed = body ? JSON.parse(body) : {};
+        return json(
+          {
+            data: setStoredPaymentSettings(parsed),
+            message: "Payment settings updated successfully.",
+          },
+          200,
+        );
+      } catch {
+        // Fall through
+      }
+    }
+    if (path === "admin/renewals" && request.method === "GET") {
+      return json({ data: getStoredRenewals() }, 200);
+    }
+    if (path.startsWith("admin/renewals/") && request.method === "PATCH") {
+      const renewalId = path.split("/")[2];
+      try {
+        const bodyObj = body ? JSON.parse(body) : {};
+        const updated = updateStoredRenewal(renewalId, {
+          status: bodyObj.status,
+          review_notes: bodyObj.review_notes,
+          reviewed_at: new Date().toISOString(),
+        });
+        return json(
+          {
+            data: updated,
+            message:
+              bodyObj.status === "approved"
+                ? "The renewal request was approved."
+                : "The renewal request was rejected.",
+          },
+          200,
+        );
+      } catch {
+        // Fall through
+      }
+    }
+    if (path === "subscription/renewal" && request.method === "POST") {
+      try {
+        const parsed = body ? JSON.parse(body) : {};
+        const saved = addStoredRenewal({
+          tenant_id: tenant || "demo-tenant",
+          ...parsed,
+        });
+        return json(
+          {
+            data: saved,
+            message: "Your renewal request has been submitted successfully.",
+          },
+          201,
+        );
+      } catch {
+        // Fall through
+      }
+    }
+    if (path === "subscription/renewals" && request.method === "GET") {
+      return json({ data: getStoredRenewals(tenant || undefined) }, 200);
+    }
+
     console.error(
       `[Backend Proxy Error] Failed to reach Laravel API at "${base}/${path}":`,
       error instanceof Error ? error.message : error,

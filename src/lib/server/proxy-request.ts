@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-const MAX_BODY_BYTES = 64 * 1024;
+const MAX_BODY_BYTES = 640 * 1024;
 export async function readBody(request: NextRequest): Promise<string> {
   const declaredSize = Number(request.headers.get("content-length") ?? 0);
   if (declaredSize > MAX_BODY_BYTES)

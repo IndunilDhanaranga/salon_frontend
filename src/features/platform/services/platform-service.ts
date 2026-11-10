@@ -29,6 +29,13 @@ export const platformService = {
     return api<PlatformAccessResponse>("admin/access", { signal });
   },
 
+  fetchPaymentSettings(signal?: AbortSignal) {
+    return api<import("@/lib/types").PlatformPaymentSettings>(
+      "admin/payment-settings",
+      { signal },
+    );
+  },
+
   toggleTenantStatus(tenantId: string, status: "active" | "suspended") {
     return api(`admin/tenants/${tenantId}`, {
       method: "PATCH",
@@ -56,8 +63,33 @@ export const platformService = {
     );
   },
 
+  fetchRenewals(signal?: AbortSignal) {
+    return api<{ data: import("@/lib/types").SubscriptionRenewal[] }>(
+      "admin/renewals",
+      { signal },
+    );
+  },
+
+  reviewRenewal(
+    id: string,
+    status: "approved" | "rejected",
+    review_notes?: string,
+  ) {
+    return api(`admin/renewals/${id}`, {
+      method: "PATCH",
+      body: { status, review_notes },
+    });
+  },
+
   saveSubscription(tenantId: string, values: SubscriptionUpdate) {
     return api(`admin/tenants/${tenantId}/subscription`, {
+      method: "PATCH",
+      body: values,
+    });
+  },
+
+  savePaymentSettings(values: import("@/lib/types").PlatformPaymentSettings) {
+    return api("admin/payment-settings", {
       method: "PATCH",
       body: values,
     });

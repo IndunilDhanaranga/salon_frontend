@@ -17,6 +17,38 @@ export interface DeviceRecord {
 const DEVICE_STORAGE_KEY = "salon_device_id";
 const REGISTRY_STORAGE_KEY = "salon_device_registry";
 
+/* ------------------------------------------------------------------ */
+/*  Helpers                                                             */
+/* ------------------------------------------------------------------ */
+
+function urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
+}
+
+export function canUseWebPush(): boolean {
+  if (typeof window === "undefined") return false;
+
+  const hostname = window.location?.hostname || "";
+  const isLocalhost =
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    hostname.endsWith(".localhost");
+
+  return Boolean(window.isSecureContext || isLocalhost);
+}
+
+/* ------------------------------------------------------------------ */
+/*  Device Detection                                                    */
+/* ------------------------------------------------------------------ */
+
 /**
  * Accurately detects OS, Browser, Device Type, and Model,
  * with special attention to iPhone, iPad, MacBook, and Android.
@@ -113,6 +145,10 @@ export function getOrCreateDeviceId(): string {
     return `dev-${Date.now()}`;
   }
 }
+
+/* ------------------------------------------------------------------ */
+/*  Device Registration                                                 */
+/* ------------------------------------------------------------------ */
 
 /**
  * Register current device into both local registry AND central Next.js server API.
@@ -215,6 +251,141 @@ export function getRegisteredDevices(): DeviceRecord[] {
   }
 }
 
+/* ------------------------------------------------------------------ */
+/*  Service Worker Registration                                         */
+/* ------------------------------------------------------------------ */
+
+let _swRegistration: ServiceWorkerRegistration | null = null;
+
+/**
+ * Registers the Service Worker (public/sw.js).
+ * Returns the registration, or null if SW is not supported.
+ */
+export async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null> {
+  if (typeof window === "undefined") return null;
+  if (!canUseWebPush()) return null;
+  if (!("serviceWorker" in navigator)) return null;
+
+  try {
+    // Register with scope "/" so it covers the full site
+    const registration = await navigator.serviceWorker.register("/sw.js", {
+      scope: "/",
+      updateViaCache: "none",
+    });
+    _swRegistration = registration;
+
+    // Listen for messages from the service worker (notification click)
+    navigator.serviceWorker.addEventListener("message", (event) => {
+      if (event.data?.type === "PUSH_NOTIFICATION_CLICK") {
+        // Dispatch a custom DOM event that React components can listen to
+        window.dispatchEvent(
+          new CustomEvent("salon_push_click", {
+            detail: event.data,
+          }),
+        );
+      }
+    });
+
+    return registration;
+  } catch {
+    return null;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  VAPID Web Push Subscription                                         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Subscribes the current device to real OS-level Web Push notifications.
+ * This is the core mechanism used by Helakuru, Facebook, etc.
+ * Compatible with:
+ *  - Windows/Linux Chrome, Edge, Firefox
+ *  - macOS Chrome, Edge, Firefox (Safari 16+ on macOS 13+)
+ *  - Android Chrome, Firefox
+ *  - iPhone/iPad Safari iOS 16.4+ (MUST be installed as PWA to Home Screen)
+ */
+export async function subscribeToWebPush(
+  user?: { name: string; email?: string },
+  tenantSlug?: string,
+): Promise<"granted" | "denied" | "unsupported" | "pending"> {
+  if (typeof window === "undefined") return "unsupported";
+  if (!canUseWebPush()) {
+    return "unsupported";
+  }
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    // Device doesn't support service workers / push
+    return "unsupported";
+  }
+
+  const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  if (!vapidPublicKey) return "unsupported";
+
+  try {
+    // 1. Request Notification permission
+    let permission = Notification.permission;
+    if (permission === "denied") return "denied";
+
+    if (permission === "default") {
+      // Safari requires the Promise form; wrap to handle both callback and promise
+      permission = await new Promise<NotificationPermission>((resolve) => {
+        try {
+          const req = Notification.requestPermission((p) => resolve(p));
+          if (req && typeof req.then === "function") {
+            req.then(resolve).catch(() => resolve(Notification.permission));
+          }
+        } catch {
+          resolve(Notification.permission);
+        }
+      });
+    }
+
+    if (permission !== "granted") return "denied";
+
+    // 2. Ensure Service Worker is registered
+    let registration = _swRegistration;
+    if (!registration) {
+      registration = await registerServiceWorker();
+    }
+    if (!registration) return "unsupported";
+
+    // 3. Wait for SW to be active
+    await navigator.serviceWorker.ready;
+
+    // 4. Check for existing subscription or create new one
+    let subscription = await registration.pushManager.getSubscription();
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+      });
+    }
+
+    // 5. Send subscription to server
+    const deviceId = getOrCreateDeviceId();
+    await fetch("/api/notifications/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subscription: JSON.parse(JSON.stringify(subscription)),
+        deviceId,
+        action: "subscribe",
+      }),
+    });
+
+    // 6. Register device record (updates pushPermission to "granted")
+    registerCurrentDevice(user, tenantSlug);
+
+    return "granted";
+  } catch {
+    return "unsupported";
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/*  Auto Push Permission + SW Setup                                     */
+/* ------------------------------------------------------------------ */
+
 /**
  * Automatically requests browser push notification permission on the device.
  * Safari / iOS / MacBook compatible (handles both Callback and Promise standards).
@@ -228,23 +399,17 @@ export async function autoRequestPushPermission(
     return "unsupported";
   }
 
-  try {
-    let perm = Notification.permission;
-    if (perm === "default") {
-      // Safari compatibility: handle both callback and promise syntax
-      perm = await new Promise<NotificationPermission>((resolve) => {
-        try {
-          const req = Notification.requestPermission((p) => resolve(p));
-          if (req && typeof req.then === "function") {
-            req.then(resolve).catch(() => resolve(Notification.permission));
-          }
-        } catch {
-          resolve(Notification.permission);
-        }
-      });
-    }
+  if (!canUseWebPush()) {
     registerCurrentDevice(user, tenantSlug);
-    return perm;
+    return "unsupported";
+  }
+
+  try {
+    // Also register SW + VAPID subscription for real OS notifications
+    const result = await subscribeToWebPush(user, tenantSlug);
+    if (result === "granted") return "granted";
+    if (result === "denied") return "denied";
+    return "unsupported";
   } catch {
     registerCurrentDevice(user, tenantSlug);
     return "unsupported";
@@ -265,16 +430,23 @@ export function setupAutoPushPermission(
   // Always register the device first so it is immediately visible in the Admin Panel
   registerCurrentDevice(user, tenantSlug);
 
+  // Register service worker immediately (no permission needed for SW registration)
+  void registerServiceWorker();
+
   if (!("Notification" in window)) return;
 
   if (
     Notification.permission === "granted" ||
     Notification.permission === "denied"
   ) {
+    // Already decided — just ensure VAPID subscription is current
+    if (Notification.permission === "granted") {
+      void subscribeToWebPush(user, tenantSlug);
+    }
     return;
   }
 
-  // Attempt 1: Immediate prompt
+  // Attempt 1: Immediate prompt (works on desktop Chrome, Firefox, Edge)
   void autoRequestPushPermission(user, tenantSlug);
 
   // Attempt 2: User-gesture trigger (required by Apple iOS Safari & macOS Safari)
@@ -302,6 +474,10 @@ export function setupAutoPushPermission(
     passive: true,
   });
 }
+
+/* ------------------------------------------------------------------ */
+/*  Facebook-style Notification Chime                                   */
+/* ------------------------------------------------------------------ */
 
 /**
  * Facebook-style crisp notification audio chime.

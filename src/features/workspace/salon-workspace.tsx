@@ -14,6 +14,7 @@ import {
   ProductTour,
   DemoBanner,
   NotificationProvider,
+  SubscriptionBanner,
 } from "@/features/business";
 import {
   registerCurrentDevice,
@@ -158,6 +159,12 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
             onTenant={w.selectTenant}
             onLogout={() => void w.logout()}
             onTour={() => w.setTourOpen(true)}
+            branches={w.branches}
+            activeBranchId={w.activeBranchId}
+            selectedBranchId={w.branchId}
+            hasAllBranchesAccess={w.hasAllBranchesAccess}
+            onSelectBranch={w.setBranchId}
+            onManageBranches={() => w.setView("branches")}
             onPlatform={
               session.user.is_platform_admin
                 ? () => w.selectPlatform(true)
@@ -173,6 +180,10 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
                   onExit={exitDemo}
                 />
               )}
+              <SubscriptionBanner
+                tenant={tenant}
+                onView={() => w.setView("subscription")}
+              />
               <BusinessHeader
                 tenant={tenant}
                 view={w.view}

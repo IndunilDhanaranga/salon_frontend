@@ -14,7 +14,11 @@ import { PlanDirectory } from "../plans/components/plan-directory";
 import { PlanFormDialog } from "../plans/components/plan-form-dialog";
 import { PlatformAccessManager } from "../roles/components/platform-access-manager";
 import { AccountDirectory } from "../administrators/components/account-directory";
-import { SubscriptionDialog } from "../subscriptions/components/subscription-dialog";
+import {
+  SubscriptionDialog,
+  PlatformSubscriptionsView,
+} from "../subscriptions";
+import { PaymentSettingsManager } from "../settings/components/payment-settings-manager";
 import { PlatformPushNotifications } from "../notifications/components/platform-push-notifications";
 import { useTranslation } from "@/lib/i18n";
 
@@ -71,6 +75,11 @@ export function PlatformView({
             subtitle:
               "ව්‍යාපාර ප්‍රවේශ කාලසීමා, අත්හදා බැලීම් දීර්ඝ කිරීම සහ පැකේජ පැවරීම.",
           },
+          settings: {
+            title: "ගෙවීම් විස්තර සැකසුම්",
+            subtitle:
+              "නිල බැංකු ගිණුම් තොරතුරු යාවත්කාලීන කර සැලසුම් කළමනාකරණය.",
+          },
           access: {
             title: "පද්ධති භූමිකා සහ අවසර (RBAC)",
             subtitle:
@@ -112,6 +121,11 @@ export function PlatformView({
             subtitle:
               "Manage business access periods, extend free trials, and assign active tiers.",
           },
+          settings: {
+            title: "Payment Settings",
+            subtitle:
+              "Update the official bank account details shown to salons before renewal submissions.",
+          },
           access: {
             title: "Platform Roles & Permissions (RBAC)",
             subtitle:
@@ -145,6 +159,7 @@ export function PlatformView({
       onRefresh={() => void p.load()}
       onBusiness={onBusiness}
       onLogout={onLogout}
+      pendingRenewalsCount={p.pendingRenewalsCount}
     >
       {p.loading && !p.data && !p.plans && !p.access && !p.reports ? (
         <div className="platform-loading-box" aria-busy="true">
@@ -178,7 +193,7 @@ export function PlatformView({
             />
           )}
 
-          {(tab === "businesses" || tab === "subscriptions") && p.data && (
+          {tab === "businesses" && p.data && (
             <BusinessDirectory
               tenants={p.data.tenants}
               busy={busy}
@@ -193,6 +208,30 @@ export function PlatformView({
                 )
               }
               onManage={(t) => setManagingTenant(t)}
+            />
+          )}
+
+          {tab === "subscriptions" && p.data && (
+            <PlatformSubscriptionsView
+              tenants={p.data.tenants}
+              renewals={p.renewals}
+              busy={busy}
+              canManage={p.hasPerm("platform.subscriptions.manage")}
+              onManageSubscription={(tenant) => setManagingTenant(tenant)}
+              onExtendTrial={async (id) => {
+                await p.extendTrial(id, 30);
+              }}
+              onReviewRenewal={p.reviewRenewal}
+            />
+          )}
+
+          {tab === "settings" && (
+            <PaymentSettingsManager
+              settings={p.paymentSettings}
+              busy={busy}
+              onSave={async (values) => {
+                await p.savePaymentSettings(values);
+              }}
             />
           )}
 

@@ -159,6 +159,13 @@ export function AuthScreen({
                 required
               />
             </label>
+            {!register && (
+              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "-0.5rem" }}>
+                <a className="text-button" href="/forgot-password">
+                  Forgot password?
+                </a>
+              </div>
+            )}
             {register && (
               <>
                 <label>

@@ -1,18 +1,22 @@
 "use client";
 
 import React from "react";
-import { RefreshCw } from "lucide-react";
+import { Bell, BellRing, ReceiptText, RefreshCw } from "lucide-react";
 import { LanguageDropdown, useTranslation } from "@/lib/i18n";
 
 export function PlatformHeader({
   title,
   subtitle,
   busy,
+  pendingRenewalsCount = 0,
+  onNavigateSubscriptions,
   onRefresh,
 }: {
   title: string;
   subtitle: string;
   busy: boolean;
+  pendingRenewalsCount?: number;
+  onNavigateSubscriptions?: () => void;
   onRefresh: () => void;
 }) {
   const { t } = useTranslation();
@@ -25,6 +29,21 @@ export function PlatformHeader({
         <p>{subtitle}</p>
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {pendingRenewalsCount > 0 && onNavigateSubscriptions && (
+          <button
+            type="button"
+            className="pending-slips-alert-btn"
+            onClick={onNavigateSubscriptions}
+            title="Inspect submitted payment slips"
+          >
+            <BellRing size={16} className="bounce-anim" />
+            <span>
+              {pendingRenewalsCount} Pending Slip
+              {pendingRenewalsCount > 1 ? "s" : ""}
+            </span>
+          </button>
+        )}
+
         <LanguageDropdown />
         <button
           type="button"

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
   addServerBroadcast,
+  broadcastWebPush,
   getServerBroadcasts,
   getServerDevices,
   type ServerBroadcastMessage,
@@ -42,12 +43,26 @@ export async function POST(req: NextRequest) {
     const saved = addServerBroadcast(broadcast);
     const devices = getServerDevices();
 
+    // Send real OS-level Web Push to all subscribed devices
+    const { sent, failed } = await broadcastWebPush({
+      id: saved.id,
+      title: saved.title,
+      body: saved.message,
+      icon: "/icon.svg",
+      url: "/",
+      tag: `salon-broadcast-${saved.id}`,
+      priority: saved.priority,
+      targetView: saved.targetView,
+    });
+
     return NextResponse.json({
       success: true,
       broadcast: saved,
-      deliveredTo: Math.max(1, devices.length),
+      deliveredTo: Math.max(sent, devices.length),
+      webPushSent: sent,
+      webPushFailed: failed,
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json(
       { error: "Failed to broadcast notification." },
       { status: 500 },

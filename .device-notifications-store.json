@@ -6,11 +6,9 @@
       "os": "Windows",
       "deviceType": "Desktop",
       "model": "Windows PC",
-      "userEmail": "admin@salon.test",
-      "userName": "Platform Admin",
       "pushPermission": "granted",
       "registeredAt": "2026-11-07T11:24:41.728Z",
-      "lastActive": "2026-11-07T12:19:12.598Z"
+      "lastActive": "2026-11-10T14:41:50.316Z"
     },
     {
       "id": "dev-windows-edge-uhxln",
@@ -18,14 +16,35 @@
       "os": "Windows",
       "deviceType": "Desktop",
       "model": "Windows PC",
-      "userEmail": "admin@salon.test",
-      "userName": "Platform Admin",
       "pushPermission": "granted",
       "registeredAt": "2026-11-07T11:24:44.474Z",
-      "lastActive": "2026-11-07T12:20:02.271Z"
+      "lastActive": "2026-11-08T06:05:03.724Z"
+    },
+    {
+      "id": "dev-windows-chrome-0mod6",
+      "browser": "Chrome",
+      "os": "Windows",
+      "deviceType": "Desktop",
+      "model": "Windows PC",
+      "userEmail": "indunildhanaranga@gmail.com",
+      "userName": "Indunil Dhanaranga",
+      "tenantSlug": "test",
+      "pushPermission": "granted",
+      "registeredAt": "2026-11-10T14:59:24.439Z",
+      "lastActive": "2026-11-10T15:16:01.920Z"
     }
   ],
   "broadcasts": [
+    {
+      "id": "push-1794218784357-x87r6",
+      "title": "Urgent System Notice",
+      "message": "Important: Please review this urgent notice and take necessary action immediately.",
+      "priority": "urgent",
+      "category": "system",
+      "targetAudience": "all",
+      "sentBy": "Platform Admin",
+      "sentAt": "2026-11-09T10:06:25.038Z"
+    },
     {
       "id": "push-1794054048116-0hbvk",
       "title": "Enna En",
@@ -55,6 +74,44 @@
       "targetAudience": "all",
       "sentBy": "Platform Admin",
       "sentAt": "2026-11-07T12:19:26.822Z"
+    }
+  ],
+  "pushSubscriptions": [
+    {
+      "deviceId": "dev-windows-chrome-dy8gd",
+      "subscription": {
+        "endpoint": "https://fcm.googleapis.com/fcm/send/e-abPCOSH1o:APA91bHkpMgU6jmxvpkurZnItoUZniYzYFNXvX_wAUmqcTyUVRa7Ob84B-KyG9TwerMNrW3ciV0QEhhLzc9OXeLGxTw1UZ9l2HFUqy9uDUJVUnGntws5hLgWsd3-I8Qi2GfM0BMpBTvu",
+        "expirationTime": null,
+        "keys": {
+          "p256dh": "BEzqtN5W2k7rbJQFErdErXBbkEUeEMi4TjH7SSEwyVNREbuF7Ze_6L0O-QdyFCRRIH-ivbWzj00l3kG_JCbfM9o",
+          "auth": "9DWuRHTqrTyJoEAPW-y1cQ"
+        }
+      },
+      "subscribedAt": "2026-11-10T14:41:50.298Z"
+    },
+    {
+      "deviceId": "dev-windows-edge-uhxln",
+      "subscription": {
+        "endpoint": "https://wns2-sg2p.notify.windows.com/w/?token=BQYAAAAEN6vMkNoSyDi%2brY%2fpAZ%2fTZDjPKA87NcvC2VYYrRlYnV8DPtm0vQ8wdEQcGZ4Xby%2bO%2fehs5lj97z9H%2b5ezv4H%2b2M2p4yhsTGEjwI9qE1LxKXccs5aqcD%2bKbheskKYqkEfgpklU9AAGqtZiE66CkfrCQO1CB1u1Tca7nuVoaoC4%2bsSN8fVaRllxTeeIPlhBjpZyu6gj%2fsgwkv1kGH7LTFEzDbIXdWYNBJQgIaOmdClr0x%2blxZiH%2b1EvU40mqP9BdVSgz0%2b6Th5QhbOUVRDr1dkcF9I91dX9P8R0ZyA5s%2btlIlQQVFGnXTlowuUmAcMpkXM%3d",
+        "expirationTime": null,
+        "keys": {
+          "p256dh": "BIX8LcykZI1ykoIYACnT-A8NjMKsejvfkh5k6EAYTEpHWyqdhtU4L_li6UW8g_GKjF_UEoXIJ0ppunztxC7F1nI",
+          "auth": "x93NnCp-PV1hm5rDtEtEmw"
+        }
+      },
+      "subscribedAt": "2026-11-08T06:05:03.669Z"
+    },
+    {
+      "deviceId": "dev-windows-chrome-0mod6",
+      "subscription": {
+        "endpoint": "https://fcm.googleapis.com/fcm/send/fH_vj-QvR-U:APA91bGSWR434LQrKKXtCHjowblOZDQigzJAW4Imd4JgAMVgaM3aR_tNeiEXhMrioP32Z2WipwQjtP_3WWtVaLR7S24LLyK-N4PWfDkRYM9_ZrlD2hoQedLI5OAHV9K5D4fZa9vVXe39",
+        "expirationTime": null,
+        "keys": {
+          "p256dh": "BKzY0tfmdtrr1bkJsEj7hAkM5RVHqk_AydXt1KAB9tpk7xtRDpTsiocYRuSMDpHLB7fc0X_Tds35O7s-pY27-PA",
+          "auth": "bEWcMyHnFx3ge6p9XM7A0Q"
+        }
+      },
+      "subscribedAt": "2026-11-10T15:16:01.898Z"
     }
   ]
 }

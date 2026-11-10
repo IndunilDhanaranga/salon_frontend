@@ -1167,3 +1167,828 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+/* ==========================================================================
+   Subscription Renewals, 1-Week Grace Period, Slips & Admin Review Styling
+   ========================================================================== */
+
+/* --- Enhanced Business Subscription Banners --- */
+.business-subscription-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding: 1rem 1.35rem;
+  margin: 0 0 1.5rem;
+  border-radius: 12px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  animation: fadeIn 0.3s ease;
+}
+
+.business-subscription-banner .banner-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  flex-shrink: 0;
+}
+
+.business-subscription-banner .banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.business-subscription-banner .banner-text strong {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+  font-weight: 650;
+  color: var(--foreground);
+}
+
+.business-subscription-banner .banner-text p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* Grace Warning Banner (1-Week Grace Period) */
+.business-subscription-banner.is-grace-warning {
+  background: #fffbf0;
+  border: 1px solid #f9d88a;
+}
+.business-subscription-banner.is-grace-warning .banner-icon-badge {
+  background: #fdf3cf;
+  color: #b45309;
+}
+.business-subscription-banner.is-grace-warning strong {
+  color: #92400e;
+}
+.business-subscription-banner.is-grace-warning p {
+  color: #78350f;
+}
+
+/* Locked Out Banner */
+.business-subscription-banner.is-locked-out {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+}
+.business-subscription-banner.is-locked-out .banner-icon-badge {
+  background: #fee2e2;
+  color: #dc2626;
+}
+.business-subscription-banner.is-locked-out strong {
+  color: #991b1b;
+}
+.business-subscription-banner.is-locked-out p {
+  color: #b91c1c;
+}
+
+/* Pending Review Banner */
+.business-subscription-banner.is-pending-review {
+  background: #f0f7ff;
+  border: 1px solid #bae0fd;
+}
+.business-subscription-banner.is-pending-review .banner-icon-badge {
+  background: #dbeafe;
+  color: #2563eb;
+}
+.business-subscription-banner.is-pending-review strong {
+  color: #1e40af;
+}
+.business-subscription-banner.is-pending-review p {
+  color: #1e3a8a;
+}
+
+/* Trial Expiring Notice */
+.business-subscription-banner.is-trial-notice {
+  background: #f4fbf7;
+  border: 1px solid #bbf7d0;
+}
+.business-subscription-banner.is-trial-notice .banner-icon-badge {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* --- Subscription Lock Screen (Grace Period Expired) --- */
+.subscription-lock-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  animation: fadeIn 0.35s ease;
+}
+
+.lock-hero-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 2.25rem 2rem;
+  background: linear-gradient(135deg, #fff7ed 0%, #fff 100%);
+  border: 1.5px solid #fed7aa;
+  border-radius: 16px;
+  box-shadow: 0 4px 18px rgba(234, 88, 12, 0.08);
+}
+
+.lock-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: #ea580c;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(234, 88, 12, 0.28);
+}
+
+.lock-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.lock-eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #c2410c;
+  margin-bottom: 0.4rem;
+}
+
+.lock-content h1 {
+  font-size: 1.6rem;
+  margin: 0 0 0.65rem;
+  color: #1f2937;
+  letter-spacing: -0.02em;
+}
+
+.lock-description {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #4b5563;
+}
+
+.lock-meta-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #ffedd5;
+}
+
+.lock-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.lock-meta-item .meta-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #9a3412;
+  text-transform: uppercase;
+}
+
+.lock-meta-item strong {
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+/* --- Official Platform Bank Account Details Card --- */
+.bank-account-card {
+  padding: 1.25rem 1.5rem;
+  border-radius: 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.5rem;
+}
+
+.bank-account-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.92rem;
+  font-weight: 650;
+  color: #0f172a;
+  margin-bottom: 1rem;
+}
+
+.bank-account-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  padding-bottom: 0.85rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.account-number-mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+  color: #0369a1;
+}
+
+.bank-account-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+/* --- Payment Method Switcher in Renewal Form --- */
+.renewal-method-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 0.35rem;
+}
+
+.method-option-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1.5px solid var(--line);
+  background: var(--surface);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.method-option-card:hover {
+  border-color: var(--pine);
+  background: var(--canvas);
+}
+
+.method-option-card.is-selected {
+  border-color: var(--pine);
+  background: #f0fdf4;
+  box-shadow: 0 0 0 1px var(--pine);
+}
+
+.method-icon-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--canvas);
+  color: var(--pine);
+  flex-shrink: 0;
+}
+
+.method-text strong {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--foreground);
+  margin-bottom: 0.15rem;
+}
+
+.method-text span {
+  font-size: 0.75rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* --- Slip Dropzone & Attached Card --- */
+.slip-dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.75rem 1.5rem;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #64748b;
+  text-align: center;
+}
+
+.slip-dropzone:hover,
+.slip-dropzone.is-dragover {
+  border-color: var(--pine);
+  background: #f0fdf4;
+  color: var(--pine);
+}
+
+.file-format-hint {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-top: 0.35rem;
+}
+
+.slip-attached-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  border: 1px solid #86efac;
+  background: #f0fdf4;
+}
+
+.slip-file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  min-width: 0;
+}
+
+.slip-thumb {
+  width: 50px;
+  height: 50px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #bbf7d0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.slip-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.slip-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.slip-filename {
+  font-size: 0.88rem;
+  color: #166534;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.slip-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Lightbox Slip Modal */
+.slip-preview-modal {
+  position: relative;
+  max-width: 760px;
+  width: 92vw;
+  max-height: 88vh;
+  background: var(--surface);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.slip-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.slip-modal-body {
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0f172a;
+}
+
+.slip-modal-body img {
+  max-width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+  border-radius: 6px;
+}
+
+/* --- Platform Subscriptions Management & Reviews --- */
+.platform-subtab-bar {
+  display: flex;
+  gap: 0.6rem;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+}
+
+.platform-subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.platform-subtab-btn:hover {
+  color: var(--foreground);
+  background: var(--canvas);
+}
+
+.platform-subtab-btn.is-active {
+  color: var(--pine);
+  background: var(--surface);
+  border-color: var(--line);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.subtab-counter-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 10px;
+  background: #ea580c;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.table-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.filter-pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.75rem;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  font-size: 0.8rem;
+  font-weight: 550;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.filter-pill.is-active {
+  border-color: var(--pine);
+  background: var(--pine);
+  color: #ffffff;
+}
+
+.pill-dot-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: #ea580c;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+/* Cards Grid for Renewals */
+.renewal-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.25rem;
+}
+
+.platform-renewal-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.4rem;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.platform-renewal-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.platform-renewal-card.is-pending-card {
+  border-left: 4px solid #ea580c;
+}
+
+.card-top-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.tenant-info-block h4 {
+  margin: 0.2rem 0;
+  font-size: 1.05rem;
+  color: var(--foreground);
+}
+
+.card-payment-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  padding: 0.85rem;
+  border-radius: 10px;
+  background: var(--canvas);
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.detail-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.amount-highlight {
+  font-size: 1.1rem;
+  color: var(--foreground);
+  font-family: var(--font-display);
+}
+
+.mono-ref {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+  font-size: 0.85rem;
+  color: #0284c7;
+}
+
+.method-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--pine);
+}
+
+.user-note-quote {
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  background: #fefce8;
+  border: 1px solid #fef08a;
+  font-size: 0.82rem;
+  color: #713f12;
+}
+
+.user-note-quote .quote-label {
+  font-weight: 700;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+  display: block;
+}
+
+/* Slip Inspection Container in Admin Card */
+.slip-inspect-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.slip-inspect-row {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--canvas);
+}
+
+.slip-inspect-thumb {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  flex-shrink: 0;
+}
+
+.slip-inspect-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.thumb-zoom-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.slip-inspect-thumb:hover .thumb-zoom-overlay {
+  opacity: 1;
+}
+
+.slip-inspect-hint strong {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--foreground);
+}
+
+.slip-inspect-hint p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.no-slip-note {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.renewal-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-top: auto;
+  padding-top: 0.5rem;
+}
+
+.renewal-card-actions .button {
+  flex: 1;
+}
+
+/* Header Notification Button for Pending Slips */
+.pending-slips-alert-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 8px;
+  background: #ea580c;
+  color: #ffffff;
+  border: none;
+  font-size: 0.82rem;
+  font-weight: 650;
+  cursor: pointer;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.pending-slips-alert-btn:hover {
+  background: #c2410c;
+  transform: translateY(-1px);
+}
+
+.bounce-anim {
+  animation: bounce 1.8s infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.nav-pending-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #ea580c;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.status-pill.is-grace {
+  background: #fef3c7;
+  color: #b45309;
+}
+.status-pill.is-trial {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+/* --- History list on Business Subscription Page --- */
+.renewals-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.renewal-history-card {
+  padding: 1rem 1.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.renewal-history-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.renewal-history-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.renewal-method-tag {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: var(--canvas);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.renewal-ref-code {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 0.8rem;
+  color: #0284c7;
+}
+
+.renewal-history-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.renewal-date-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.admin-review-callout {
+  padding: 0.65rem 0.85rem;
+  border-radius: 8px;
+  font-size: 0.82rem;
+}
+.admin-review-callout.is-success {
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #166534;
+}
+.admin-review-callout.is-rejection {
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  color: #991b1b;
+}

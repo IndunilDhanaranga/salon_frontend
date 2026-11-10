@@ -39,6 +39,7 @@ export function BillComposer({
   const api = useBranchApi();
   const { t, language } = useTranslation();
   const [lines, setLines] = useState<{ id: string; quantity: number }[]>([]);
+  const [customerName, setCustomerName] = useState("Walk-in Customer");
   const [selectedStaffId, setSelectedStaffId] = useState(defaultStaffId || "");
   const [paid, setPaid] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "card" | "other">(
@@ -57,11 +58,14 @@ export function BillComposer({
     setBusy(true);
     setError("");
     try {
+      const nextCustomerName = (customerName || form.get("customer_name") || "")
+        .toString()
+        .trim();
       const result = await api<{ data: Order }>("orders", {
         method: "POST",
         tenant: tenant.slug,
         body: {
-          customer_name: form.get("customer_name"),
+          customer_name: nextCustomerName || "Walk-in Customer",
           staff_id: canAssignStaff ? selectedStaffId || undefined : undefined,
           items: lines.map((line) => ({
             catalog_item_id: line.id,
@@ -124,6 +128,8 @@ export function BillComposer({
               required
               maxLength={120}
               autoFocus
+              value={customerName}
+              onChange={(event) => setCustomerName(event.target.value)}
               placeholder={t.billing.customerName}
             />
           </label>

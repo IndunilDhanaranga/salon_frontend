@@ -53,6 +53,8 @@ export function SubscriptionDialog({
   );
   const [error, setError] = useState("");
 
+  const sub = detail?.data ?? tenant.subscription;
+
   useEffect(() => {
     let mounted = true;
     setLoadingDetail(true);
@@ -140,7 +142,49 @@ export function SubscriptionDialog({
     }
   }
 
-  const sub = detail?.data ?? tenant.subscription;
+  async function handleApproveRenewal() {
+    setError("");
+    if (!selectedPlanId && !sub?.plan_id) {
+      setError("Select a plan before approving a renewal.");
+      return;
+    }
+
+    try {
+      await onSaveSubscription(tenant.id, {
+        status: "active",
+        plan_id: selectedPlanId || sub!.plan_id!,
+        current_period_end: new Date(
+          (periodEnd || new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10)) +
+            "T23:59:59Z",
+        ).toISOString(),
+        renewal_approved: true,
+      });
+
+      // Dispatch business notification
+      void fetch("/api/notifications/broadcast", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: "Payment Approved: Subscription Renewed!",
+          message: `Your subscription renewal for ${tenant.name} has been approved by the platform administrator. Full salon access is restored.`,
+          priority: "urgent",
+          category: "subscription",
+          targetAudience: tenant.slug,
+          targetView: "subscription",
+          sentBy: "Platform Admin",
+        }),
+      }).catch(() => {});
+
+      onClose();
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to approve renewal.",
+      );
+    }
+  }
+
+  const pendingRenewal =
+    sub?.status === "pending_renewal" || sub?.renewal_status === "pending";
 
   return (
     <AdminDialog
@@ -219,6 +263,28 @@ export function SubscriptionDialog({
                 </strong>
               </div>
             </div>
+
+            {pendingRenewal && (
+              <div className="warning-callout">
+                <AlertCircle size={18} />
+                <div>
+                  <strong>Renewal request is waiting for admin review.</strong>
+                  <p>
+                    {sub?.renewal_payment_method === "bank_transfer"
+                      ? "Bank transfer slip" 
+                      : "Online transfer slip"} reference: {sub?.renewal_reference || "not provided"}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  className="button primary small-button"
+                  onClick={handleApproveRenewal}
+                  disabled={busy}
+                >
+                  Approve renewal
+                </button>
+              </div>
+            )}
 
             {/* Quick 1-click Free Trial Extension */}
             <div className="quick-extend-row">

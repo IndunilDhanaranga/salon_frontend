@@ -612,9 +612,11 @@ input[type="checkbox"] {
   width: 100%;
   margin: 0 auto;
   box-sizing: border-box;
+  min-height: 0;
 }
 .workspace-body {
   flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
   padding: 0 36px 30px;
@@ -1103,6 +1105,7 @@ tr:nth-child(3n) .client-avatar {
   margin: 0 auto;
   box-sizing: border-box;
   z-index: 10;
+  margin-top: auto;
 }
 .workspace-footer > span:first-child {
   font-family: var(--font-display);
@@ -1769,23 +1772,30 @@ dd {
   .workspace-layout {
     display: flex;
     flex-direction: column;
-    height: auto;
+    height: 100dvh;
     min-height: 100dvh;
-    max-height: none;
+    max-height: 100dvh;
     overflow-x: hidden;
   }
   .main-content {
+    flex: 1 1 auto;
     height: auto;
     max-height: none;
     overflow: visible;
     padding-bottom: 76px;
+    min-height: 0;
   }
   .workspace-body {
+    flex: 1 1 auto;
+    min-height: 0;
     overflow: visible;
     padding: 0 20px 20px;
   }
   .workspace-footer {
+    flex-shrink: 0;
+    margin-top: auto;
     padding: 18px 20px 24px;
+    margin-bottom: calc(64px + env(safe-area-inset-bottom, 16px));
   }
   .topbar {
     min-height: 55px;

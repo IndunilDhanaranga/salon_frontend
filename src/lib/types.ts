@@ -40,7 +40,13 @@ export interface Plan {
 export interface Subscription {
   id: string;
   tenant_id: string;
-  status: "trialing" | "active" | "cancelled" | "expired";
+  status:
+    | "trialing"
+    | "active"
+    | "cancelled"
+    | "expired"
+    | "grace_period"
+    | "pending_renewal";
   plan_id: string | null;
   plan_name: string;
   price_minor: number;
@@ -57,13 +63,53 @@ export interface Subscription {
   trial_ends_at: string;
   current_period_start: string;
   current_period_end: string;
+  grace_period_ends_at?: string | null;
   cancelled_at: string | null;
   access_allowed: boolean;
   days_remaining: number;
+  renewal_status?: "none" | "pending" | "approved" | "rejected";
+  renewal_requested_at?: string | null;
+  renewal_payment_method?: "bank_transfer" | "online_transfer" | null;
+  renewal_reference?: string | null;
+  renewal_amount_minor?: number | null;
+  renewal_proof_url?: string | null;
+  renewal_review_notes?: string | null;
 }
+export interface SubscriptionRenewal {
+  id: string;
+  tenant_id: string;
+  subscription_id: string;
+  payment_method: "bank_transfer" | "online_transfer";
+  amount_minor: number;
+  reference: string;
+  type?: "late" | "early";
+  status: "pending" | "approved" | "rejected";
+  notes?: string | null;
+  review_notes?: string | null;
+  proof_url?: string | null;
+  submitted_by_user_id?: string | null;
+  reviewed_by_user_id?: string | null;
+  reviewed_at?: string | null;
+  created_at: string;
+  updated_at: string;
+  tenant?: {
+    id: string;
+    name: string;
+    slug: string;
+    currency: string;
+    owner_email?: string | null;
+  };
+  subscription?: Subscription;
+}
+
+export interface AdminRenewalsResponse {
+  data: SubscriptionRenewal[];
+}
+
 export interface SubscriptionResponse {
   data: Subscription;
   plans: Plan[];
+  renewals?: SubscriptionRenewal[];
 }
 export interface AdminPlansResponse {
   data: Plan[];
@@ -141,6 +187,14 @@ export interface PlatformDashboard {
   } | null;
   tenants: PlatformTenant[];
   users: User[];
+}
+
+export interface PlatformPaymentSettings {
+  bank_name: string;
+  account_name: string;
+  account_number: string;
+  branch_name: string;
+  updated_at?: string;
 }
 
 export interface PlatformRole {

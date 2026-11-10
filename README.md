@@ -38,6 +38,8 @@ Open [the local application](http://127.0.0.1:3000). The local-only seeder creat
 
 To check on a real phone, run `npm run dev:lan` and open `http://<your-computer-LAN-address>:3000` on the same Wi-Fi network. The Next.js server still talks to Laravel locally, so the phone does not need direct access to port 8000. Desktop preview uses the default local-only dev command.
 
+Important: browser push notifications require a secure origin. Android, Safari, and service workers will not receive or show OS notifications on an insecure LAN IP such as `http://192.168.x.x:3000`. For real Android push testing, use HTTPS or localhost (for example via a trusted local certificate or a reverse proxy) instead of a plain LAN HTTP URL.
+
 | Area               | Email              | Password   |
 | ------------------ | ------------------ | ---------- |
 | Business owner     | `demo@salon.test`  | `password` |

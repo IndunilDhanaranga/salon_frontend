@@ -153,6 +153,24 @@ test("platform roles start on an authorized page", () => {
   );
 });
 
+test("payment settings are available via the platform admin and API bridge", () => {
+  const { availablePlatformTab } = loadSource(
+    "src/features/platform/platform-access.ts",
+  );
+  assert.equal(
+    availablePlatformTab(
+      "settings",
+      (permission) => permission === "platform.settings.manage",
+    ),
+    "settings",
+  );
+  const { ENDPOINTS } = loadSource("src/lib/server/proxy-policy.ts");
+  assert.equal(
+    ENDPOINTS.some((endpoint) => endpoint.pattern.test("admin/payment-settings")),
+    true,
+  );
+});
+
 test("expired subscriptions hide operational actions", () => {
   const { canPermission, subscriptionStatusLabel } =
     loadSource("src/lib/access.ts");
@@ -165,6 +183,21 @@ test("expired subscriptions hide operational actions", () => {
     false,
   );
   assert.equal(subscriptionStatusLabel(subscription), "Expired");
+});
+
+test("grace-period renewals keep a short access window with renewal warnings", () => {
+  const { hasBusinessAccess, subscriptionStatusLabel } =
+    loadSource("src/lib/access.ts");
+  const now = Date.now();
+  const subscription = {
+    ...tenant.subscription,
+    status: "grace_period",
+    access_allowed: true,
+    current_period_end: new Date(now - 86400000).toISOString(),
+    grace_period_ends_at: new Date(now + 5 * 86400000).toISOString(),
+  };
+  assert.equal(hasBusinessAccess({ ...tenant, subscription }), true);
+  assert.equal(subscriptionStatusLabel(subscription), "Grace period");
 });
 
 test("the bridge checks actual request host and rejects foreign origins", () => {
@@ -200,6 +233,45 @@ test("option endpoints remain read-only and unknown routes are refused", () => {
     ENDPOINTS.some((endpoint) => endpoint.pattern.test("admin/arbitrary")),
     false,
   );
+  assert.equal(
+    ENDPOINTS.some((endpoint) => endpoint.pattern.test("subscription/renewal")),
+    true,
+  );
+  assert.equal(
+    ENDPOINTS.some((endpoint) => endpoint.pattern.test("admin/renewals")),
+    true,
+  );
+});
+
+test("browser push is blocked on insecure LAN origins, even when the device is subscribed", () => {
+  const { canUseWebPush } = loadSource("src/lib/device-registry.ts", {
+    window: {
+      location: { hostname: "192.168.1.20", protocol: "http:" },
+      isSecureContext: false,
+      Notification: { permission: "granted" },
+    },
+    navigator: {
+      userAgent: "Mozilla/5.0 (Linux; Android 14) Chrome/130.0 Safari/537.36",
+    },
+  });
+
+  assert.equal(canUseWebPush(), false);
+
+  const { canUseWebPush: canUseWebPushSecure } = loadSource(
+    "src/lib/device-registry.ts",
+    {
+      window: {
+        location: { hostname: "localhost", protocol: "https:" },
+        isSecureContext: true,
+        Notification: { permission: "granted" },
+      },
+      navigator: {
+        userAgent: "Mozilla/5.0 (Linux; Android 14) Chrome/130.0 Safari/537.36",
+      },
+    },
+  );
+
+  assert.equal(canUseWebPushSecure(), true);
 });
 
 test("API client sends branch selection, query filters and JSON mutations", async () => {

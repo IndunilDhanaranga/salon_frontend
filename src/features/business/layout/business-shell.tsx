@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import type { Session, Tenant } from "@/lib/types";
+import type { Branch, Session, Tenant } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
 import { BusinessSidebar } from "./business-sidebar";
 import { BusinessBottomNav } from "./business-bottom-nav";
@@ -10,6 +10,7 @@ import { Scissors } from "lucide-react";
 import { NotificationBell } from "../notifications/components/notification-bell";
 import { NotificationDrawer } from "../notifications/components/notification-drawer";
 import { NotificationToast } from "../notifications/components/notification-toast";
+import { BranchDropdown } from "../workspace/components/branch-dropdown";
 
 export function BusinessShell({
   session,
@@ -21,6 +22,12 @@ export function BusinessShell({
   onLogout,
   onPlatform,
   onTour,
+  branches,
+  activeBranchId,
+  selectedBranchId,
+  hasAllBranchesAccess,
+  onSelectBranch,
+  onManageBranches,
   children,
 }: {
   session: Session;
@@ -32,6 +39,12 @@ export function BusinessShell({
   onLogout: () => void;
   onPlatform?: () => void;
   onTour: () => void;
+  branches?: Branch[];
+  activeBranchId?: string | null;
+  selectedBranchId?: string;
+  hasAllBranchesAccess?: boolean;
+  onSelectBranch?: (id: string) => void;
+  onManageBranches?: () => void;
   children: React.ReactNode;
 }) {
   const { t } = useTranslation();
@@ -56,6 +69,16 @@ export function BusinessShell({
         </div>
 
         <div className="mobile-header-right">
+          {branches && branches.length > 0 && onSelectBranch && (
+            <BranchDropdown
+              branches={branches}
+              activeBranchId={activeBranchId ?? null}
+              selectedBranchId={selectedBranchId ?? "all"}
+              hasAllBranchesAccess={hasAllBranchesAccess ?? true}
+              onSelectBranch={onSelectBranch}
+              onManageBranches={onManageBranches}
+            />
+          )}
           <div className="mobile-header-tenant-pill">
             <span>{tenant.name}</span>
           </div>

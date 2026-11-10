@@ -35,7 +35,7 @@ export async function upstreamResponse(
     return path === "logout" ? clearSession(response) : response;
   }
 
-  if (publicEndpoint && upstream.ok) {
+  if ((path === "login" || path === "register") && upstream.ok) {
     if (
       !payload ||
       typeof payload !== "object" ||

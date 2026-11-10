@@ -24,6 +24,7 @@ export function PlatformShell({
   onRefresh,
   onBusiness,
   onLogout,
+  pendingRenewalsCount = 0,
   children,
 }: {
   session: Session;
@@ -40,6 +41,7 @@ export function PlatformShell({
   onRefresh: () => void;
   onBusiness?: () => void;
   onLogout: () => Promise<void>;
+  pendingRenewalsCount?: number;
   children: React.ReactNode;
 }) {
   const { language } = useTranslation();
@@ -75,6 +77,7 @@ export function PlatformShell({
         onBusiness={onBusiness}
         onLogout={onLogout}
         busy={busy}
+        pendingRenewalsCount={pendingRenewalsCount}
       />
 
       <main className="platform-workspace-main">
@@ -82,6 +85,8 @@ export function PlatformShell({
           title={tabTitle}
           subtitle={tabSubtitle}
           busy={busy}
+          pendingRenewalsCount={pendingRenewalsCount}
+          onNavigateSubscriptions={() => onTab("subscriptions")}
           onRefresh={onRefresh}
         />
 

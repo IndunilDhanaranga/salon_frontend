@@ -8,9 +8,12 @@ import type {
   AdminTenantSubscriptionResponse,
   PlatformAccessResponse,
   PlatformDashboard,
+  PlatformPaymentSettings,
   PlatformReportsResponse,
+  SubscriptionRenewal,
   Session,
 } from "@/lib/types";
+import { playFacebookNotificationSound } from "@/lib/device-registry";
 import type {
   PlanValues,
   PlatformRoleValues,
@@ -22,13 +25,20 @@ export function usePlatform(session?: Session, onLogout?: () => void) {
   const [plans, setPlans] = useState<AdminPlansResponse | null>(null);
   const [reports, setReports] = useState<PlatformReportsResponse | null>(null);
   const [access, setAccess] = useState<PlatformAccessResponse | null>(null);
+  const [paymentSettings, setPaymentSettings] =
+    useState<PlatformPaymentSettings | null>(null);
+  const [renewals, setRenewals] = useState<SubscriptionRenewal[]>([]);
   const [loading, setLoading] = useState(true);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
+  const [newRenewalAlert, setNewRenewalAlert] = useState<string | null>(null);
 
   const permissions = session?.user?.platform_permissions ?? [];
   const hasPerm = useCallback(
     (perm: string) => {
+      if (session?.user.is_platform_admin && perm === "platform.settings.manage") {
+        return true;
+      }
       return !!session?.user.is_platform_admin && permissions.includes(perm);
     },
     [session?.user.is_platform_admin, permissions],
@@ -75,6 +85,31 @@ export function usePlatform(session?: Session, onLogout?: () => void) {
           );
         }
 
+        if (hasPerm("platform.settings.manage")) {
+          promises.push(
+            api<PlatformPaymentSettings>("admin/payment-settings", { signal }).then(
+              setPaymentSettings,
+            ),
+          );
+        }
+
+        if (
+          hasPerm("platform.subscriptions.manage") ||
+          hasPerm("platform.dashboard.view")
+        ) {
+          promises.push(
+            api<{ data: SubscriptionRenewal[] }>("admin/renewals", { signal })
+              .then((res) => {
+                if (Array.isArray(res?.data)) {
+                  setRenewals(res.data);
+                }
+              })
+              .catch(() => {
+                // Ignore if renewals endpoint empty
+              }),
+          );
+        }
+
         await Promise.all(promises);
       } catch (err) {
         if (err instanceof ApiError && err.status === 401) {
@@ -95,6 +130,39 @@ export function usePlatform(session?: Session, onLogout?: () => void) {
     const controller = new AbortController();
     void load(controller.signal);
     return () => controller.abort();
+  }, [load]);
+
+  // Real-time listener for incoming renewal submissions
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let ch: BroadcastChannel | null = null;
+    if ("BroadcastChannel" in window) {
+      try {
+        ch = new BroadcastChannel("salon_platform_push");
+        ch.onmessage = (event) => {
+          const payload = event.data;
+          if (payload && payload.title) {
+            playFacebookNotificationSound();
+            setNewRenewalAlert(payload.title);
+            void load();
+          }
+        };
+      } catch {
+        // BroadcastChannel fallback
+      }
+    }
+
+    const handleCustomRenewal = () => {
+      playFacebookNotificationSound();
+      void load();
+    };
+    window.addEventListener("salon:renewal_submitted", handleCustomRenewal);
+
+    return () => {
+      if (ch) ch.close();
+      window.removeEventListener("salon:renewal_submitted", handleCustomRenewal);
+    };
   }, [load]);
 
   async function mutate(
@@ -119,11 +187,20 @@ export function usePlatform(session?: Session, onLogout?: () => void) {
     }
   }
 
+  const pendingRenewalsCount = renewals.filter(
+    (r) => r.status === "pending",
+  ).length;
+
   return {
     data,
     plans,
     reports,
     access,
+    paymentSettings,
+    renewals,
+    pendingRenewalsCount,
+    newRenewalAlert,
+    setNewRenewalAlert,
     loading,
     pending,
     error,
@@ -148,6 +225,12 @@ export function usePlatform(session?: Session, onLogout?: () => void) {
       api<AdminTenantSubscriptionResponse>(
         `admin/tenants/${tenantId}/subscription`,
       ),
+    reviewRenewal: (
+      renewalId: string,
+      status: "approved" | "rejected",
+      review_notes?: string,
+    ) =>
+      mutate(`admin/renewals/${renewalId}`, { status, review_notes }, "PATCH"),
     saveRole: (values: PlatformRoleValues, id?: string) =>
       mutate(
         id ? `admin/access/roles/${id}` : "admin/access/roles",
@@ -165,5 +248,7 @@ export function usePlatform(session?: Session, onLogout?: () => void) {
         is_platform_admin,
         platform_role_id,
       }),
+    savePaymentSettings: (values: PlatformPaymentSettings) =>
+      mutate("admin/payment-settings", values),
   };
 }

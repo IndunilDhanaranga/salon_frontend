@@ -25,6 +25,7 @@ export function PlatformSidebar({
   onBusiness,
   onLogout,
   busy,
+  pendingRenewalsCount = 0,
 }: {
   tab: PlatformTab;
   onTab: (tab: PlatformTab) => void;
@@ -35,6 +36,7 @@ export function PlatformSidebar({
   onBusiness?: () => void;
   onLogout: () => Promise<void>;
   busy: boolean;
+  pendingRenewalsCount?: number;
 }) {
   const { t } = useTranslation();
   const roleName = platformRoleLabel(session.user.platform_role);
@@ -53,6 +55,8 @@ export function PlatformSidebar({
         return t.platform.plans;
       case "subscriptions":
         return t.nav.subscription;
+      case "settings":
+        return "Payment Settings";
       case "access":
         return t.platform.access;
       case "accounts":
@@ -123,6 +127,11 @@ export function PlatformSidebar({
                       <div className="nav-item-icon-title">
                         <Icon size={16} strokeWidth={1.8} />
                         <span>{getTabLabel(item)}</span>
+                        {item.id === "subscriptions" && pendingRenewalsCount > 0 && (
+                          <span className="nav-pending-badge">
+                            {pendingRenewalsCount}
+                          </span>
+                        )}
                       </div>
                       <ChevronRight size={14} className="nav-chevron" />
                     </button>

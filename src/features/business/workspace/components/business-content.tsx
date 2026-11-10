@@ -1,5 +1,5 @@
 "use client";
-import { canPermission } from "@/lib/access";
+import { canPermission, hasBusinessAccess } from "@/lib/access";
 import type { Session, Tenant } from "@/lib/types";
 import type { useWorkspace } from "@/features/workspace/use-workspace";
 import { useTranslation } from "@/lib/i18n";
@@ -13,6 +13,7 @@ import { BillingView } from "@/features/business/billing/components/billing-view
 import { PosView } from "@/features/business/billing/components/pos-view";
 import { WorkspaceDetails } from "./workspace-details";
 import { SubscriptionView } from "@/features/business/subscription/components/subscription-view";
+import { SubscriptionLockScreen } from "@/features/business/subscription/components/subscription-lock-screen";
 import { BusinessReportsView } from "@/features/business/reports/components/business-reports-view";
 import { DeductionsView } from "@/features/business/deductions/components/deductions-view";
 import { BranchesView } from "@/features/business/branches/components/branches-view";
@@ -25,7 +26,10 @@ type Props = {
 export function BusinessContent({ workspace: w, tenant, session }: Props) {
   const { t } = useTranslation();
   const can = (permission: string) => canPermission(tenant, permission);
+  const hasAccess = hasBusinessAccess(tenant);
+
   if (w.view === "subscription") return <SubscriptionView tenant={tenant} />;
+
   if (tenant.status !== "active")
     return (
       <section className="panel empty-state">
@@ -33,6 +37,17 @@ export function BusinessContent({ workspace: w, tenant, session }: Props) {
         <p>{tenant.status}</p>
       </section>
     );
+
+  // If 1-week grace period has expired, lock access to all operational options
+  if (!hasAccess) {
+    return (
+      <SubscriptionLockScreen
+        tenant={tenant}
+        onViewSubscription={() => w.setView("subscription")}
+        onRefresh={() => void w.refresh()}
+      />
+    );
+  }
   if (w.view === "overview" && can("dashboard.view") && w.data.dashboard)
     return (
       <OverviewView

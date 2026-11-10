@@ -6,6 +6,7 @@ export type PlatformTab =
   | "businesses"
   | "plans"
   | "subscriptions"
+  | "settings"
   | "access"
   | "accounts"
   | "notifications";
@@ -24,8 +25,18 @@ export type PlanValues = Pick<
 >;
 
 export type SubscriptionUpdate =
-  | { status: "active"; plan_id: string; current_period_end: string }
-  | { status: "cancelled" };
+  | {
+      status: "active";
+      plan_id: string;
+      current_period_end: string;
+      renewal_approved?: boolean;
+    }
+  | { status: "cancelled" }
+  | {
+      status: "grace_period";
+      grace_period_ends_at: string;
+      renewal_approved?: boolean;
+    };
 
 export interface PlatformRoleValues {
   name: string;

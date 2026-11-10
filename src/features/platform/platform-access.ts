@@ -6,6 +6,7 @@ export const platformTabPermissions: Record<PlatformTab, string> = {
   businesses: "platform.tenants.view",
   plans: "platform.plans.view",
   subscriptions: "platform.subscriptions.manage",
+  settings: "platform.settings.manage",
   access: "platform.access.manage",
   accounts: "platform.users.view",
   notifications: "platform.dashboard.view",

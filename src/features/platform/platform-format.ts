@@ -51,6 +51,8 @@ export function subscriptionLabel(status: string) {
       {
         trialing: "Free trial",
         active: "Active plan",
+        grace_period: "Grace period",
+        pending_renewal: "Pending renewal",
         cancelled: "Cancelled",
         expired: "Expired",
       } as Record<string, string>

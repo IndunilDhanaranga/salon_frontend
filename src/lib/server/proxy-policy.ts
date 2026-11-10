@@ -6,10 +6,15 @@ export const ENDPOINTS: Array<{
   public?: boolean;
   tenant?: boolean;
 }> = [
-  { pattern: /^(login|register)$/, methods: ["POST"], public: true },
+  {
+    pattern: /^(login|register|forgot-password|reset-password)$/,
+    methods: ["POST"],
+    public: true,
+  },
   { pattern: /^me$/, methods: ["GET"] },
   { pattern: /^logout$/, methods: ["POST"] },
   { pattern: /^admin\/(dashboard|reports)$/, methods: ["GET"] },
+  { pattern: /^admin\/payment-settings$/, methods: ["GET", "PATCH"] },
   { pattern: /^admin\/plans$/, methods: ["GET", "POST"] },
   { pattern: new RegExp(`^admin/plans/${UUID}$`, "i"), methods: ["PATCH"] },
   {
@@ -19,6 +24,14 @@ export const ENDPOINTS: Array<{
   {
     pattern: new RegExp(`^admin/tenants/${UUID}/subscription/trial$`, "i"),
     methods: ["POST"],
+  },
+  {
+    pattern: /^admin\/renewals$/,
+    methods: ["GET", "POST"],
+  },
+  {
+    pattern: new RegExp(`^admin/renewals/${UUID}$`, "i"),
+    methods: ["PATCH"],
   },
   { pattern: new RegExp(`^admin/tenants/${UUID}$`, "i"), methods: ["PATCH"] },
   { pattern: /^admin\/access$/, methods: ["GET"] },
@@ -32,6 +45,7 @@ export const ENDPOINTS: Array<{
     methods: ["PATCH"],
   },
   { pattern: /^subscription$/, methods: ["GET"], tenant: true },
+  { pattern: /^subscription\/renewal$/, methods: ["GET", "POST"], tenant: true },
   { pattern: /^(dashboard|reports)$/, methods: ["GET"], tenant: true },
   {
     pattern: /^(appointment-options|order-options)$/,

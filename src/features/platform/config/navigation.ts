@@ -4,6 +4,7 @@ import {
   Building2,
   Layers3,
   CreditCard,
+  Landmark,
   ShieldCheck,
   Users,
   BellRing,
@@ -53,6 +54,13 @@ export const PLATFORM_NAV_ITEMS: PlatformNavItem[] = [
     defaultLabel: "Subscriptions",
     icon: CreditCard,
     perm: "platform.subscriptions.manage",
+  },
+  {
+    id: "settings",
+    labelKey: "settings",
+    defaultLabel: "Payment Settings",
+    icon: Landmark,
+    perm: "platform.settings.manage",
   },
   {
     id: "access",

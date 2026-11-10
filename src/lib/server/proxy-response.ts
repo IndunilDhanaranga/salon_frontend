@@ -35,7 +35,10 @@ export async function upstreamResponse(
     return path === "logout" ? clearSession(response) : response;
   }
 
-  if ((path === "login" || path === "register") && upstream.ok) {
+  if (
+    (path === "login" || path === "register" || path === "google/register") &&
+    upstream.ok
+  ) {
     if (
       !payload ||
       typeof payload !== "object" ||

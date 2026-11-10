@@ -7,7 +7,8 @@ export const ENDPOINTS: Array<{
   tenant?: boolean;
 }> = [
   {
-    pattern: /^(login|register|forgot-password|reset-password)$/,
+    pattern:
+      /^(login|register|google\/register|forgot-password|reset-password)$/,
     methods: ["POST"],
     public: true,
   },
@@ -45,7 +46,11 @@ export const ENDPOINTS: Array<{
     methods: ["PATCH"],
   },
   { pattern: /^subscription$/, methods: ["GET"], tenant: true },
-  { pattern: /^subscription\/renewal$/, methods: ["GET", "POST"], tenant: true },
+  {
+    pattern: /^subscription\/renewal$/,
+    methods: ["GET", "POST"],
+    tenant: true,
+  },
   { pattern: /^(dashboard|reports)$/, methods: ["GET"], tenant: true },
   {
     pattern: /^(appointment-options|order-options)$/,

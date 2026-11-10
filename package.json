@@ -3,12 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 127.0.0.1",
-    "build": "next build",
+    "dev": "next dev --webpack --hostname 127.0.0.1",
+    "build": "next build --webpack",
     "start": "next start --hostname 127.0.0.1",
     "typecheck": "tsc --noEmit",
     "test": "node --test tests/*.test.cjs",
-    "dev:lan": "next dev --hostname 0.0.0.0",
+    "dev:lan": "next dev --webpack --hostname 0.0.0.0",
     "format": "prettier --write src tests next.config.ts tsconfig.json package.json README.md DESIGN.md docs",
     "format:check": "prettier --check src tests next.config.ts tsconfig.json package.json README.md DESIGN.md docs"
   },

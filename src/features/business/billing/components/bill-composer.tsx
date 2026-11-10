@@ -10,7 +10,7 @@ import {
   CreditCard,
   History,
 } from "lucide-react";
-import { useBranchApi } from "@/features/workspace/branch-context";
+import { useBranchApi } from "@/features/business/branches/branch-context";
 import type { CatalogItem, Order, Tenant } from "@/lib/types";
 import { message, money } from "@/lib/format";
 import { PosCatalogPicker } from "../pos-catalog-picker";

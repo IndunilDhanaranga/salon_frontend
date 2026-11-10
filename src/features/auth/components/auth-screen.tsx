@@ -14,6 +14,7 @@ import { api } from "@/lib/api";
 import type { Session } from "@/lib/types";
 import { message } from "@/lib/format";
 import { autoRequestPushPermission } from "@/lib/device-registry";
+import { GoogleSignupButton } from "./google-signup-button";
 
 export function AuthScreen({
   onAuthenticated,
@@ -27,21 +28,42 @@ export function AuthScreen({
   const [register, setRegister] = useState(initialRegister);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [googleCredential, setGoogleCredential] = useState("");
 
-  async function signIn(form: FormData, demo = false, startTour = false) {
+  async function signIn(
+    form: FormData,
+    demo: boolean | "google" = false,
+    startTour = false,
+  ) {
     setBusy(true);
     setError("");
     void autoRequestPushPermission();
     const values = Object.fromEntries(form);
-    const body = demo
-      ? { email: "demo@salon.test", password: "password" }
-      : values;
+    const body =
+      demo === true
+        ? { email: "demo@salon.test", password: "password" }
+        : demo === "google"
+          ? {
+              credential: googleCredential,
+              salon_name: values.salon_name,
+              phone: values.phone,
+              currency: values.currency,
+              timezone: values.timezone,
+            }
+          : values;
     try {
       onAuthenticated(
-        await api<Session>(register && !demo ? "register" : "login", {
-          method: "POST",
-          body,
-        }),
+        await api<Session>(
+          demo === "google"
+            ? "google/register"
+            : register && !demo
+              ? "register"
+              : "login",
+          {
+            method: "POST",
+            body,
+          },
+        ),
         startTour,
       );
     } catch (err) {
@@ -112,55 +134,100 @@ export function AuthScreen({
           <form
             onSubmit={(event) => {
               event.preventDefault();
-              void signIn(new FormData(event.currentTarget));
+              void signIn(
+                new FormData(event.currentTarget),
+                googleCredential ? "google" : false,
+              );
             }}
           >
+            {register && !googleCredential && (
+              <div className="google-signup-section">
+                <GoogleSignupButton
+                  onCredential={(credential) => {
+                    setGoogleCredential(credential);
+                    setError("");
+                  }}
+                />
+                <div className="auth-divider">
+                  <span>or use email and password</span>
+                </div>
+              </div>
+            )}
             {register && (
               <>
-                <label>
-                  Your name
-                  <input
-                    name="name"
-                    autoComplete="name"
-                    required
-                    maxLength={120}
-                  />
-                </label>
+                {googleCredential ? (
+                  <div className="connection-notice" role="status">
+                    Google account selected. Add your workspace details to
+                    continue.
+                    <button
+                      type="button"
+                      className="text-button"
+                      onClick={() => setGoogleCredential("")}
+                    >
+                      Choose another account
+                    </button>
+                  </div>
+                ) : (
+                  <label>
+                    Your name
+                    <input
+                      name="name"
+                      autoComplete="name"
+                      required
+                      maxLength={120}
+                    />
+                  </label>
+                )}
                 <label>
                   Salon name
                   <input name="salon_name" required maxLength={120} />
+                  <span className="field-hint">
+                    Your workspace address will be generated from this name.
+                  </span>
                 </label>
                 <label>
-                  Workspace address
+                  Phone number
                   <input
-                    name="slug"
+                    name="phone"
+                    type="tel"
+                    autoComplete="tel"
                     required
-                    pattern="[a-z0-9]+(-[a-z0-9]+)*"
-                    maxLength={63}
-                    placeholder="e.g. studio-one"
+                    maxLength={30}
                   />
-                  <span className="field-hint">
-                    Lowercase letters, numbers, and hyphens.
-                  </span>
                 </label>
               </>
             )}
-            <label>
-              Email address
-              <input name="email" type="email" autoComplete="email" required />
-            </label>
-            <label>
-              Password
-              <input
-                name="password"
-                type="password"
-                autoComplete={register ? "new-password" : "current-password"}
-                minLength={register ? 8 : 1}
-                required
-              />
-            </label>
+            {(!register || !googleCredential) && (
+              <label>
+                Email address
+                <input
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                />
+              </label>
+            )}
+            {(!register || !googleCredential) && (
+              <label>
+                Password
+                <input
+                  name="password"
+                  type="password"
+                  autoComplete={register ? "new-password" : "current-password"}
+                  minLength={register ? 8 : 1}
+                  required
+                />
+              </label>
+            )}
             {!register && (
-              <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "-0.5rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  marginTop: "-0.5rem",
+                }}
+              >
                 <a className="text-button" href="/forgot-password">
                   Forgot password?
                 </a>
@@ -168,16 +235,18 @@ export function AuthScreen({
             )}
             {register && (
               <>
-                <label>
-                  Confirm password
-                  <input
-                    name="password_confirmation"
-                    type="password"
-                    autoComplete="new-password"
-                    minLength={8}
-                    required
-                  />
-                </label>
+                {!googleCredential && (
+                  <label>
+                    Confirm password
+                    <input
+                      name="password_confirmation"
+                      type="password"
+                      autoComplete="new-password"
+                      minLength={8}
+                      required
+                    />
+                  </label>
+                )}
                 <div className="form-grid">
                   <label>
                     Currency
@@ -209,7 +278,9 @@ export function AuthScreen({
               {busy
                 ? "Please wait…"
                 : register
-                  ? "Create my workspace"
+                  ? googleCredential
+                    ? "Create workspace with Google"
+                    : "Create my workspace"
                   : "Sign in"}
               <ArrowRight size={17} />
             </button>
@@ -221,6 +292,7 @@ export function AuthScreen({
               disabled={busy}
               onClick={() => {
                 setRegister(!register);
+                setGoogleCredential("");
                 setError("");
               }}
             >

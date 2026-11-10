@@ -2,6 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  phone?: string | null;
   is_platform_admin: boolean;
   platform_role?: string;
   platform_role_id?: string | null;

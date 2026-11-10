@@ -25,7 +25,7 @@ import {
   Banknote,
   Send,
 } from "lucide-react";
-import { useBranchApi } from "@/features/workspace/branch-context";
+import { useBranchApi } from "@/features/business/branches/branch-context";
 import { initials, message, money } from "@/lib/format";
 import type {
   Deduction,

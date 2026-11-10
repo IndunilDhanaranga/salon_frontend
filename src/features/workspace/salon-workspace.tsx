@@ -156,7 +156,6 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
             view={w.view}
             busy={w.busy || w.loading}
             onView={w.setView}
-            onTenant={w.selectTenant}
             onLogout={() => void w.logout()}
             onTour={() => w.setTourOpen(true)}
             branches={w.branches}

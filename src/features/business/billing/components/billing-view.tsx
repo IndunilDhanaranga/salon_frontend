@@ -3,7 +3,7 @@ import { canPermission } from "@/lib/access";
 
 import { useCallback, useEffect, useState } from "react";
 import { Plus, Receipt } from "lucide-react";
-import { useBranchApi } from "@/features/workspace/branch-context";
+import { useBranchApi } from "@/features/business/branches/branch-context";
 import type {
   CatalogItem,
   ListResponse,

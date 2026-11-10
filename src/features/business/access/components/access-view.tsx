@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { Plus, UserPlus } from "lucide-react";
 import type { ApiOptions } from "@/lib/api";
-import { useBranchApi } from "@/features/workspace/branch-context";
+import { useBranchApi } from "@/features/business/branches/branch-context";
 import type { AccessResponse, Tenant, TenantRole } from "@/lib/types";
 import { message } from "@/lib/format";
 import { RoleEditor } from "./role-editor";

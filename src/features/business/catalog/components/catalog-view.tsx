@@ -3,7 +3,7 @@ import { canPermission } from "@/lib/access";
 
 import { useCallback, useEffect, useState } from "react";
 import { Plus, Scissors, Package, ArrowUpRight, Edit3, X } from "lucide-react";
-import { useBranchApi } from "@/features/workspace/branch-context";
+import { useBranchApi } from "@/features/business/branches/branch-context";
 import type { CatalogItem, ListResponse, Tenant } from "@/lib/types";
 import { message, money } from "@/lib/format";
 import { useTranslation } from "@/lib/i18n";

@@ -169,6 +169,7 @@ export function FirstBranchSetup({
                     type="tel"
                     maxLength={40}
                     autoComplete="tel"
+                  defaultValue={session.user.phone ?? ""}
                     disabled={disabled || created}
                   />
                 </label>

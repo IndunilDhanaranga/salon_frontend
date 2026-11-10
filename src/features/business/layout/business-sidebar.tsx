@@ -24,7 +24,6 @@ export function BusinessSidebar({
   view,
   busy,
   onView,
-  onTenant,
   onLogout,
   onPlatform,
   onTour,
@@ -36,7 +35,6 @@ export function BusinessSidebar({
   view: View;
   busy: boolean;
   onView: (view: View) => void;
-  onTenant: (slug: string) => void;
   onLogout: () => void;
   onPlatform?: () => void;
   onTour: () => void;
@@ -121,29 +119,16 @@ export function BusinessSidebar({
           )}
         </div>
 
-        {/* Compact Workspace Selector */}
-        <label className="workspace-select">
-          <span className="eyebrow light">{t.shell.yourWorkspace}</span>
-          <select
-            aria-label={t.shell.yourWorkspace}
-            value={tenant.slug}
-            disabled={busy}
-            onChange={(event) => {
-              onTenant(event.target.value);
-              if (onMobileClose) onMobileClose();
-            }}
-          >
-            {session.tenants.map((item) => (
-              <option value={item.slug} key={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+        {/* Current Workspace */}
+        <div className="workspace-select">
+          <div className="workspace-select-value" title={tenant.name}>
+            {tenant.name}
+          </div>
           <span className="workspace-role">
             {tenant.role === "owner" ? t.access.owner : tenant.role}{" "}
             {t.shell.workspaceRole}
           </span>
-        </label>
+        </div>
 
         {/* Scrollable Navigation Area */}
         <nav

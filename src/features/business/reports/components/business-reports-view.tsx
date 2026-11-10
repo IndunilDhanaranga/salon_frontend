@@ -22,7 +22,7 @@ import {
   Wallet,
   XCircle,
 } from "lucide-react";
-import { useBranchApi } from "@/features/workspace/branch-context";
+import { useBranchApi } from "@/features/business/branches/branch-context";
 import { initials, message, money } from "@/lib/format";
 import type { BusinessReportResponse, Tenant } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";

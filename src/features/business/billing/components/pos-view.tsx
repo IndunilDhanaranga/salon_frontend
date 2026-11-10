@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { Receipt, ShoppingBag } from "lucide-react";
-import { useBranchApi } from "@/features/workspace/branch-context";
+import { useBranchApi } from "@/features/business/branches/branch-context";
 import type {
   CatalogItem,
   ListResponse,

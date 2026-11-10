@@ -359,6 +359,38 @@ input[type="checkbox"] {
   margin-bottom: 32px;
   font-size: 13px;
 }
+.google-signup-section {
+  margin: 0 0 20px;
+}
+.google-signup-button {
+  min-height: 44px;
+  display: flex;
+  justify-content: center;
+}
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 17px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  background: var(--line);
+}
+.auth-form .connection-notice {
+  padding: 12px;
+  border-radius: 6px;
+  line-height: 1.6;
+}
+.auth-form .connection-notice .text-button {
+  display: block;
+  margin-top: 6px;
+}
 .auth-toggle {
   margin: 22px 0 30px;
   font-size: 12px;
@@ -464,31 +496,25 @@ input[type="checkbox"] {
   margin: 0 4px 10px;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 7px;
 }
-.workspace-select .eyebrow {
-  margin-bottom: 2px;
-  font-size: 9px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--sidebar-muted);
-}
-.workspace-select select {
-  background: var(--sidebar-surface);
-  border: 1px solid var(--sidebar-line);
+.workspace-select-value {
   color: white;
   font-size: 12px;
-  font-weight: 500;
-  padding: 4px 8px;
-  height: 32px;
-  border-radius: 6px;
+  font-weight: 600;
+  padding: 2px 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .workspace-role {
   color: var(--accent);
   font-size: 10px;
   font-weight: 500;
   padding: 0 2px;
+  margin-bottom: 6px;
 }
 .nav-item {
   border: 0;
@@ -2192,9 +2218,8 @@ dd {
     padding-top: 8px;
     padding-bottom: 8px;
   }
-  .workspace-select select {
+  .workspace-select-value {
     font-size: 16px;
-    min-height: 44px;
   }
   .mobile-menu-toggle {
     display: none;

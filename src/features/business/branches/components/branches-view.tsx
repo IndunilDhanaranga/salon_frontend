@@ -19,7 +19,7 @@ import {
   RefreshCw,
   Coins,
 } from "lucide-react";
-import { useBranchApi } from "@/features/workspace/branch-context";
+import { useBranchApi } from "@/features/business/branches/branch-context";
 import { money, message } from "@/lib/format";
 import type {
   Branch,

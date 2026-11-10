@@ -18,7 +18,6 @@ export function BusinessShell({
   view,
   busy,
   onView,
-  onTenant,
   onLogout,
   onPlatform,
   onTour,
@@ -35,7 +34,6 @@ export function BusinessShell({
   view: View;
   busy: boolean;
   onView: (view: View) => void;
-  onTenant: (slug: string) => void;
   onLogout: () => void;
   onPlatform?: () => void;
   onTour: () => void;
@@ -93,7 +91,6 @@ export function BusinessShell({
         view={view}
         busy={busy}
         onView={onView}
-        onTenant={onTenant}
         onLogout={onLogout}
         onPlatform={onPlatform}
         onTour={onTour}

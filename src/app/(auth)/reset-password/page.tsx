@@ -1,12 +1,12 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useState } from "react";
 import { ArrowLeft, ArrowRight, Scissors } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { api } from "@/lib/api";
 import { message } from "@/lib/format";
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const params = useSearchParams();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
@@ -59,5 +59,13 @@ export default function ResetPasswordPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<main className="auth-layout" aria-busy="true" />}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }

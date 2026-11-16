@@ -6,7 +6,6 @@ import {
   Smartphone,
   Monitor,
   PlusSquare,
-  X,
   ChevronRight,
   CheckCircle,
   ArrowUpFromLine,
@@ -73,7 +72,6 @@ export function PwaInstallBanner() {
   const [platform, setPlatform] = useState<Platform>("unknown");
   const [browser, setBrowser] = useState<ReturnType<typeof detectBrowser>>("other");
   const [isPwa, setIsPwa] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
   const [expanded, setExpanded] = useState<ExpandedSection>(null);
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
@@ -83,15 +81,6 @@ export function PwaInstallBanner() {
     setPlatform(detectPlatform());
     setBrowser(detectBrowser());
     setIsPwa(isStandalone());
-
-    // Check if user previously dismissed
-    try {
-      if (localStorage.getItem("salon_pwa_dismissed") === "1") {
-        setDismissed(true);
-      }
-    } catch {
-      /* empty */
-    }
 
     // Chrome / Edge install prompt (works on Android, Windows, Mac, Linux)
     const handler = (e: Event) => {
@@ -122,15 +111,6 @@ export function PwaInstallBanner() {
     setDeferredPrompt(null);
   }, [deferredPrompt]);
 
-  const handleDismiss = useCallback(() => {
-    setDismissed(true);
-    try {
-      localStorage.setItem("salon_pwa_dismissed", "1");
-    } catch {
-      /* empty */
-    }
-  }, []);
-
   const toggleSection = useCallback(
     (section: ExpandedSection) => {
       setExpanded((prev) => (prev === section ? null : section));
@@ -138,8 +118,8 @@ export function PwaInstallBanner() {
     [],
   );
 
-  // Don't show if already installed as PWA, dismissed, or can't detect
-  if (isPwa || dismissed || installed) return null;
+  // Keep the install section visible on every browser visit until installation.
+  if (isPwa || installed) return null;
 
   const isDesktop =
     platform === "windows" || platform === "mac" || platform === "linux";
@@ -163,14 +143,16 @@ export function PwaInstallBanner() {
           <strong>Install Salon App</strong>
           <span>Get push notifications &amp; fast access</span>
         </div>
-        <button
-          type="button"
-          className="pwa-dismiss-btn"
-          onClick={handleDismiss}
-          aria-label="Dismiss"
-        >
-          <X size={14} />
-        </button>
+        {deferredPrompt && (
+          <button
+            type="button"
+            className="button primary pwa-header-install-btn"
+            onClick={() => void handleNativeInstall()}
+          >
+            <Download size={14} />
+            Install
+          </button>
+        )}
       </div>
 
       {/* Platform Buttons */}

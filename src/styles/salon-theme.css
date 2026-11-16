@@ -959,12 +959,12 @@ textarea::placeholder {
     justify-content: space-between;
     height: 52px;
     padding: 0 16px;
-    background: linear-gradient(135deg, #5f3db7 0%, #7a57d9 100%);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--sidebar-surface);
+    border-bottom: 1px solid var(--sidebar-line);
     position: sticky;
     top: 0;
     z-index: 50;
-    box-shadow: 0 10px 24px rgba(85, 52, 156, 0.18);
+    box-shadow: var(--menu-shadow);
   }
 
   .mobile-header-brand {
@@ -978,7 +978,7 @@ textarea::placeholder {
   }
 
   .mobile-header-brand svg {
-    color: #f5ebff;
+    color: var(--accent);
   }
 
   .mobile-header-tenant-pill {
@@ -986,9 +986,9 @@ textarea::placeholder {
     font-weight: 600;
     padding: 5px 10px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.14);
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    color: #f6f1ff;
+    background: var(--sidebar-hover);
+    border: 1px solid var(--sidebar-line);
+    color: var(--sidebar-text);
     max-width: 120px;
     white-space: nowrap;
     overflow: hidden;
@@ -1011,9 +1011,9 @@ textarea::placeholder {
     max-width: 100%;
     padding: 4px 8px;
     border-radius: 10px;
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.18);
-    color: #f8f4ff;
+    background: var(--sidebar-hover);
+    border-color: var(--sidebar-line);
+    color: var(--sidebar-text);
     white-space: nowrap;
   }
 
@@ -1022,9 +1022,9 @@ textarea::placeholder {
   }
 
   .mobile-header-right .notification-bell-btn {
-    background: rgba(255, 255, 255, 0.16);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: #fff;
+    background: var(--sidebar-hover);
+    border-color: var(--sidebar-line);
+    color: var(--sidebar-text);
     width: 34px;
     height: 34px;
     flex-shrink: 0;
@@ -1073,7 +1073,7 @@ textarea::placeholder {
     transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
     border-radius: 0 24px 24px 0 !important;
     box-shadow: 6px 0 28px rgba(0, 0, 0, 0.45) !important;
-    background: var(--pine-deep) !important;
+    background: var(--sidebar-surface) !important;
     overflow-y: auto !important;
     padding: 18px 14px 24px !important;
   }
@@ -1096,11 +1096,11 @@ textarea::placeholder {
     right: 0;
     z-index: 90;
     padding: 8px 12px max(10px, env(safe-area-inset-bottom));
-    background: rgba(30, 24, 39, 0.94);
+    background: color-mix(in srgb, var(--sidebar-surface) 94%, transparent);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 -10px 24px rgba(0, 0, 0, 0.18);
+    border-top: 1px solid var(--sidebar-line);
+    box-shadow: 0 -10px 24px rgba(25, 25, 24, 0.18);
   }
 
   .mobile-bottom-nav-inner {
@@ -1122,7 +1122,7 @@ textarea::placeholder {
     cursor: pointer;
     padding: 4px 8px 6px;
     border-radius: 14px;
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--sidebar-muted);
     min-width: 52px;
     position: relative;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1144,14 +1144,14 @@ textarea::placeholder {
 
   /* Active Pill Highlight (Image 1 style) */
   .mobile-bottom-nav-item.is-active .nav-icon-wrapper {
-    background: rgba(255, 255, 255, 0.14);
-    color: #fff;
+    background: var(--sidebar-hover);
+    color: var(--sidebar-text);
     transform: translateY(-1px);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
+    box-shadow: inset 0 0 0 1px var(--sidebar-line);
   }
 
   .mobile-bottom-nav-item.is-active {
-    color: #fff;
+    color: var(--sidebar-text);
   }
 
   .active-indicator {
@@ -1159,9 +1159,9 @@ textarea::placeholder {
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: #fff;
+    background: var(--accent);
     margin-top: 2px;
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.14);
+    box-shadow: 0 0 0 2px rgba(229, 211, 170, 0.2);
   }
 
   /* Center Plus Button for POS in Bottom Dock (No label) */
@@ -1177,9 +1177,9 @@ textarea::placeholder {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #f2d799 0%, #e7c97d 100%);
-    color: #1f1d22;
-    box-shadow: 0 8px 18px rgba(221, 185, 116, 0.45);
+    background: var(--accent);
+    color: var(--accent-ink);
+    box-shadow: 0 8px 18px rgba(229, 211, 170, 0.28);
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
@@ -1188,9 +1188,9 @@ textarea::placeholder {
   }
 
   .mobile-bottom-plus-item.is-active .nav-plus-wrapper {
-    background: var(--pine-deep);
+    background: var(--sidebar-hover);
     color: var(--accent);
-    box-shadow: 0 4px 14px rgba(22, 28, 26, 0.4);
+    box-shadow: 0 4px 14px rgba(25, 25, 24, 0.35);
     transform: translateY(-2px);
   }
 
@@ -1217,7 +1217,7 @@ textarea::placeholder {
   }
 
   .mobile-bottom-nav-item:not(.is-active):hover {
-    color: var(--ink);
+    color: var(--sidebar-text);
   }
 
   /* Safe content spacing */

@@ -12,6 +12,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "Salon Platform",
     short_name: "Salon",
     description: "Professional Salon Management Platform",
+    id: "/",
     start_url: "/",
     scope: "/",
     display: "standalone",

@@ -15,6 +15,7 @@ import type { Session } from "@/lib/types";
 import { message } from "@/lib/format";
 import { autoRequestPushPermission } from "@/lib/device-registry";
 import { GoogleSignupButton } from "./google-signup-button";
+import { PwaInstallBanner } from "./pwa-install-banner";
 
 export function AuthScreen({
   onAuthenticated,
@@ -323,6 +324,7 @@ export function AuthScreen({
           >
             <Compass size={17} /> Take a tour
           </button>
+          <PwaInstallBanner />
           <p className="auth-note">
             Local starter · Demo data is created by the backend seeder.
           </p>

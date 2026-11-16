@@ -437,6 +437,219 @@ input[type="checkbox"] {
   margin-top: 18px;
   color: var(--muted);
 }
+
+/* ==========================================================================
+   PWA Install Banner (Login Page)
+   ========================================================================== */
+.pwa-install-banner {
+  margin-top: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+.pwa-banner-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 14px 10px;
+}
+.pwa-banner-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #6d28d9 0%, #7c3aed 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.pwa-banner-title {
+  flex: 1;
+  min-width: 0;
+}
+.pwa-banner-title strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.pwa-banner-title span {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+.pwa-dismiss-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+.pwa-dismiss-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+  color: var(--ink);
+}
+.pwa-platform-buttons {
+  padding: 0 10px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.pwa-platform-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--canvas);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  transition: all 0.15s ease;
+  width: 100%;
+  text-align: left;
+}
+.pwa-platform-btn:hover {
+  border-color: #6d28d9;
+  background: rgba(109, 40, 217, 0.04);
+}
+.pwa-platform-btn.active {
+  border-color: #6d28d9;
+  background: rgba(109, 40, 217, 0.06);
+}
+.pwa-platform-btn.current {
+  border-color: #6d28d9;
+}
+.pwa-platform-btn.ios > svg {
+  color: #007aff;
+}
+.pwa-platform-btn.android > svg {
+  color: #34a853;
+}
+.pwa-platform-btn.desktop > svg {
+  color: #6d28d9;
+}
+.pwa-platform-btn.windows > svg {
+  color: #0078d4;
+}
+.pwa-current-badge {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: #6d28d9;
+  color: #fff;
+  white-space: nowrap;
+}
+.pwa-install-now-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #34a853;
+  color: #fff;
+  white-space: nowrap;
+  margin-left: auto;
+}
+.pwa-chevron {
+  margin-left: auto;
+  color: var(--muted);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.pwa-chevron.rotated {
+  transform: rotate(90deg);
+}
+.pwa-install-steps {
+  padding: 6px 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pwa-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+}
+.pwa-step-number {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #6d28d9;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pwa-step-content {
+  flex: 1;
+  min-width: 0;
+}
+.pwa-step-content strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.4;
+}
+.pwa-step-content p {
+  font-size: 11px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 2px 0 0;
+}
+.pwa-step-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  padding: 8px 10px;
+  margin-top: 4px;
+  border-radius: 6px;
+  background: rgba(52, 168, 83, 0.08);
+  border: 1px solid rgba(52, 168, 83, 0.15);
+}
+.pwa-step-note svg {
+  color: #34a853;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.pwa-step-note span {
+  font-size: 11px;
+  color: #1a7431;
+  line-height: 1.5;
+}
+.pwa-android-auto {
+  padding: 4px 0;
+}
+.pwa-auto-install-btn {
+  margin-bottom: 8px;
+}
+.pwa-step-note-text {
+  font-size: 11px;
+  color: var(--muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
 .workspace-layout {
   display: grid;
   grid-template-columns: 228px minmax(0, 1fr);

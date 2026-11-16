@@ -8,10 +8,7 @@
       "model": "Windows PC",
       "pushPermission": "granted",
       "registeredAt": "2026-11-07T11:24:41.728Z",
-      "lastActive": "2026-11-10T18:53:26.004Z",
-      "userEmail": "indunil.xypherlabs@gmail.com",
-      "userName": "indunil dhanaranga",
-      "tenantSlug": "test-salon"
+      "lastActive": "2026-11-10T20:19:38.620Z"
     },
     {
       "id": "dev-windows-edge-uhxln",
@@ -90,7 +87,7 @@
           "auth": "9DWuRHTqrTyJoEAPW-y1cQ"
         }
       },
-      "subscribedAt": "2026-11-10T18:53:25.983Z"
+      "subscribedAt": "2026-11-10T20:19:38.601Z"
     },
     {
       "deviceId": "dev-windows-edge-uhxln",

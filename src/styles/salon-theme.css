@@ -1003,31 +1003,15 @@ textarea::placeholder {
   }
 
   .mobile-header-right .branch-dropdown-wrapper {
-    max-width: 38vw;
-    min-width: 0;
+    display: none;
   }
 
-  .mobile-header-right .branch-select-button {
-    max-width: 100%;
-    padding: 4px 8px;
-    border-radius: 10px;
-    background: var(--sidebar-hover);
-    border-color: var(--sidebar-line);
-    color: var(--sidebar-text);
-    white-space: nowrap;
-  }
-
-  .mobile-header-right .branch-name-label {
-    max-width: 92px;
+  .mobile-header-right .branch-badge-pill {
+    display: none;
   }
 
   .mobile-header-right .notification-bell-btn {
-    background: var(--sidebar-hover);
-    border-color: var(--sidebar-line);
-    color: var(--sidebar-text);
-    width: 34px;
-    height: 34px;
-    flex-shrink: 0;
+    display: none;
   }
 
   .mobile-admin-tag {
@@ -1043,20 +1027,7 @@ textarea::placeholder {
 
   /* 2. Slide Drawer & Backdrop (Image 2 Style) */
   .sidebar-backdrop {
-    display: block;
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-    z-index: 1000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.25s ease;
-  }
-  .sidebar-backdrop.is-open {
-    opacity: 1;
-    pointer-events: auto;
+    display: none;
   }
 
   .sidebar,
@@ -1084,7 +1055,7 @@ textarea::placeholder {
   }
 
   .drawer-close-button {
-    display: flex;
+    display: none;
   }
 
   /* 3. Quick Actions Dock at Bottom (Image 1 Style - Minimal Icon-Only) */

@@ -1003,15 +1003,51 @@ textarea::placeholder {
   }
 
   .mobile-header-right .branch-dropdown-wrapper {
-    display: none;
+    max-width: 38vw;
+    min-width: 0;
+  }
+
+  .mobile-header-right .branch-select-button,
+  .mobile-header-right .branch-select-button:hover:not(:disabled),
+  .mobile-header-right .branch-select-button.open {
+    max-width: 100%;
+    padding: 4px 8px;
+    border-color: transparent;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--sidebar-text);
+    white-space: nowrap;
+  }
+
+  .mobile-header-right .branch-name-label {
+    max-width: 92px;
+  }
+
+  .mobile-header-right .branch-dropdown-item.active,
+  .mobile-header-right .branch-dropdown-item:hover {
+    background: transparent;
   }
 
   .mobile-header-right .branch-badge-pill {
-    display: none;
+    background: transparent;
+    border-color: transparent;
+    color: var(--sidebar-text);
   }
 
   .mobile-header-right .notification-bell-btn {
-    display: none;
+    background: transparent;
+    border-color: transparent;
+    color: var(--sidebar-text);
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+  }
+
+  .mobile-header-right .notification-bell-btn:hover,
+  .mobile-header-right .notification-bell-btn.active {
+    background: transparent;
+    border-color: transparent;
+    color: var(--sidebar-text);
   }
 
   .mobile-admin-tag {
@@ -1027,7 +1063,20 @@ textarea::placeholder {
 
   /* 2. Slide Drawer & Backdrop (Image 2 Style) */
   .sidebar-backdrop {
-    display: none;
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .sidebar-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
   }
 
   .sidebar,
@@ -1055,7 +1104,7 @@ textarea::placeholder {
   }
 
   .drawer-close-button {
-    display: none;
+    display: flex;
   }
 
   /* 3. Quick Actions Dock at Bottom (Image 1 Style - Minimal Icon-Only) */

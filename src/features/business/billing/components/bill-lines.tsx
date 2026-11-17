@@ -5,10 +5,11 @@ import { money } from "@/lib/format";
 import { useTranslation } from "@/lib/i18n";
 
 type Props = {
-  lines: { id: string; quantity: number }[];
+  lines: { id: string; quantity: number; unitPriceMinor: number }[];
   catalog: CatalogItem[];
   currency: string;
   busy: boolean;
+  onPrice: (id: string, unitPriceMinor: number) => void;
   onQuantity: (id: string, quantity: number) => void;
   onRemove: (id: string) => void;
 };
@@ -17,6 +18,7 @@ export function BillLines({
   catalog,
   currency,
   busy,
+  onPrice,
   onQuantity,
   onRemove,
 }: Props) {
@@ -31,10 +33,30 @@ export function BillLines({
             <div>
               <strong>{item.name}</strong>
               <span className="cell-sub">
-                {money(item.price_minor, currency)}{" "}
+                {money(line.unitPriceMinor, currency)}{" "}
                 {language === "si" ? "බැගින්" : "each"}
               </span>
             </div>
+            <label className="bill-unit-price-label">
+              <span className="sr-only">{t.appointments.amount} {item.name}</span>
+              <input
+                type="number"
+                inputMode="decimal"
+                min="0"
+                max="999999999"
+                step="0.01"
+                required
+                aria-label={`${t.appointments.amount} ${item.name} (${currency})`}
+                value={(line.unitPriceMinor / 100).toFixed(2)}
+                disabled={busy}
+                onChange={(event) => {
+                  const amount = Number(event.target.value || 0);
+                  if (Number.isFinite(amount) && amount >= 0) {
+                    onPrice(line.id, Math.round(amount * 100));
+                  }
+                }}
+              />
+            </label>
             <div className="pos-quantity">
               <button
                 type="button"
@@ -77,7 +99,7 @@ export function BillLines({
                 <Plus size={16} />
               </button>
             </div>
-            <strong>{money(item.price_minor * line.quantity, currency)}</strong>
+            <strong>{money(line.unitPriceMinor * line.quantity, currency)}</strong>
             <button
               className="icon-button"
               type="button"

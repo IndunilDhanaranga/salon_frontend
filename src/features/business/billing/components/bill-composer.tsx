@@ -38,7 +38,9 @@ export function BillComposer({
 }) {
   const api = useBranchApi();
   const { t, language } = useTranslation();
-  const [lines, setLines] = useState<{ id: string; quantity: number }[]>([]);
+  const [lines, setLines] = useState<
+    { id: string; quantity: number; unitPriceMinor: number }[]
+  >([]);
   const [customerName, setCustomerName] = useState("Walk-in Customer");
   const [selectedStaffId, setSelectedStaffId] = useState(defaultStaffId || "");
   const [paid, setPaid] = useState(true);
@@ -50,8 +52,7 @@ export function BillComposer({
   const total = lines.reduce(
     (sum, line) =>
       sum +
-      (catalog.find((item) => item.id === line.id)?.price_minor || 0) *
-        line.quantity,
+      line.unitPriceMinor * line.quantity,
     0,
   );
   async function save(form: FormData) {
@@ -70,6 +71,7 @@ export function BillComposer({
           items: lines.map((line) => ({
             catalog_item_id: line.id,
             quantity: line.quantity,
+            unit_price_minor: line.unitPriceMinor,
           })),
           status: paid ? "paid" : "unpaid",
           payment_method: paid ? paymentMethod : null,
@@ -167,7 +169,15 @@ export function BillComposer({
                       ? { ...line, quantity: Math.min(1000, line.quantity + 1) }
                       : line,
                   )
-                : [...current, { id, quantity: 1 }],
+                : [
+                    ...current,
+                    {
+                      id,
+                      quantity: 1,
+                      unitPriceMinor:
+                        catalog.find((item) => item.id === id)?.price_minor ?? 0,
+                    },
+                  ],
             );
           }}
         />
@@ -176,6 +186,13 @@ export function BillComposer({
           catalog={catalog}
           currency={tenant.currency}
           busy={busy}
+          onPrice={(id, unitPriceMinor) =>
+            setLines((current) =>
+              current.map((line) =>
+                line.id === id ? { ...line, unitPriceMinor } : line,
+              ),
+            )
+          }
           onQuantity={(id, quantity) =>
             setLines((current) =>
               current.map((line) =>

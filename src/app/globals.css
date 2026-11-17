@@ -1769,6 +1769,15 @@ dd {
 .bill-line > div {
   flex: 1;
 }
+.bill-unit-price-label {
+  width: 112px;
+  margin: 0;
+  flex: 0 0 auto;
+}
+.bill-unit-price-label input {
+  min-height: 35px;
+  padding: 8px;
+}
 .bill-line > strong {
   min-width: 100px;
   text-align: right;

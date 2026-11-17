@@ -2284,6 +2284,7 @@ textarea::placeholder {
 .broadcast-modal-container {
   width: 100%;
   max-width: 520px;
+  max-height: calc(100dvh - 32px);
   background: var(--surface);
   border-radius: 16px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22);
@@ -2393,10 +2394,13 @@ textarea::placeholder {
 }
 
 .broadcast-modal-form {
+  min-height: 0;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .broadcast-form-field {
@@ -2424,10 +2428,14 @@ textarea::placeholder {
 }
 
 .broadcast-modal-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  padding-top: 8px;
+  padding: 12px 0 0;
+  background: var(--surface);
 }
 
 /* Toast enhancements */
@@ -2772,6 +2780,27 @@ textarea::placeholder {
 }
 
 @media (max-width: 600px) {
+  .broadcast-modal-backdrop {
+    align-items: center;
+    padding: 8px;
+  }
+  .broadcast-modal-container {
+    max-height: calc(100dvh - 16px);
+    border-radius: 12px;
+  }
+  .broadcast-modal-header {
+    padding: 14px 16px;
+  }
+  .broadcast-templates-section {
+    padding: 8px 16px;
+  }
+  .broadcast-modal-form {
+    padding: 14px 16px;
+    gap: 10px;
+  }
+  .broadcast-modal-footer {
+    bottom: 0;
+  }
   .push-stats-grid {
     grid-template-columns: 1fr;
   }

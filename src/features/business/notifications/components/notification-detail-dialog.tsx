@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useId, useRef } from "react";
+import { createPortal } from "react-dom";
 import { AlertTriangle, ArrowRight, Bell, CheckCheck, X } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import type { InAppNotification } from "../types";
@@ -30,7 +31,7 @@ export function NotificationDetailDialog({
     const dialog = dialogRef.current;
     const previousFocus = document.activeElement;
     const overflow = document.body.style.overflow;
-    dialog?.showModal();
+    if (dialog && !dialog.open) dialog.showModal();
     document.body.style.overflow = "hidden";
     return () => {
       dialog?.close();
@@ -47,7 +48,9 @@ export function NotificationDetailDialog({
     };
   }, []);
 
-  return (
+  // Keep the dialog outside the mobile app shell and drawer containers.
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <dialog
       ref={dialogRef}
       className="notification-detail-dialog"
@@ -135,6 +138,7 @@ export function NotificationDetailDialog({
           </button>
         )}
       </footer>
-    </dialog>
+    </dialog>,
+    document.body,
   );
 }

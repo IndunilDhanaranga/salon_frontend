@@ -258,52 +258,55 @@ export function NotificationDrawer() {
               >
                 <button
                   type="button"
-                  className="notification-open-button"
+                  className="notification-item-open"
                   aria-label={`${item.title}${!item.read ? ` · ${t.notifications.unread}` : ""}`}
                   aria-haspopup="dialog"
                   onClick={() => openNotification(item)}
-                />
-                {/* Facebook Avatar with Mini Sub-Badge */}
-                <div className="fb-avatar-wrap">
-                  <div className="fb-avatar-circle">
-                    {getAvatarContent(item)}
-                  </div>
-                  <div
-                    className={`fb-subbadge ${getSubBadgeColor(item)}`}
-                    aria-hidden="true"
-                  >
-                    {getSubBadgeIcon(item)}
-                  </div>
-                </div>
+                >
+                  {/* Facebook Avatar with Mini Sub-Badge */}
+                  <span className="fb-avatar-wrap">
+                    <span className="fb-avatar-circle">
+                      {getAvatarContent(item)}
+                    </span>
+                    <span
+                      className={`fb-subbadge ${getSubBadgeColor(item)}`}
+                      aria-hidden="true"
+                    >
+                      {getSubBadgeIcon(item)}
+                    </span>
+                  </span>
 
-                {/* Content Area */}
-                <div className="fb-notif-content">
-                  <div className="fb-notif-text">
-                    {item.sender?.name && (
-                      <strong className="fb-sender-name">
-                        {item.sender.name}{" "}
-                      </strong>
-                    )}
-                    <span className="fb-notif-title-inline">{item.title}</span>
-                    {item.priority === "urgent" && (
-                      <span className="fb-urgent-pill">
-                        <AlertTriangle size={10} />
-                        {t.notifications.priorityUrgent}
+                  {/* Content Area */}
+                  <span className="fb-notif-content">
+                    <span className="fb-notif-text">
+                      {item.sender?.name && (
+                        <strong className="fb-sender-name">
+                          {item.sender.name}{" "}
+                        </strong>
+                      )}
+                      <span className="fb-notif-title-inline">
+                        {item.title}
                       </span>
-                    )}
-                  </div>
-
-                  <p className="fb-notif-body">{item.message}</p>
-
-                  <div className="fb-notif-bottom">
-                    <span className="fb-notif-timestamp">
-                      {formatTime(item.timestamp)}
+                      {item.priority === "urgent" && (
+                        <span className="fb-urgent-pill">
+                          <AlertTriangle size={10} />
+                          {t.notifications.priorityUrgent}
+                        </span>
+                      )}
                     </span>
-                    <span className="fb-action-hint">
-                      {t.notifications.viewDetails} →
+
+                    <span className="fb-notif-body">{item.message}</span>
+
+                    <span className="fb-notif-bottom">
+                      <span className="fb-notif-timestamp">
+                        {formatTime(item.timestamp)}
+                      </span>
+                      <span className="fb-action-hint">
+                        {t.notifications.viewDetails} →
+                      </span>
                     </span>
-                  </div>
-                </div>
+                  </span>
+                </button>
 
                 {/* Right Area: Facebook Blue Dot or Close button */}
                 <div className="fb-notif-right-action">

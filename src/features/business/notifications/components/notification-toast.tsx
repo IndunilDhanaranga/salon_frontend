@@ -47,45 +47,46 @@ export function NotificationToast() {
       >
         <button
           type="button"
-          className="notification-open-button"
+          className="notification-toast-open"
           aria-label={`${t.notifications.viewDetails}: ${activeToast.title}`}
           aria-haspopup="dialog"
           onClick={() => openNotification(activeToast)}
-        />
-        <div
-          className={`toast-icon-badge ${activeToast.isBroadcast ? "broadcast" : activeToast.type}`}
         >
-          {getIcon(activeToast)}
-        </div>
+          <span
+            className={`toast-icon-badge ${activeToast.isBroadcast ? "broadcast" : activeToast.type}`}
+          >
+            {getIcon(activeToast)}
+          </span>
 
-        <div className="toast-content">
-          <div className="toast-title-row">
-            <strong className="toast-title">{activeToast.title}</strong>
-            {activeToast.isBroadcast && (
-              <span className="toast-tag-broadcast">
-                {t.notifications.teamNotice}
+          <span className="toast-content">
+            <span className="toast-title-row">
+              <strong className="toast-title">{activeToast.title}</strong>
+              {activeToast.isBroadcast && (
+                <span className="toast-tag-broadcast">
+                  {t.notifications.teamNotice}
+                </span>
+              )}
+              {activeToast.priority === "urgent" && (
+                <span className="toast-tag-urgent">
+                  <AlertTriangle size={11} />
+                  {t.notifications.priorityUrgent}
+                </span>
+              )}
+            </span>
+            <span className="toast-message">{activeToast.message}</span>
+            {activeToast.sender && (
+              <span className="toast-sender">
+                {t.notifications.fromSender}: {activeToast.sender.name}
               </span>
             )}
-            {activeToast.priority === "urgent" && (
-              <span className="toast-tag-urgent">
-                <AlertTriangle size={11} />
-                {t.notifications.priorityUrgent}
-              </span>
-            )}
-          </div>
-          <p className="toast-message">{activeToast.message}</p>
-          {activeToast.sender && (
-            <span className="toast-sender">
-              {t.notifications.fromSender}: {activeToast.sender.name}
+          </span>
+
+          {activeToast.targetView && (
+            <span className="toast-action-arrow">
+              <ChevronRight size={16} />
             </span>
           )}
-        </div>
-
-        {activeToast.targetView && (
-          <div className="toast-action-arrow">
-            <ChevronRight size={16} />
-          </div>
-        )}
+        </button>
 
         <button
           type="button"

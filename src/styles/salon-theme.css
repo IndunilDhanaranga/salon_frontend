@@ -2831,6 +2831,170 @@ textarea::placeholder {
   }
 }
 
+/* Full-message reading, shared by notification feed and toast clicks. */
+.notification-open-button {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+}
+.notification-open-button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.notification-toast {
+  position: relative;
+}
+.fb-dismiss-btn,
+.toast-close-btn {
+  position: relative;
+  z-index: 2;
+  min-width: 44px;
+  min-height: 44px;
+}
+.fb-notif-item:focus-within .fb-dismiss-btn {
+  opacity: 1;
+}
+@media (hover: none) {
+  .fb-dismiss-btn {
+    opacity: 1;
+  }
+}
+.notification-detail-dialog {
+  width: min(38rem, calc(100% - 2rem));
+  max-width: none;
+  max-height: calc(100dvh - 2rem);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  box-shadow: var(--menu-shadow);
+  overflow: hidden;
+}
+.notification-detail-dialog[open] {
+  display: flex;
+  flex-direction: column;
+}
+.notification-detail-dialog::backdrop {
+  background: #19191899;
+}
+.notification-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.notification-detail-symbol {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--radius);
+  background: var(--mint);
+  color: var(--accent-ink);
+  flex-shrink: 0;
+}
+.notification-detail-symbol.is-urgent {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+.notification-detail-kind {
+  flex: 1;
+  font-weight: 600;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.notification-detail-close {
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+}
+.notification-detail-close:hover {
+  color: var(--ink);
+  background: var(--surface-subtle);
+}
+.notification-detail-content {
+  padding: 1.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  min-height: 0;
+}
+.notification-detail-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--success-ink);
+}
+.notification-detail-status span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.notification-detail-status .notification-detail-urgent {
+  color: var(--danger);
+}
+.notification-detail-content h2 {
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
+  line-height: 1.35;
+  margin: 0 0 0.75rem;
+  overflow-wrap: anywhere;
+}
+.notification-detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.notification-detail-message {
+  margin: 1.5rem 0 0;
+  font-size: 1rem;
+  line-height: 1.75;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.notification-detail-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+}
+@media (max-width: 480px) {
+  .notification-detail-dialog {
+    width: calc(100% - 1rem);
+    max-height: calc(
+      100dvh - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom)
+    );
+  }
+  .notification-detail-header,
+  .notification-detail-content,
+  .notification-detail-footer {
+    padding: 1rem;
+  }
+  .notification-detail-footer .button {
+    flex: 1 1 100%;
+  }
+}
+
 @media print {
   :root {
     --canvas: #fff;

@@ -17,8 +17,7 @@ import { useTranslation } from "@/lib/i18n";
 import type { InAppNotification, NotificationType } from "../types";
 
 export function NotificationToast() {
-  const { activeToast, dismissToast, markAsRead, onNavigateView } =
-    useNotifications();
+  const { activeToast, dismissToast, openNotification } = useNotifications();
   const { t } = useTranslation();
 
   if (!activeToast) return null;
@@ -41,20 +40,18 @@ export function NotificationToast() {
     }
   };
 
-  const handleClick = () => {
-    markAsRead(activeToast.id);
-    if (activeToast.targetView && onNavigateView) {
-      onNavigateView(activeToast.targetView);
-    }
-    dismissToast();
-  };
-
   return (
     <div className="notification-toast-wrapper" role="alert" aria-live="polite">
       <div
         className={`notification-toast ${activeToast.isBroadcast ? "broadcast" : activeToast.type} ${activeToast.priority === "urgent" ? "toast-urgent" : ""}`}
-        onClick={handleClick}
       >
+        <button
+          type="button"
+          className="notification-open-button"
+          aria-label={`${t.notifications.viewDetails}: ${activeToast.title}`}
+          aria-haspopup="dialog"
+          onClick={() => openNotification(activeToast)}
+        />
         <div
           className={`toast-icon-badge ${activeToast.isBroadcast ? "broadcast" : activeToast.type}`}
         >

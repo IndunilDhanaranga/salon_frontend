@@ -49,6 +49,7 @@ export type NotificationContextValue = {
   isOpen: boolean;
   setIsOpen: (open: boolean) => void;
   markAsRead: (id: string) => void;
+  openNotification: (notification: InAppNotification) => void;
   markAllAsRead: () => void;
   removeNotification: (id: string) => void;
   clearAll: () => void;

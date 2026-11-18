@@ -29,11 +29,10 @@ export function NotificationDrawer() {
     unreadCount,
     isOpen,
     setIsOpen,
-    markAsRead,
+    openNotification,
     markAllAsRead,
     removeNotification,
     clearAll,
-    onNavigateView,
     setIsComposeOpen,
     pushPermission,
     requestPushPermission,
@@ -108,16 +107,6 @@ export function NotificationDrawer() {
       month: "short",
       day: "numeric",
     }).format(new Date(timestamp));
-  };
-
-  const handleItemClick = (item: InAppNotification) => {
-    if (!item.read) {
-      markAsRead(item.id);
-    }
-    if (item.targetView && onNavigateView) {
-      onNavigateView(item.targetView);
-      setIsOpen(false);
-    }
   };
 
   return (
@@ -266,8 +255,14 @@ export function NotificationDrawer() {
               <article
                 key={item.id}
                 className={`fb-notif-item ${item.read ? "is-read" : "is-unread"} ${item.priority === "urgent" ? "is-urgent" : ""}`}
-                onClick={() => handleItemClick(item)}
               >
+                <button
+                  type="button"
+                  className="notification-open-button"
+                  aria-label={`${item.title}${!item.read ? ` · ${t.notifications.unread}` : ""}`}
+                  aria-haspopup="dialog"
+                  onClick={() => openNotification(item)}
+                />
                 {/* Facebook Avatar with Mini Sub-Badge */}
                 <div className="fb-avatar-wrap">
                   <div className="fb-avatar-circle">
@@ -304,11 +299,9 @@ export function NotificationDrawer() {
                     <span className="fb-notif-timestamp">
                       {formatTime(item.timestamp)}
                     </span>
-                    {item.targetView && (
-                      <span className="fb-action-hint">
-                        {t.notifications.viewDetails} →
-                      </span>
-                    )}
+                    <span className="fb-action-hint">
+                      {t.notifications.viewDetails} →
+                    </span>
                   </div>
                 </div>
 

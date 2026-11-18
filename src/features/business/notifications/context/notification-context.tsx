@@ -23,6 +23,7 @@ import type {
   InAppNotification,
   NotificationContextValue,
 } from "../types";
+import { NotificationDetailDialog } from "../components/notification-detail-dialog";
 
 const NotificationContext = createContext<NotificationContextValue | null>(
   null,
@@ -80,6 +81,8 @@ export function NotificationProvider({
 }: Props) {
   const { language } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedNotification, setSelectedNotification] =
+    useState<InAppNotification | null>(null);
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [customNotifications, setCustomNotifications] = useState<
     InAppNotification[]
@@ -520,7 +523,9 @@ export function NotificationProvider({
       }
 
       if (sub.status === "grace_period") {
-        const graceEnd = new Date(sub.grace_period_ends_at ?? sub.current_period_end);
+        const graceEnd = new Date(
+          sub.grace_period_ends_at ?? sub.current_period_end,
+        );
         const daysLeft = Math.max(
           0,
           Math.ceil((graceEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24)),
@@ -529,8 +534,7 @@ export function NotificationProvider({
         list.push({
           id: `sub-grace-${sub.id}`,
           type: "subscription",
-          title:
-            language === "si" ? "නැවත ගෙවීමේ අවවාදය" : "Renewal warning",
+          title: language === "si" ? "නැවත ගෙවීමේ අවවාදය" : "Renewal warning",
           message:
             language === "si"
               ? `ඔබගේ දායකත්ව කාලය අවසන් වී ඇත. සත්කාර දිනය ${daysLeft}ක් ඉතිරිව ඇති අතර, නැවත ගෙවීමකින් පසු සේවාව නැවත සක්‍රිය වේ.`
@@ -546,7 +550,9 @@ export function NotificationProvider({
           id: `sub-renewal-${sub.id}`,
           type: "subscription",
           title:
-            language === "si" ? "ගෙවීම් ඉල්ලීම අනුමත වෙමින්" : "Renewal pending review",
+            language === "si"
+              ? "ගෙවීම් ඉල්ලීම අනුමත වෙමින්"
+              : "Renewal pending review",
           message:
             language === "si"
               ? "ඔබගේ නැවත ගෙවීම් ඉල්ලීම පරිපාලක අනුමැතිය සඳහා යවා ඇත."
@@ -626,6 +632,15 @@ export function NotificationProvider({
       );
     },
     [customNotifications, dismissedIds, persistPersonalState],
+  );
+
+  const openNotification = useCallback(
+    (notification: InAppNotification) => {
+      markAsRead(notification.id);
+      setSelectedNotification({ ...notification, read: true });
+      setActiveToast(null);
+    },
+    [markAsRead],
   );
 
   const markAllAsRead = useCallback(() => {
@@ -790,6 +805,7 @@ export function NotificationProvider({
         isOpen,
         setIsOpen,
         markAsRead,
+        openNotification,
         markAllAsRead,
         removeNotification,
         clearAll,
@@ -805,6 +821,21 @@ export function NotificationProvider({
       }}
     >
       {children}
+      {selectedNotification && (
+        <NotificationDetailDialog
+          notification={selectedNotification}
+          onClose={() => setSelectedNotification(null)}
+          onNavigate={
+            onView
+              ? (view) => {
+                  setSelectedNotification(null);
+                  setIsOpen(false);
+                  onView(view);
+                }
+              : undefined
+          }
+        />
+      )}
     </NotificationContext.Provider>
   );
 }

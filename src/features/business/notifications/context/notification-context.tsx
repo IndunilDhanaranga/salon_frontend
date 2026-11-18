@@ -145,7 +145,7 @@ export function NotificationProvider({
 
       // setupAutoPushPermission: registers SW immediately, requests permission
       // on mount (desktop) or first user gesture (mobile/Safari)
-      setupAutoPushPermission(currentUser, tenant.slug);
+      return setupAutoPushPermission(currentUser, tenant.slug);
     }
   }, [currentUser, tenant.slug]);
 

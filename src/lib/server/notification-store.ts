@@ -1,6 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
 import * as webpush from "web-push";
+import {
+  notificationBackend,
+  useNotificationBackend,
+} from "./notification-backend";
 
 /* ------------------------------------------------------------------ */
 /*  VAPID Configuration                                                 */
@@ -65,7 +69,9 @@ interface StoreData {
 /*  Persistence                                                         */
 /* ------------------------------------------------------------------ */
 
-const STORE_FILE = path.join(process.cwd(), ".device-notifications-store.json");
+const STORE_FILE =
+  process.env.NOTIFICATION_STORE_FILE ||
+  path.join(process.cwd(), ".device-notifications-store.json");
 
 let memoryStore: StoreData = {
   devices: [],
@@ -73,30 +79,41 @@ let memoryStore: StoreData = {
   pushSubscriptions: [],
 };
 
-// Load initial store from file if exists
-try {
-  if (fs.existsSync(STORE_FILE)) {
-    const raw = fs.readFileSync(STORE_FILE, "utf-8");
-    const parsed = JSON.parse(raw);
-    if (parsed && Array.isArray(parsed.devices)) {
-      memoryStore.devices = parsed.devices;
+// Route bundles can have separate module instances. Read the latest persisted
+// snapshot before each operation instead of overwriting it with startup data.
+function loadStore() {
+  try {
+    if (fs.existsSync(STORE_FILE)) {
+      const raw = fs.readFileSync(STORE_FILE, "utf-8");
+      const parsed = JSON.parse(raw);
+      if (parsed && Array.isArray(parsed.devices)) {
+        memoryStore.devices = parsed.devices;
+      }
+      if (parsed && Array.isArray(parsed.broadcasts)) {
+        memoryStore.broadcasts = parsed.broadcasts;
+      }
+      if (parsed && Array.isArray(parsed.pushSubscriptions)) {
+        memoryStore.pushSubscriptions = parsed.pushSubscriptions;
+      }
     }
-    if (parsed && Array.isArray(parsed.broadcasts)) {
-      memoryStore.broadcasts = parsed.broadcasts;
-    }
-    if (parsed && Array.isArray(parsed.pushSubscriptions)) {
-      memoryStore.pushSubscriptions = parsed.pushSubscriptions;
-    }
+  } catch (error) {
+    console.error("Failed to read notification store", error);
+    throw error;
   }
-} catch {
-  // Fall back to memoryStore
 }
 
 function persistStore() {
+  const temporaryFile = `${STORE_FILE}.${process.pid}.tmp`;
   try {
-    fs.writeFileSync(STORE_FILE, JSON.stringify(memoryStore, null, 2), "utf-8");
-  } catch {
-    // Write failure fallback
+    fs.writeFileSync(
+      temporaryFile,
+      JSON.stringify(memoryStore, null, 2),
+      "utf-8",
+    );
+    fs.renameSync(temporaryFile, STORE_FILE);
+  } catch (error) {
+    console.error("Failed to persist notification store", error);
+    throw error;
   }
 }
 
@@ -104,9 +121,16 @@ function persistStore() {
 /*  Device Registry                                                     */
 /* ------------------------------------------------------------------ */
 
-export function registerServerDevice(
+export async function registerServerDevice(
   device: ServerDeviceRecord,
-): ServerDeviceRecord {
+): Promise<ServerDeviceRecord> {
+  if (useNotificationBackend()) {
+    return notificationBackend("devices", "POST", {
+      key: device.id,
+      value: device,
+    });
+  }
+  loadStore();
   const existingIdx = memoryStore.devices.findIndex((d) => d.id === device.id);
   if (existingIdx >= 0) {
     memoryStore.devices[existingIdx] = {
@@ -128,7 +152,9 @@ export function registerServerDevice(
   ];
 }
 
-export function getServerDevices(): ServerDeviceRecord[] {
+export async function getServerDevices(): Promise<ServerDeviceRecord[]> {
+  if (useNotificationBackend()) return notificationBackend("devices");
+  loadStore();
   return [...memoryStore.devices].sort(
     (a, b) =>
       new Date(b.lastActive).getTime() - new Date(a.lastActive).getTime(),
@@ -139,15 +165,34 @@ export function getServerDevices(): ServerDeviceRecord[] {
 /*  Broadcast Messages                                                  */
 /* ------------------------------------------------------------------ */
 
-export function addServerBroadcast(
+export async function addServerBroadcast(
   broadcast: ServerBroadcastMessage,
-): ServerBroadcastMessage {
+): Promise<ServerBroadcastMessage> {
+  if (useNotificationBackend()) {
+    return notificationBackend("broadcasts", "POST", {
+      key: broadcast.id,
+      value: broadcast,
+    });
+  }
+  loadStore();
   memoryStore.broadcasts = [broadcast, ...memoryStore.broadcasts].slice(0, 100);
   persistStore();
   return broadcast;
 }
 
-export function getServerBroadcasts(since?: string): ServerBroadcastMessage[] {
+export async function getServerBroadcasts(
+  since?: string,
+): Promise<ServerBroadcastMessage[]> {
+  if (useNotificationBackend()) {
+    const broadcasts =
+      await notificationBackend<ServerBroadcastMessage[]>("broadcasts");
+    return since
+      ? broadcasts.filter(
+          (b) => new Date(b.sentAt).getTime() > new Date(since).getTime(),
+        )
+      : broadcasts;
+  }
+  loadStore();
   if (!since) return [...memoryStore.broadcasts];
   const sinceTime = new Date(since).getTime();
   return memoryStore.broadcasts.filter(
@@ -159,10 +204,18 @@ export function getServerBroadcasts(since?: string): ServerBroadcastMessage[] {
 /*  Web Push Subscriptions                                              */
 /* ------------------------------------------------------------------ */
 
-export function addPushSubscription(
+export async function addPushSubscription(
   deviceId: string,
   subscription: object,
-): void {
+): Promise<void> {
+  if (useNotificationBackend()) {
+    await notificationBackend("subscriptions", "POST", {
+      key: deviceId,
+      value: { deviceId, subscription, subscribedAt: new Date().toISOString() },
+    });
+    return;
+  }
+  loadStore();
   const existingIdx = memoryStore.pushSubscriptions.findIndex(
     (s) => s.deviceId === deviceId,
   );
@@ -179,14 +232,32 @@ export function addPushSubscription(
   persistStore();
 }
 
-export function removePushSubscription(deviceId: string): void {
+export async function removePushSubscription(
+  deviceId: string,
+  endpoint?: string,
+): Promise<void> {
+  if (useNotificationBackend()) {
+    await notificationBackend("subscriptions", "DELETE", {
+      key: deviceId,
+      endpoint,
+    });
+    return;
+  }
+  loadStore();
   memoryStore.pushSubscriptions = memoryStore.pushSubscriptions.filter(
-    (s) => s.deviceId !== deviceId,
+    (s) =>
+      s.deviceId !== deviceId ||
+      (endpoint !== undefined &&
+        (s.subscription as webpush.PushSubscription).endpoint !== endpoint),
   );
   persistStore();
 }
 
-export function getPushSubscriptions(): PushSubscriptionRecord[] {
+export async function getPushSubscriptions(): Promise<
+  PushSubscriptionRecord[]
+> {
+  if (useNotificationBackend()) return notificationBackend("subscriptions");
+  loadStore();
   return [...memoryStore.pushSubscriptions];
 }
 
@@ -215,7 +286,7 @@ export async function broadcastWebPush(payload: PushPayload): Promise<{
   sent: number;
   failed: number;
 }> {
-  const subscriptions = getPushSubscriptions();
+  const subscriptions = await getPushSubscriptions();
   if (!subscriptions.length || !vapidPublicKey || !vapidPrivateKey) {
     return { sent: 0, failed: 0 };
   }
@@ -248,7 +319,12 @@ export async function broadcastWebPush(payload: PushPayload): Promise<{
         // Remove invalid/expired subscriptions (410 Gone = device unsubscribed)
         const status = (err as { statusCode?: number })?.statusCode;
         if (status === 410 || status === 404) {
-          removePushSubscription(deviceId);
+          // A renewal may have completed while this request was in flight.
+          // Never remove the replacement when the old endpoint expires.
+          await removePushSubscription(
+            deviceId,
+            (subscription as webpush.PushSubscription).endpoint,
+          );
         }
         return { deviceId, success: false };
       }

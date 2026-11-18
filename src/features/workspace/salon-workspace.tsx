@@ -42,9 +42,9 @@ function SalonWorkspaceInner({ w }: { w: ReturnType<typeof useWorkspace> }) {
 
   React.useEffect(() => {
     if (session) {
-      setupAutoPushPermission(session.user, tenant?.slug);
+      return setupAutoPushPermission(session.user, tenant?.slug);
     } else {
-      setupAutoPushPermission();
+      return setupAutoPushPermission();
     }
   }, [session, tenant?.slug]);
 

@@ -106,27 +106,54 @@ self.addEventListener("notificationclick", function (event) {
 /*  Push Subscription Change: Handle automatic re-subscription         */
 /* ------------------------------------------------------------------ */
 
+async function syncPushSubscription() {
+  const cache = await caches.open("salon-push-state-v1");
+  const contextResponse = await cache.match("/__salon-push-context");
+  if (!contextResponse) return; // Older installs recover on their next app visit.
+  const { deviceId, vapidPublicKey } = await contextResponse.json();
+  if (!deviceId) return;
+
+  let subscription = await self.registration.pushManager.getSubscription();
+  if (!subscription) {
+    const base64 = vapidPublicKey.replace(/-/g, "+").replace(/_/g, "/");
+    const key = Uint8Array.from(atob(base64), (character) =>
+      character.charCodeAt(0),
+    );
+    subscription = await self.registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: key,
+    });
+  }
+  const response = await fetch("/api/notifications/subscribe", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      deviceId,
+      subscription: subscription.toJSON(),
+      action: "resubscribe",
+    }),
+  });
+  if (!response.ok) throw new Error("Failed to save renewed push subscription");
+}
+
 self.addEventListener("pushsubscriptionchange", function (event) {
   event.waitUntil(
-    self.registration.pushManager
-      .subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: event.oldSubscription
-          ? event.oldSubscription.options.applicationServerKey
-          : null,
-      })
-      .then(function (newSubscription) {
-        // Notify app of re-subscription
-        return fetch("/api/notifications/subscribe", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            subscription: newSubscription.toJSON(),
-            action: "resubscribe",
-          }),
-        });
-      }),
+    syncPushSubscription().catch(async (error) => {
+      // Background Sync retries failed network requests on supporting browsers.
+      // Other browsers recover through foreground subscription reconciliation.
+      if (self.registration.sync) {
+        await self.registration.sync.register("salon-push-resubscribe");
+      } else {
+        throw error;
+      }
+    }),
   );
+});
+
+self.addEventListener("sync", function (event) {
+  if (event.tag === "salon-push-resubscribe") {
+    event.waitUntil(syncPushSubscription());
+  }
 });
 
 /* ------------------------------------------------------------------ */

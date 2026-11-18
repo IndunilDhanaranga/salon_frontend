@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 
 /** GET: Return current subscription count (admin info) */
 export async function GET() {
-  const subs = getPushSubscriptions();
+  const subs = await getPushSubscriptions();
   return NextResponse.json({ count: subs.length });
 }
 
@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     };
 
     if (action === "unsubscribe" && deviceId) {
-      removePushSubscription(deviceId);
+      await removePushSubscription(deviceId);
       return NextResponse.json({ success: true, action: "unsubscribed" });
     }
 
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    addPushSubscription(deviceId, subscription);
+    await addPushSubscription(deviceId, subscription);
     return NextResponse.json({
       success: true,
       action: action === "resubscribe" ? "resubscribed" : "subscribed",

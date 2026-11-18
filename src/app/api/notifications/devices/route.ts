@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  const devices = getServerDevices();
+  const devices = await getServerDevices();
   return NextResponse.json({
     devices,
     stats: {
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const device = registerServerDevice({
+    const device = await registerServerDevice({
       id: body.id,
       browser: body.browser || "Browser",
       os: body.os || "OS",

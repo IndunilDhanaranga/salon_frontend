@@ -363,7 +363,16 @@ export async function subscribeToWebPush(
 
     // 5. Send subscription to server
     const deviceId = getOrCreateDeviceId();
-    await fetch("/api/notifications/subscribe", {
+    // CacheStorage is shared with the worker, which cannot read localStorage
+    // when the app is closed and the browser rotates its push endpoint.
+    if ("caches" in window) {
+      const cache = await caches.open("salon-push-state-v1");
+      await cache.put(
+        "/__salon-push-context",
+        new Response(JSON.stringify({ deviceId, vapidPublicKey })),
+      );
+    }
+    const response = await fetch("/api/notifications/subscribe", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -372,13 +381,14 @@ export async function subscribeToWebPush(
         action: "subscribe",
       }),
     });
+    if (!response.ok) return "pending";
 
     // 6. Register device record (updates pushPermission to "granted")
     registerCurrentDevice(user, tenantSlug);
 
     return "granted";
   } catch {
-    return "unsupported";
+    return "pending";
   }
 }
 
@@ -435,6 +445,33 @@ export function setupAutoPushPermission(
 
   if (!("Notification" in window)) return;
 
+  // Mobile apps often resume without remounting. Reconcile after suspension
+  // and network loss as well as on initial load.
+  const reconcile = () => {
+    if (
+      Notification.permission === "granted" &&
+      document.visibilityState === "visible"
+    ) {
+      void subscribeToWebPush(user, tenantSlug);
+    }
+  };
+  document.addEventListener("visibilitychange", reconcile);
+  window.addEventListener("online", reconcile);
+  const dispose = () => {
+    document.removeEventListener("visibilitychange", reconcile);
+    window.removeEventListener("online", reconcile);
+    cleanup();
+  };
+  const triggerOnGesture = () => {
+    void autoRequestPushPermission(user, tenantSlug);
+    cleanup();
+  };
+  const cleanup = () => {
+    window.removeEventListener("click", triggerOnGesture);
+    window.removeEventListener("touchstart", triggerOnGesture);
+    window.removeEventListener("keydown", triggerOnGesture);
+  };
+
   if (
     Notification.permission === "granted" ||
     Notification.permission === "denied"
@@ -443,24 +480,13 @@ export function setupAutoPushPermission(
     if (Notification.permission === "granted") {
       void subscribeToWebPush(user, tenantSlug);
     }
-    return;
+    return dispose;
   }
 
   // Attempt 1: Immediate prompt (works on desktop Chrome, Firefox, Edge)
   void autoRequestPushPermission(user, tenantSlug);
 
   // Attempt 2: User-gesture trigger (required by Apple iOS Safari & macOS Safari)
-  const triggerOnGesture = () => {
-    void autoRequestPushPermission(user, tenantSlug);
-    cleanup();
-  };
-
-  const cleanup = () => {
-    window.removeEventListener("click", triggerOnGesture);
-    window.removeEventListener("touchstart", triggerOnGesture);
-    window.removeEventListener("keydown", triggerOnGesture);
-  };
-
   window.addEventListener("click", triggerOnGesture, {
     once: true,
     passive: true,
@@ -473,6 +499,7 @@ export function setupAutoPushPermission(
     once: true,
     passive: true,
   });
+  return dispose;
 }
 
 /* ------------------------------------------------------------------ */

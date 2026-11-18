@@ -3,7 +3,6 @@ import {
   addServerBroadcast,
   broadcastWebPush,
   getServerBroadcasts,
-  getServerDevices,
   type ServerBroadcastMessage,
 } from "@/lib/server/notification-store";
 
@@ -12,7 +11,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET(req: NextRequest) {
   const since = req.nextUrl.searchParams.get("since") || undefined;
-  const broadcasts = getServerBroadcasts(since);
+  const broadcasts = await getServerBroadcasts(since);
   return NextResponse.json({ broadcasts });
 }
 
@@ -40,8 +39,7 @@ export async function POST(req: NextRequest) {
       sentAt: new Date().toISOString(),
     };
 
-    const saved = addServerBroadcast(broadcast);
-    const devices = getServerDevices();
+    const saved = await addServerBroadcast(broadcast);
 
     // Send real OS-level Web Push to all subscribed devices
     const { sent, failed } = await broadcastWebPush({
@@ -58,7 +56,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       broadcast: saved,
-      deliveredTo: Math.max(sent, devices.length),
+      deliveredTo: sent,
       webPushSent: sent,
       webPushFailed: failed,
     });
